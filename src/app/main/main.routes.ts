@@ -12,7 +12,7 @@ export const mainRoutes: Routes = [
         path: '',
         component: WelcomeComponent
       },
-      {
+      /*{
         path: 'product',
       },
       {
@@ -29,7 +29,7 @@ export const mainRoutes: Routes = [
       },
       {
         path: 'report',
-      },
+      },*/
       {
         path: '**',
         redirectTo: ''
