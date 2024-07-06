@@ -2,16 +2,15 @@
   <nz-header>
     <div nz-row>
       <div nz-col nzSpan="8"></div>
-      <div nz-col nzSpan="8">
-        <img ngSrc="/images/logo.png" class="inline-block object-contain h-1/2" alt="logo" width="460" height="124" />
+      <div nz-col nzSpan="8" routerLink="/">
+        <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="460" height="124" />
       </div>
       <div nz-col class="text-end" nzSpan="8">
-        <nz-badge class="font-mono" [nzCount]="5">
-          <i class="fa-solid fa-shopping-cart text-gray-700 p-1.5 border border-solid border-gray-700 rounded-full"></i>
+        <nz-badge class="font-mono" [nzCount]="(cartOrders$ | async)?.length ?? 0">
+          <i routerLink="/orders/cart" class="fa-solid fa-shopping-cart text-gray-700 p-1.5 border border-solid border-gray-700 rounded-full"></i>
         </nz-badge>
       </div>
     </div>
-
   </nz-header>
   <nz-content class="p-4">
     <router-outlet></router-outlet>

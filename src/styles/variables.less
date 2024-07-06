@@ -1,0 +1,130 @@
+@import "colors";
+
+@font-family: 'Vazirmatn', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+'Noto Color Emoji';
+
+// -------- Colors -----------
+// >>> Primary
+@primary-color: @indigo-5;
+@primary-1: tint(@primary-color, 90%);
+@primary-2: tint(@primary-color, 80%);
+@primary-5: tint(@primary-color, 20%);
+@primary-6: @primary-color;
+@primary-7: shade(@primary-color, 5%);
+@processing-color: @primary-color;
+
+// >>> Info
+@info-color: @primary-color;
+
+@item-active-bg: @indigo-4;
+@item-hover-bg: @indigo-3;
+@success-color: @green-6;
+@warning-color: @yellow-6;
+@error-color: @red-5;
+@highlight-color: @red-5;
+@body-background: @slate-2;
+@component-background: @slate-3;
+
+@text-color: @neutral-10;
+@text-color-secondary: @neutral-7;
+@text-color-inverse: @neutral-1;
+@icon-color-hover: @neutral-9;
+@heading-color: @neutral-8;
+@font-size-base: 14px;
+@font-size-sm: 10px;
+@font-size-lg: 16px;
+@line-height-base: 1.53;
+@border-radius-base: 4px;
+// height rules
+@height-base: 32px;
+@height-lg: 40px;
+@height-sm: 24px;
+// Border color
+@border-color-base: @slate-3;
+@border-color-split: fade(@border-color-base, 40%);
+
+@background-color-base: @slate-3;
+@background-color-light: @slate-9;
+
+// Rate
+@rate-star-color: @amber-5;
+@rate-star-size: 12px;
+@rate-star-hover-scale: scale(1.1);
+
+// Layout
+@layout-body-background: @slate-2;
+@layout-header-background: @slate-1;
+@layout-footer-background: @layout-body-background;
+@layout-sider-background: @slate-2;
+@layout-trigger-background: @slate-4;
+@layout-trigger-color: @slate-2;
+// Layout light theme
+@layout-sider-background-light: @slate-9;
+@layout-trigger-background-light: @slate-9;
+
+
+// Table
+@table-bg: @component-background;
+@table-header-bg: darken(@table-bg, 4%);
+@table-header-color: @heading-color;
+@table-header-sort-bg: darken(@table-bg, 5%);
+@table-body-sort-bg: darken(@table-bg, 5%);
+@table-row-hover-bg: lighten(@table-bg, 2%);
+@table-selected-row-bg: @indigo-7;
+@table-body-selected-sort-bg: @table-selected-row-bg;
+@table-selected-row-hover-bg: darken(@table-selected-row-bg, 2%);
+@table-expanded-row-bg: @table-header-bg;
+@table-footer-bg: @table-header-bg;
+@table-header-cell-split-color: rgba(0, 0, 0, 0.06);
+// Sorter
+@table-header-sort-active-bg: @slate-6;
+@table-fixed-header-sort-active-bg: @slate-6;
+
+// Filter
+@table-header-filter-active-bg: rgba(0, 0, 0, 0.04);
+@table-filter-btns-bg: inherit;
+@table-filter-dropdown-bg: @component-background;
+@table-expand-icon-bg: @component-background;
+@table-selection-column-width: 32px;
+// Sticky
+@table-sticky-scroll-bar-bg: fade(#000, 35%);
+@table-sticky-scroll-bar-radius: 4px;
+
+// Modal
+@modal-header-bg: @slate-8;
+@modal-header-border-color-split: @slate-5;
+@modal-content-bg: @slate-8;
+@modal-heading-color: @slate-0;
+@modal-close-color: @text-color-secondary;
+@modal-footer-border-color-split: @slate-5;
+
+// Divider
+@divider-color: fade(@slate-3, 30%);
+
+// Menu
+// ---
+@menu-inline-toplevel-item-height: 40px;
+@menu-item-height: 40px;
+@menu-item-group-height: @line-height-base;
+@menu-collapsed-width: 80px;
+@menu-bg: @component-background;
+@menu-popup-bg: @component-background;
+@menu-item-color: @text-color;
+@menu-inline-submenu-bg: @background-color-light;
+@menu-highlight-color: @primary-color;
+@menu-highlight-danger-color: @error-color;
+@menu-item-active-bg: @primary-1;
+@menu-item-active-danger-bg: @red-1;
+@menu-item-active-border-width: 3px;
+@menu-item-group-title-color: @text-color-secondary;
+@menu-item-vertical-margin: 4px;
+@menu-item-font-size: @font-size-base;
+@menu-item-boundary-margin: 8px;
+@menu-item-padding-horizontal: 20px;
+@menu-item-padding: 0 @menu-item-padding-horizontal;
+@menu-horizontal-line-height: 46px;
+@menu-icon-margin-right: 10px;
+@menu-icon-size: @menu-item-font-size;
+@menu-icon-size-lg: @font-size-lg;
+@menu-item-group-title-font-size: @menu-item-font-size;

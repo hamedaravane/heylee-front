@@ -10,18 +10,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 export class ProductFacade {
   private readonly productInfra = inject(ProductInfra);
   private readonly productSubject = new Subject<Product>();
-  private readonly nzMessageService = inject(NzMessageService);
   get product$() {
     return this.productSubject.asObservable();
   }
   private readonly productLoadingSubject = new Subject<boolean>();
   get productLoading$() {
     return this.productLoadingSubject.asObservable();
-  }
-  private readonly cartArray = new Array<Product>();
-  private readonly cartSubject = new Subject<Product[]>();
-  get cart$() {
-    return this.cartSubject.asObservable();
   }
 
   async getProductByCode(code: string): Promise<void> {
@@ -39,11 +33,5 @@ export class ProductFacade {
     } finally {
       this.productLoadingSubject.next(false);
     }
-  }
-
-  addToCart(product: Product) {
-    this.cartArray.push(product);
-    this.cartSubject.next(this.cartArray);
-    this.nzMessageService.success('کالا به سبد خرید اضافه شد');
   }
 }

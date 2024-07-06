@@ -7,6 +7,5 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [NzButtonModule, RouterLink],
   templateUrl: './welcome.component.html',
-  styleUrl: './welcome.component.scss'
 })
 export class WelcomeComponent {}
