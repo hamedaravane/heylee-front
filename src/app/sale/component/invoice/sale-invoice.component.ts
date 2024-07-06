@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'sale-invoice',
@@ -11,7 +11,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 export class SaleInvoiceComponent {
   private formBuilder = inject(FormBuilder);
   orderForm = this.formBuilder.group({
-    saleItems: this.formBuilder.array([]),
+    saleItems: this.formBuilder.array([]) as FormArray,
     customer: this.formBuilder.group({
       name: '',
       address: '',
@@ -21,6 +21,15 @@ export class SaleInvoiceComponent {
       description: ''
     })
   })
+
+  addNewProduct() {
+    const productGroup = this.formBuilder.group({
+      name: [''],
+      quantity: [1],
+      price: ['']
+    });
+    this.orderForm.get('saleItems')
+  }
 
   onSubmit() {
     console.log(this.orderForm.value);

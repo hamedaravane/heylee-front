@@ -1,10 +1,11 @@
 <div class="bg-gray-100 overflow-clip rounded-sm p-4">
   <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
     <div>
-      <button nz-button nzBlock nzType="dashed">
+      <button class="my-4" nz-button nzBlock nzType="dashed" (click)="addNewProduct()">
         <i class="fa-solid fa-plus"></i>
         <span class="ms-2">افزودن محصول</span>
       </button>
     </div>
+    <button [disabled]="orderForm.invalid" nz-button nzType="primary" nzBlock>ثبت فاکتور</button>
   </form>
 </div>
