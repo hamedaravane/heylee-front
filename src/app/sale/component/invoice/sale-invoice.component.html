@@ -1,51 +1,142 @@
-<div class="bg-gray-100 overflow-clip rounded-sm p-4">
-  <form (ngSubmit)="submitOrderForm()" [formGroup]="saleFormGroup">
-    <div formArrayName="saleItems">
-      <div *ngFor="let item of saleItems.controls; let i = index" [formGroupName]="i">
-        <div>
-          <button type="button" (click)="removeSaleItem(i)">Remove Item</button>
-        </div>
-        <label for="code">Code</label>
-        <input id="code" formControlName="code">
-        <label for="color">Color</label>
-        <input id="color" formControlName="color">
-        <label for="colorHexCode">Color Hex Code</label>
-        <input id="colorHexCode" formControlName="colorHexCode">
-        <label for="size">Size</label>
-        <input id="size" formControlName="size">
-        <label for="sizeUnit">Size Unit</label>
-        <input id="sizeUnit" formControlName="sizeUnit">
-        <label for="name">Name</label>
-        <input id="name" formControlName="name">
+<div class="bg-gray-50 border border-solid border-gray-300 overflow-clip rounded-sm p-3 mb-4">
+  <nz-input-group [nzSuffix]="suffixIconSearch">
+    <input nz-input
+           type="search"
+           pattern="^[a-zA-Z0-9]{1,12}$"
+           maxlength="12"
+           [ngModel]="searchText"
+           (ngModelChange)="searchProducts()"
+           placeholder="جستجو در کد محصولات">
+  </nz-input-group>
 
-      </div>
-      <button (click)="addSaleItem()" class="my-4" nz-button nzBlock nzType="dashed">
-        <i class="fa-solid fa-plus"></i>
-        <span class="ms-2">افزودن محصول</span>
-      </button>
-    </div>
-    <div *ngIf="saleItems.length > 0" class="p-2">
-      <div class="mb-2">
-        <label class="me-2">نام مشتری</label>
-        <input formControlName="customerFirstName">
-      </div>
-      <div class="mb-2">
-        <label class="me-2">نام خانوادگی مشتری</label>
-        <input formControlName="customerLastName">
-      </div>
-      <div class="mb-2">
-        <label class="me-2">شهر</label>
-        <input formControlName="customerCity">
-      </div>
-      <div class="mb-2">
-        <label class="me-2">آدرس</label>
-        <input formControlName="customerAddress">
-      </div>
-      <div>
-        <label class="me-2">شماره تلفن</label>
-        <input formControlName="customerPhone">
-      </div>
-    </div>
-    <button [disabled]="saleFormGroup.invalid" nz-button nzBlock nzType="primary">ثبت فاکتور</button>
+  <nz-collapse class="mt-4">
+    <nz-collapse-panel nzHeader="لیست همه محصولات موجود" nzActive="true">
+      @if (availableProducts$ | async; as availableProducts) {
+        @for (product of availableProducts; track $index) {
+          <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
+            <div class="col-span-3 h-12 w-12 inline-block overflow-clip border border-solid border-gray-300">
+              @if (product.product.image) {
+                <img [ngSrc]="product.product.image"
+                     class="w-12 h-full object-cover"
+                     width="60"
+                     height="60"
+                     alt="product image"/>
+              } @else {
+                <i class="fa-solid fa-image"></i>
+              }
+            </div>
+            <div class="col-span-8">
+              <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
+                <span class="line-clamp-1">{{ product.product.name }}</span>
+                <span class="line-clamp-1">{{ product.color.label }}</span>
+                <span class="line-clamp-1">{{ product.size.label }}</span>
+                <span class="line-clamp-1">{{ product.product.code }}</span>
+                <span class="line-clamp-1">{{ product.availableQuantity }}</span>
+                <span class="line-clamp-1">{{ product.sellingUnitPrice }}</span>
+              </div>
+            </div>
+            <div class="col-span-1 justify-self-end self-center">
+              <button class="leading-none" nz-button nzType="primary" nzSize="small" (click)="addProductToOrder(product)">
+                <i class="fa-solid fa-plus fa-sm leading-tight"></i>
+              </button>
+            </div>
+
+          </div>
+        }
+      }
+    </nz-collapse-panel>
+  </nz-collapse>
+
+</div>
+<div class="bg-gray-50 border border-solid border-gray-300 overflow-clip rounded-sm p-4">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="customerForm">
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="phone">شماره موبایل</nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="+98">
+          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
+                 inputmode="numeric" id="phone" formControlName="phone"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="fullName">نام کامل مشتری</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="fullName" type="text" id="fullName" pattern="^[\u0600-\u06FF\s]+$"
+               formControlName="fullName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="city">شهر</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="city" type="text" id="city" pattern="^[\u0600-\u06FF\s]+$"
+               formControlName="city"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="address">آدرس</nz-form-label>
+      <nz-form-control>
+        <textarea
+            nz-input
+            required
+            name="address"
+            id="address" pattern="^[\u0600-\u06FF\s]+$"
+            formControlName="address"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzXs="4" nzFor="instagram">
+        <span>اینستاگرام</span>
+        <i class="fa-brands fa-instagram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
+          <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
+                 pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzXs="4" nzFor="telegram">
+        <span>تلگرام</span>
+        <i class="fa-brands fa-telegram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
+          <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
+                 pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzXs="4" nzFor="discount">تخفیف</nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="ریال">
+          <input nz-input name="discount" type="number" id="discount" formControlName="discount"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="refNumber">شماره پیگیری</nz-form-label>
+      <nz-form-control dir="ltr">
+        <input nz-input required name="refNumber" type="text" id="refNumber" formControlName="refNumber"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzXs="4" nzFor="items">سفارشات</nz-form-label>
+      <nz-form-control>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
+      </nz-form-control>
+    </nz-form-item>
   </form>
 </div>
+
+<ng-template #suffixIconSearch>
+  <i class="fa-solid fa-search text-gray-500"></i>
+</ng-template>

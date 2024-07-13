@@ -10,7 +10,6 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
   standalone: true,
   imports: [NzLayoutModule, RouterOutlet, NgOptimizedImage, NzGridModule, NzBadgeModule, RouterLink, AsyncPipe],
   templateUrl: './main.component.html',
-  styleUrl: './main.component.scss'
 })
 export class MainComponent {
 }
