@@ -1,37 +1,49 @@
-import { Component, inject } from '@angular/core';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {Component, inject} from '@angular/core';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, ReactiveFormsModule],
+  imports: [NzButtonModule, ReactiveFormsModule, NgIf, NgForOf],
   standalone: true,
   templateUrl: './sale-invoice.component.html',
 })
 export class SaleInvoiceComponent {
   private formBuilder = inject(FormBuilder);
-  orderForm = this.formBuilder.group({
-    saleItems: this.formBuilder.array([]) as FormArray,
-    customer: this.formBuilder.group({
-      name: '',
-      address: '',
-      phone: '',
-      city: '',
-      postalCode: '',
-      description: ''
-    })
-  })
+  saleFormGroup = this.formBuilder.group({
+    customerFirstName: ['', Validators.required],
+    customerLastName: ['', Validators.required],
+    customerCity: ['', Validators.required],
+    customerAddress: ['', Validators.required],
+    customerPhone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    saleItems: this.formBuilder.array([this.createSaleItem()])
+  });
 
-  addNewProduct() {
-    const productGroup = this.formBuilder.group({
-      name: [''],
-      quantity: [1],
-      price: ['']
-    });
-    this.orderForm.get('saleItems')
+  get saleItems(): FormArray {
+    return this.saleFormGroup.get('saleItems') as FormArray;
   }
 
-  onSubmit() {
-    console.log(this.orderForm.value);
+  createSaleItem(): FormGroup {
+    return this.formBuilder.group({
+      code: ['', Validators.required],
+      name: ['', Validators.required],
+      color: ['', Validators.required],
+      colorHexCode: ['', Validators.required],
+      size: ['', Validators.required],
+      sizeUnit: ['', Validators.required]
+    });
+  }
+
+  addSaleItem() {
+    this.saleItems.push(this.createSaleItem());
+  }
+
+  removeSaleItem(index: number) {
+    this.saleItems.removeAt(index);
+  }
+
+  submitOrderForm() {
+    console.log(this.saleFormGroup.value);
   }
 }

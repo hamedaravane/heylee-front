@@ -1,11 +1,51 @@
 <div class="bg-gray-100 overflow-clip rounded-sm p-4">
-  <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
-    <div>
-      <button class="my-4" nz-button nzBlock nzType="dashed" (click)="addNewProduct()">
+  <form (ngSubmit)="submitOrderForm()" [formGroup]="saleFormGroup">
+    <div formArrayName="saleItems">
+      <div *ngFor="let item of saleItems.controls; let i = index" [formGroupName]="i">
+        <div>
+          <button type="button" (click)="removeSaleItem(i)">Remove Item</button>
+        </div>
+        <label for="code">Code</label>
+        <input id="code" formControlName="code">
+        <label for="color">Color</label>
+        <input id="color" formControlName="color">
+        <label for="colorHexCode">Color Hex Code</label>
+        <input id="colorHexCode" formControlName="colorHexCode">
+        <label for="size">Size</label>
+        <input id="size" formControlName="size">
+        <label for="sizeUnit">Size Unit</label>
+        <input id="sizeUnit" formControlName="sizeUnit">
+        <label for="name">Name</label>
+        <input id="name" formControlName="name">
+
+      </div>
+      <button (click)="addSaleItem()" class="my-4" nz-button nzBlock nzType="dashed">
         <i class="fa-solid fa-plus"></i>
         <span class="ms-2">افزودن محصول</span>
       </button>
     </div>
-    <button [disabled]="orderForm.invalid" nz-button nzType="primary" nzBlock>ثبت فاکتور</button>
+    <div *ngIf="saleItems.length > 0" class="p-2">
+      <div class="mb-2">
+        <label class="me-2">نام مشتری</label>
+        <input formControlName="customerFirstName">
+      </div>
+      <div class="mb-2">
+        <label class="me-2">نام خانوادگی مشتری</label>
+        <input formControlName="customerLastName">
+      </div>
+      <div class="mb-2">
+        <label class="me-2">شهر</label>
+        <input formControlName="customerCity">
+      </div>
+      <div class="mb-2">
+        <label class="me-2">آدرس</label>
+        <input formControlName="customerAddress">
+      </div>
+      <div>
+        <label class="me-2">شماره تلفن</label>
+        <input formControlName="customerPhone">
+      </div>
+    </div>
+    <button [disabled]="saleFormGroup.invalid" nz-button nzBlock nzType="primary">ثبت فاکتور</button>
   </form>
 </div>
