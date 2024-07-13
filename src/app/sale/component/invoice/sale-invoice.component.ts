@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import {
   FormControl,
@@ -12,13 +12,15 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { BidiModule } from '@angular/cdk/bidi';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { ProductFacade } from '../../data-access/product.facade';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ProductData } from '../../entity/product.entity';
+import {ProductFilterPipe} from "../../pipe/product-filter.pipe";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, NgOptimizedImage],
+  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet],
   standalone: true,
   templateUrl: './sale-invoice.component.html',
 })
@@ -26,6 +28,8 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly productFacade = inject(ProductFacade);
   availableProducts$ = this.productFacade.availableProducts$;
   searchText = '';
+  availableProducts = signal<ProductData[]>([]);
+  selectedProducts: ProductData[] = [];
 
   customerForm = new FormGroup({
     id: new FormControl('', [Validators.required]),
@@ -44,14 +48,29 @@ export class SaleInvoiceComponent implements OnInit {
 
   ngOnInit() {
     this.productFacade.getAvailableProducts().then();
-  }
-
-  searchProducts() {
-
+    firstValueFrom(this.availableProducts$).then(products => {
+      this.availableProducts.set(products);
+    });
   }
 
   addProductToOrder(product: ProductData) {
-    this.itemsControl?.value?.push(product);
+    this.selectedProducts.push(product);
+    // TODO: remove from available products
+    const indexToRemove = this.availableProducts().indexOf(product);
+    const availableProductsClone = this.availableProducts();
+    availableProductsClone.splice(indexToRemove, 1);
+    this.availableProducts.set(availableProductsClone);
+    // add to selected products
+    this.itemsControl?.setValue(this.selectedProducts);
+  }
+
+  removeSelectedProduct(product: ProductData) {
+    const indexToRemove = this.selectedProducts.indexOf(product);
+    this.selectedProducts.splice(indexToRemove, 1);
+    const availableProductsClone = this.availableProducts();
+    availableProductsClone.push(product);
+    this.availableProducts.set(availableProductsClone);
+    this.itemsControl?.setValue(this.selectedProducts);
   }
 
   submitOrderForm() {

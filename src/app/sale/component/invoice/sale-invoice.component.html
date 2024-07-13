@@ -4,17 +4,16 @@
            type="search"
            pattern="^[a-zA-Z0-9]{1,12}$"
            maxlength="12"
-           [ngModel]="searchText"
-           (ngModelChange)="searchProducts()"
+           [(ngModel)]="searchText"
            placeholder="جستجو در کد محصولات">
   </nz-input-group>
 
   <nz-collapse class="mt-4">
     <nz-collapse-panel nzHeader="لیست همه محصولات موجود" nzActive="true">
-      @if (availableProducts$ | async; as availableProducts) {
-        @for (product of availableProducts; track $index) {
+      @if (availableProducts().length > 0) {
+        @for (product of availableProducts() | filterProductsByCode: searchText; track $index) {
           <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
-            <div class="col-span-3 h-12 w-12 inline-block overflow-clip border border-solid border-gray-300">
+            <div class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
               @if (product.product.image) {
                 <img [ngSrc]="product.product.image"
                      class="w-12 h-full object-cover"
@@ -22,17 +21,20 @@
                      height="60"
                      alt="product image"/>
               } @else {
-                <i class="fa-solid fa-image"></i>
+                <i class="fa-solid fa-image fa-xl text-gray-400"></i>
               }
             </div>
             <div class="col-span-8">
               <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
                 <span class="line-clamp-1">{{ product.product.name }}</span>
+                <span class="line-clamp-1 font-mono">{{ product.product.code }}</span>
                 <span class="line-clamp-1">{{ product.color.label }}</span>
-                <span class="line-clamp-1">{{ product.size.label }}</span>
-                <span class="line-clamp-1">{{ product.product.code }}</span>
-                <span class="line-clamp-1">{{ product.availableQuantity }}</span>
-                <span class="line-clamp-1">{{ product.sellingUnitPrice }}</span>
+                <span class="line-clamp-1 font-mono">{{ product.size.label }}</span>
+                <span class="line-clamp-1">
+                  <span class="font-mono">{{ product.sellingUnitPrice | number }}</span>
+                  <span class="mx-1 text-gray-600" style="font-size: 0.6rem">ریال</span>
+                </span>
+                <span class="line-clamp-1 font-mono">{{ product.availableQuantity }}</span>
               </div>
             </div>
             <div class="col-span-1 justify-self-end self-center">
@@ -40,7 +42,6 @@
                 <i class="fa-solid fa-plus fa-sm leading-tight"></i>
               </button>
             </div>
-
           </div>
         }
       }
@@ -114,24 +115,25 @@
       <nz-form-label nzXs="4" nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
-          <input nz-input name="discount" type="number" id="discount" formControlName="discount"/>
+          <input class="font-mono" nz-input name="discount" type="number" id="discount" formControlName="discount"/>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzRequired nzXs="4" nzFor="refNumber">شماره پیگیری</nz-form-label>
       <nz-form-control dir="ltr">
-        <input nz-input required name="refNumber" type="text" id="refNumber" formControlName="refNumber"/>
+        <input class="font-mono" nz-input required name="refNumber" type="text" id="refNumber" formControlName="refNumber"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzXs="4" nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
+        <ng-container *ngTemplateOutlet="selectedProductsTemplate"></ng-container>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-control>
-        <button nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
+        <button [disabled]="customerForm.invalid" nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
       </nz-form-control>
     </nz-form-item>
   </form>
@@ -139,4 +141,42 @@
 
 <ng-template #suffixIconSearch>
   <i class="fa-solid fa-search text-gray-500"></i>
+</ng-template>
+
+<ng-template #selectedProductsTemplate>
+  <div>
+    @for (selectedProduct of selectedProducts; track $index) {
+      <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
+        <div class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
+          @if (selectedProduct.product.image) {
+            <img [ngSrc]="selectedProduct.product.image"
+                 class="w-12 h-full object-cover"
+                 width="60"
+                 height="60"
+                 alt="product image"/>
+          } @else {
+            <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+          }
+        </div>
+        <div class="col-span-8">
+          <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
+            <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
+            <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
+            <span class="line-clamp-1">
+                  <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
+                  <span class="mx-1 text-gray-600" style="font-size: 0.6rem">ریال</span>
+                </span>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
+          </div>
+        </div>
+        <div class="col-span-1 justify-self-end self-center">
+          <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small" (click)="removeSelectedProduct(selectedProduct)">
+            <i class="fa-solid fa-trash fa-sm leading-tight"></i>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
 </ng-template>
