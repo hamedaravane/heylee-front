@@ -1,3 +1,40 @@
+<div style="background-color: rgba(250,250,250,0.3)" class="border backdrop-blur-xl border-solid border-gray-300 overflow-clip rounded-sm p-3 mb-4 sticky top-0 z-50">
+  <div class="grid grid-cols-4 grid-rows-2 gap-x-2">
+    <div class="col-span-1">
+      <span class="text-xs">تعداد:</span>
+      <span class="float-end font-mono mx-2">{{ totalOrderQuantity() }}</span>
+    </div>
+    <div class="col-span-3">
+      <span class="text-xs">قیمت سفارشات:</span>
+      <div class="float-end">
+        <span class="font-mono">{{ totalOrderPrice() | number }}</span>
+        <span class="mx-1 text-gray-600 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <span class="text-xs">هزینه پست:</span>
+      <div class="float-end">
+        <span class="font-mono">{{ postFee() | number }}</span>
+        <span class="mx-1 text-gray-600 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <span class="text-xs">تخفیف:</span>
+      <div class="float-end">
+        <span class="font-mono">{{ discountControl?.value | number }}</span>
+        <span class="mx-1 text-gray-600 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="grid grid-cols-2">
+    <span>مقدار پرداختی نهایی</span>
+    <div class="text-end">
+      <strong class="text-end font-mono">{{ orderFee() | number }}</strong>
+      <span class="mx-1 text-gray-600 align-middle" style="font-size: 0.6rem">ریال</span>
+    </div>
+  </div>
+</div>
 <div class="bg-gray-50 border border-solid border-gray-300 overflow-clip rounded-sm p-3 mb-4">
   <nz-input-group [nzSuffix]="suffixIconSearch">
     <input nz-input
@@ -10,40 +47,42 @@
 
   <nz-collapse class="mt-4">
     <nz-collapse-panel nzHeader="لیست همه محصولات موجود" nzActive="true">
-      @if (availableProducts().length > 0) {
-        @for (product of availableProducts() | filterProductsByCode: searchText; track $index) {
-          <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
-            <div class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
-              @if (product.product.image) {
-                <img [ngSrc]="product.product.image"
-                     class="w-12 h-full object-cover"
-                     width="60"
-                     height="60"
-                     alt="product image"/>
-              } @else {
-                <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-              }
-            </div>
-            <div class="col-span-8">
-              <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
-                <span class="line-clamp-1">{{ product.product.name }}</span>
-                <span class="line-clamp-1 font-mono">{{ product.product.code }}</span>
-                <span class="line-clamp-1">{{ product.color.label }}</span>
-                <span class="line-clamp-1 font-mono">{{ product.size.label }}</span>
-                <span class="line-clamp-1">
+      @for (product of availableProducts | filterProductsByCode: searchText; track product.product.id) {
+        <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
+          <div
+              class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
+            @if (product.product.image) {
+              <img [ngSrc]="product.product.image"
+                   class="w-12 h-full object-cover"
+                   width="60"
+                   height="60"
+                   alt="product image"/>
+            } @else {
+              <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+            }
+          </div>
+          <div class="col-span-8">
+            <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
+              <span class="line-clamp-1">{{ product.product.name }}</span>
+              <span class="line-clamp-1 font-mono">{{ product.product.code }}</span>
+              <span class="line-clamp-1">{{ product.color.label }}</span>
+              <span class="line-clamp-1 font-mono">{{ product.size.label }}</span>
+              <span class="line-clamp-1">
                   <span class="font-mono">{{ product.sellingUnitPrice | number }}</span>
                   <span class="mx-1 text-gray-600" style="font-size: 0.6rem">ریال</span>
                 </span>
-                <span class="line-clamp-1 font-mono">{{ product.availableQuantity }}</span>
-              </div>
-            </div>
-            <div class="col-span-1 justify-self-end self-center">
-              <button class="leading-none" nz-button nzType="primary" nzSize="small" (click)="addProductToOrder(product)">
-                <i class="fa-solid fa-plus fa-sm leading-tight"></i>
-              </button>
+              <span class="line-clamp-1 font-mono">{{ product.availableQuantity }}</span>
             </div>
           </div>
-        }
+          <div class="col-span-1 justify-self-end self-center">
+            <button class="leading-none" nz-button nzType="primary" nzSize="small"
+                    (click)="moveProductToOrder(product)">
+              <i class="fa-solid fa-plus fa-sm leading-tight"></i>
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
       }
     </nz-collapse-panel>
   </nz-collapse>
@@ -63,7 +102,7 @@
     <nz-form-item>
       <nz-form-label nzRequired nzXs="4" nzFor="fullName">نام کامل مشتری</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="fullName" type="text" id="fullName" pattern="^[\u0600-\u06FF\s]+$"
+        <input nz-input required name="fullName" type="text" id="fullName" pattern="^[\u0600-\u06FF\s-]+$"
                formControlName="fullName"/>
       </nz-form-control>
     </nz-form-item>
@@ -81,7 +120,7 @@
             nz-input
             required
             name="address"
-            id="address" pattern="^[\u0600-\u06FF\s]+$"
+            id="address" pattern="^[\u0600-\u06FF\s-]+$"
             formControlName="address"
             [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
@@ -122,7 +161,8 @@
     <nz-form-item>
       <nz-form-label nzRequired nzXs="4" nzFor="refNumber">شماره پیگیری</nz-form-label>
       <nz-form-control dir="ltr">
-        <input class="font-mono" nz-input required name="refNumber" type="text" id="refNumber" formControlName="refNumber"/>
+        <input class="font-mono" nz-input required name="refNumber" type="text" id="refNumber"
+               formControlName="refNumber"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -147,7 +187,8 @@
   <div>
     @for (selectedProduct of selectedProducts; track $index) {
       <div class="grid grid-cols-12 gap-4 w-full bg-gray-50 border border-solid border-gray-300 rounded-sm p-2 my-2">
-        <div class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
+        <div
+            class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-300">
           @if (selectedProduct.product.image) {
             <img [ngSrc]="selectedProduct.product.image"
                  class="w-12 h-full object-cover"
@@ -172,11 +213,14 @@
           </div>
         </div>
         <div class="col-span-1 justify-self-end self-center">
-          <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small" (click)="removeSelectedProduct(selectedProduct)">
+          <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small"
+                  (click)="removeSelectedProduct(selectedProduct)">
             <i class="fa-solid fa-trash fa-sm leading-tight"></i>
           </button>
         </div>
       </div>
+    } @empty {
+      <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
     }
   </div>
 </ng-template>

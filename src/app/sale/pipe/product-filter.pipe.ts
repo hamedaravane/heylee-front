@@ -1,5 +1,5 @@
-import {Pipe} from "@angular/core";
-import {ProductData} from "../entity/product.entity";
+import { Pipe } from '@angular/core';
+import { ProductData } from '../entity/product.entity';
 
 @Pipe({
   standalone: true,
@@ -7,6 +7,9 @@ import {ProductData} from "../entity/product.entity";
 })
 export class ProductFilterPipe {
   transform(value: ProductData[], searchText: string): ProductData[] {
-    return value.filter(product => product.product.code.toLowerCase().includes(searchText.toLowerCase()));
+    if (!value || !searchText) {
+      return value;
+    }
+    return value.filter(product => product.product?.code?.toLowerCase().includes(searchText.toLowerCase()));
   }
 }

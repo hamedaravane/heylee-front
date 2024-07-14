@@ -1,6 +1,7 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   FormsModule,
@@ -12,31 +13,43 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { BidiModule } from '@angular/cdk/bidi';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { ProductFacade } from '../../data-access/product.facade';
-import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import { AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ProductData } from '../../entity/product.entity';
-import {ProductFilterPipe} from "../../pipe/product-filter.pipe";
-import {firstValueFrom} from "rxjs";
+import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
+import { firstValueFrom } from 'rxjs';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet],
+  imports: [
+    NzButtonModule,
+    ReactiveFormsModule,
+    NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet],
   standalone: true,
   templateUrl: './sale-invoice.component.html',
 })
 export class SaleInvoiceComponent implements OnInit {
   private readonly productFacade = inject(ProductFacade);
+  private readonly destroyRef = inject(DestroyRef);
   availableProducts$ = this.productFacade.availableProducts$;
   searchText = '';
-  availableProducts = signal<ProductData[]>([]);
+  availableProducts: ProductData[] = [];
   selectedProducts: ProductData[] = [];
+  constantPostFee = 380_000;
+  totalOrderPrice = signal(0);
+  postFee = signal(0);
+  totalOrderQuantity = signal(0);
+  orderFee = signal(0);
+  discount = signal(0);
 
   customerForm = new FormGroup({
     id: new FormControl('', [Validators.required]),
-    fullName: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\s]+$')]),
+    fullName: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
     phone: new FormControl('', [Validators.required]),
-    city: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\s]+$')]),
-    address: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\s]+$')]),
+    city: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
+    address: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
     instagram: new FormControl('', [Validators.minLength(1), Validators.maxLength(30)]),
     telegram: new FormControl('', [Validators.minLength(5), Validators.maxLength(32)]),
     refNumber: new FormControl('', [Validators.required]),
@@ -44,32 +57,76 @@ export class SaleInvoiceComponent implements OnInit {
     items: new FormControl<ProductData[]>([], [Validators.minLength(1)])
   })
 
-  itemsControl = this.customerForm.get('items');
+  itemsControl = this.customerForm.get('items') as AbstractControl<ProductData[]>;
+  discountControl = this.customerForm.get('discount') as AbstractControl<number>;
+  cityControl = this.customerForm.get('city') as AbstractControl<string>;
 
   ngOnInit() {
     this.productFacade.getAvailableProducts().then();
     firstValueFrom(this.availableProducts$).then(products => {
-      this.availableProducts.set(products);
+      this.availableProducts = products;
     });
+
+    this.cityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((city) => {
+      this.postFee.set(city === 'مشهد' ? 0 : this.constantPostFee);
+      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
+    });
+    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((discount) => {
+      this.discount.set(discount);
+      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
+    });
+    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
+      this.totalOrderQuantity.set(items.reduce((acc, curr) => acc + curr.availableQuantity, 0));
+      this.totalOrderPrice.set(items.reduce((acc, curr) => acc + curr.sellingUnitPrice * curr.availableQuantity, 0));
+      this.postFee.set(this.totalOrderPrice() > 7_000_000 ? 0 : this.postFee());
+      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
+    })
   }
 
-  addProductToOrder(product: ProductData) {
-    this.selectedProducts.push(product);
-    // TODO: remove from available products
-    const indexToRemove = this.availableProducts().indexOf(product);
-    const availableProductsClone = this.availableProducts();
-    availableProductsClone.splice(indexToRemove, 1);
-    this.availableProducts.set(availableProductsClone);
-    // add to selected products
+  moveProductToOrder(product: ProductData) {
+    const existingProductInSelected = this.selectedProducts.find(p => p.product.id === product.product.id);
+
+    if (existingProductInSelected) {
+      existingProductInSelected.availableQuantity++;
+    } else {
+      this.selectedProducts.push({ ...product, availableQuantity: 1 });
+    }
+
+    product.availableQuantity--;
+
+    if (product.availableQuantity === 0) {
+      const indexToRemove = this.availableProducts.indexOf(product);
+      if (indexToRemove > -1) {
+        this.availableProducts = [
+          ...this.availableProducts.slice(0, indexToRemove),
+          ...this.availableProducts.slice(indexToRemove + 1)
+        ];
+      }
+    }
     this.itemsControl?.setValue(this.selectedProducts);
   }
 
   removeSelectedProduct(product: ProductData) {
-    const indexToRemove = this.selectedProducts.indexOf(product);
-    this.selectedProducts.splice(indexToRemove, 1);
-    const availableProductsClone = this.availableProducts();
-    availableProductsClone.push(product);
-    this.availableProducts.set(availableProductsClone);
+    const selectedProduct = this.selectedProducts.find(p => p.product.id === product.product.id);
+
+    if (selectedProduct) {
+      selectedProduct.availableQuantity--;
+
+      if (selectedProduct.availableQuantity === 0) {
+        // Remove from selected products if quantity is 0
+        this.selectedProducts = this.selectedProducts.filter(p => p.product.id !== product.product.id);
+      }
+
+      const availableProduct = this.availableProducts.find(p => p.product.id === product.product.id);
+
+      if (availableProduct) {
+        availableProduct.availableQuantity++;
+      } else {
+        // Add back to available products if not already there
+        this.availableProducts.push({ ...product, availableQuantity: 1 });
+      }
+    }
+
     this.itemsControl?.setValue(this.selectedProducts);
   }
 
