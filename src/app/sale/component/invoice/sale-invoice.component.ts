@@ -57,7 +57,6 @@ export class SaleInvoiceComponent implements OnInit {
   discount = signal(0);
 
   customerForm = new FormGroup({
-    id: new FormControl('', [Validators.required]),
     fullName: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
     phone: new FormControl('', [Validators.required]),
     city: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
@@ -134,6 +133,5 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   submitOrderForm() {
-    console.log(this.customerForm.value);
   }
 }
