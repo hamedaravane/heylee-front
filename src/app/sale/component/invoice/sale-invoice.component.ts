@@ -26,18 +26,30 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     NzButtonModule,
     ReactiveFormsModule,
-    NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet],
+    NzCollapseModule,
+    NzEmptyModule,
+    NzFormModule,
+    NzInputModule,
+    BidiModule,
+    NzDividerModule,
+    AsyncPipe,
+    FormsModule,
+    NgOptimizedImage,
+    DecimalPipe,
+    ProductFilterPipe,
+    NgTemplateOutlet
+  ],
   standalone: true,
   templateUrl: './sale-invoice.component.html',
 })
 export class SaleInvoiceComponent implements OnInit {
   private readonly productFacade = inject(ProductFacade);
   private readonly destroyRef = inject(DestroyRef);
-  availableProducts$ = this.productFacade.availableProducts$;
+  private readonly availableProducts$ = this.productFacade.availableProducts$;
+  private readonly constantPostFee = 380_000;
   searchText = '';
   availableProducts: ProductData[] = [];
   selectedProducts: ProductData[] = [];
-  constantPostFee = 380_000;
   totalOrderPrice = signal(0);
   postFee = signal(0);
   totalOrderQuantity = signal(0);
@@ -57,9 +69,9 @@ export class SaleInvoiceComponent implements OnInit {
     items: new FormControl<ProductData[]>([], [Validators.minLength(1)])
   })
 
-  itemsControl = this.customerForm.get('items') as AbstractControl<ProductData[]>;
-  discountControl = this.customerForm.get('discount') as AbstractControl<number>;
-  cityControl = this.customerForm.get('city') as AbstractControl<string>;
+  private readonly itemsControl = this.customerForm.get('items') as AbstractControl<ProductData[]>;
+  private readonly discountControl = this.customerForm.get('discount') as AbstractControl<number>;
+  private readonly cityControl = this.customerForm.get('city') as AbstractControl<string>;
 
   ngOnInit() {
     this.productFacade.getAvailableProducts().then();
@@ -85,15 +97,12 @@ export class SaleInvoiceComponent implements OnInit {
 
   moveProductToOrder(product: ProductData) {
     const existingProductInSelected = this.selectedProducts.find(p => p.product.id === product.product.id);
-
     if (existingProductInSelected) {
       existingProductInSelected.availableQuantity++;
     } else {
       this.selectedProducts.push({ ...product, availableQuantity: 1 });
     }
-
     product.availableQuantity--;
-
     if (product.availableQuantity === 0) {
       const indexToRemove = this.availableProducts.indexOf(product);
       if (indexToRemove > -1) {
@@ -108,25 +117,19 @@ export class SaleInvoiceComponent implements OnInit {
 
   removeSelectedProduct(product: ProductData) {
     const selectedProduct = this.selectedProducts.find(p => p.product.id === product.product.id);
-
     if (selectedProduct) {
       selectedProduct.availableQuantity--;
 
       if (selectedProduct.availableQuantity === 0) {
-        // Remove from selected products if quantity is 0
         this.selectedProducts = this.selectedProducts.filter(p => p.product.id !== product.product.id);
       }
-
       const availableProduct = this.availableProducts.find(p => p.product.id === product.product.id);
-
       if (availableProduct) {
         availableProduct.availableQuantity++;
       } else {
-        // Add back to available products if not already there
         this.availableProducts.push({ ...product, availableQuantity: 1 });
       }
     }
-
     this.itemsControl?.setValue(this.selectedProducts);
   }
 
