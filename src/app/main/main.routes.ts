@@ -23,10 +23,6 @@ export const mainRoutes: Routes = [
       {
         path: 'inventory',
         loadComponent: () => import('../inventory/component/report/inventory-report.component').then(c => c.InventoryReportComponent),
-      },
-      {
-        path: '**',
-        redirectTo: ''
       }
     ]
   }
