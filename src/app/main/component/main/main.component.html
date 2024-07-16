@@ -1,15 +1,17 @@
-<nz-layout class="min-h-full">
-  <nz-header>
-    <div nz-row>
-      <div nz-col nzSpan="8"></div>
-      <div nz-col nzSpan="8" routerLink="/">
-        <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="460" height="124" />
+<div class="h-full bg-gray-100">
+  <nz-layout>
+    <nz-header>
+      <div nz-row>
+        <div nz-col nzSpan="8"></div>
+        <div nz-col nzSpan="8" routerLink="/">
+          <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="460" height="124" />
+        </div>
+        <div nz-col nzSpan="8"></div>
       </div>
-      <div nz-col nzSpan="8"></div>
-    </div>
-  </nz-header>
-  <nz-content class="min-h-full p-4">
-    <router-outlet></router-outlet>
-  </nz-content>
-  <nz-footer></nz-footer>
-</nz-layout>
+    </nz-header>
+    <nz-content class="min-h-full p-4">
+      <router-outlet></router-outlet>
+    </nz-content>
+    <nz-footer></nz-footer>
+  </nz-layout>
+</div>

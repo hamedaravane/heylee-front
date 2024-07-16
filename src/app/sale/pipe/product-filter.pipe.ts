@@ -1,5 +1,5 @@
-import { Pipe } from '@angular/core';
-import { ProductData } from '../entity/product.entity';
+import {Pipe} from '@angular/core';
+import {ProductData} from '../entity/product.entity';
 
 @Pipe({
   standalone: true,

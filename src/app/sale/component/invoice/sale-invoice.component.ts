@@ -1,25 +1,18 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { BidiModule } from '@angular/cdk/bidi';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { ProductFacade } from '../../data-access/product.facade';
-import { AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { ProductData } from '../../entity/product.entity';
-import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
-import { firstValueFrom } from 'rxjs';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {SaleFacade} from '../../data-access/sale.facade';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {NzCollapseModule} from 'ng-zorro-antd/collapse';
+import {ProductData} from '../../entity/product.entity';
+import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
+import {firstValueFrom} from 'rxjs';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'sale-invoice',
@@ -43,7 +36,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './sale-invoice.component.html',
 })
 export class SaleInvoiceComponent implements OnInit {
-  private readonly productFacade = inject(ProductFacade);
+  private readonly productFacade = inject(SaleFacade);
   private readonly destroyRef = inject(DestroyRef);
   private readonly availableProducts$ = this.productFacade.availableProducts$;
   private readonly constantPostFee = 380_000;

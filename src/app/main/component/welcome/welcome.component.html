@@ -1,14 +1,25 @@
-<div>
-  <button routerLink="sale" class="my-2" nz-button nzType="primary" nzBlock nzSize="large">
-    <i class="me-2 fa-solid fa-cart-shopping"></i>
-    <span>ثبت فاکتور فروش</span>
-  </button>
-  <button disabled routerLink="inventory" class="my-2" nz-button nzType="primary" nzBlock nzSize="large">
-    <i class="me-2 fa-solid fa-cubes"></i>
-    <span>موجودی انبار</span>
-  </button>
-  <button disabled routerLink="purchase" class="my-2" nz-button nzType="primary" nzBlock nzSize="large">
-    <i class="me-2 fa-solid fa-shop"></i>
-    <span>ثبت فاکتور خرید</span>
-  </button>
+<div class="grid grid-cols-2 gap-4">
+  <div routerLink="sale"
+       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
+    <i class="m-3 fa-solid fa-cart-shopping"></i>
+    <div>ثبت فاکتور فروش</div>
+  </div>
+  <div disabled
+       routerLink="inventory"
+       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
+    <i class="m-3 fa-solid fa-cubes"></i>
+    <div>موجودی انبار</div>
+  </div>
+  <div disabled
+       routerLink="purchase"
+       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
+    <i class="m-3 fa-solid fa-shop"></i>
+    <div>ثبت فاکتور خرید</div>
+  </div>
+  <div disabled
+       routerLink="invoices"
+       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
+    <i class="m-3 fa-solid fa-file-invoice"></i>
+    <div>فاکتورهای فروش</div>
+  </div>
 </div>
