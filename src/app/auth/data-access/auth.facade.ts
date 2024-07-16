@@ -12,6 +12,7 @@ export class AuthFacade {
   private readonly authFacade = inject(AuthInfra);
   private readonly userSubject = new Subject<User>();
   private readonly authTokenSubject = new Subject<AuthToken>();
+  private readonly loginLoadingSubject = new Subject<boolean>();
 
   get user$() {
     return this.userSubject.asObservable();
@@ -21,17 +22,24 @@ export class AuthFacade {
     return this.authTokenSubject.asObservable();
   }
 
+  get loginLoading$() {
+    return this.loginLoadingSubject.asObservable();
+  }
+
   async login(authRequest: AuthRequest): Promise<void> {
+    this.loginLoadingSubject.next(true);
     try {
       const {user, authToken} = await firstValueFrom(this.authFacade.login(authRequest));
       this.userSubject.next(user);
       this.authTokenSubject.next(authToken);
       localStorage.setItem('authToken', authToken.token);
       localStorage.setItem('authTokenExpiresAt', authToken.expiresAt.toString());
-    } catch (error) {
-      const err = error as Error;
+    } catch (e) {
+      const err = e as Error;
       console.error('Login failed:', err);
       this.nzMessageService.error(err.message);
+    } finally {
+      this.loginLoadingSubject.next(false);
     }
   }
 

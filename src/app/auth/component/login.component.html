@@ -26,6 +26,6 @@
                formControlName="password"/>
       </nz-form-control>
     </nz-form-item>
-    <button nz-button nzBlock nzType="primary" [disabled]="loginForm.invalid">ورود</button>
+    <button nz-button [nzLoading]="loginLoading$ | async" nzBlock nzType="primary" [disabled]="loginForm.invalid">ورود</button>
   </div>
 </form>

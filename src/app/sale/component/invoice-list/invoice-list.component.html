@@ -1,33 +1,39 @@
 <div class="bg-gray-50 rounded-sm overflow-clip border border-solid border-gray-400 p-4">
   @if (invoiceData$ | async; as invoiceData) {
     <ul>
-      @for (invoice of invoiceData.items; track invoice.id) {
-        <li class="grid grid-cols-12 bg-gray-100 rounded-sm overflow-clip border border-solid border-gray-400 p-2">
+      @for (invoice of invoiceData.items; track $index) {
+        <li class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-400 p-2">
           <span class="col-span-3">شماره فاکتور</span>
           <span class="col-span-3">{{ invoice.id }}</span>
-          <span class="col-span-6">{{ invoice.createdAt | date: 'short' }}</span>
-          <span class="col-span-3">نام مشتری</span>
-          <span class="col-span-3">{{ invoice.customer.name }}</span>
-          <span class="col-span-3">شماره همراه</span>
-          <span class="col-span-3">{{ invoice.customer.phone }}</span>
+          <span class="col-span-6 text-end">{{ invoice.createdAt | date: 'short' }}</span>
+          @if (invoice.customer) {
+            <span class="col-span-3">نام مشتری</span>
+            <span class="col-span-3">{{ invoice.customer.name }}</span>
+            <span class="col-span-3">شماره همراه</span>
+            <span class="col-span-3">{{ invoice.customer.phone }}</span>
+          }
+          <span class="col-span-3">آدرس</span>
+          <span class="col-span-9">{{ invoice.address }}</span>
           <span class="col-span-3">شهر</span>
           <span class="col-span-3">{{ invoice.city }}</span>
           <span class="col-span-3">کد پستی</span>
-          <span class="col-span-3">{{ invoice.postalCode }}</span>
-          <span class="col-span-3">آدرس</span>
-          <span class="col-span-3">{{ invoice.address }}</span>
-          <span class="col-span-3">وضعیت پرداختی</span>
-          <span class="col-span-3">{{ invoice.paymentStatus }}</span>
-          <span class="col-span-3">وضعیت ارسال</span>
-          <span class="col-span-3">{{ invoice.shippingStatus }}</span>
-          <span class="col-span-3">مجموع قیمت سفارشات</span>
-          <span class="col-span-3">{{ invoice.totalPrice }}</span>
+          <span class="col-span-3">{{ invoice.postalCode ?? 'ندارد' }}</span>
+          <span class="col-span-6">وضعیت پرداختی</span>
+          <div class="col-span-6">
+            <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.paymentStatus.color">{{ invoice.paymentStatus.persianLabel }}</span>
+          </div>
+          <span class="col-span-6">وضعیت ارسال</span>
+          <div class="col-span-6">
+            <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.shippingStatus.color">{{ invoice.shippingStatus.persianLabel }}</span>
+          </div>
+          <span class="col-span-6">مجموع قیمت سفارشات</span>
+          <span class="col-span-6">{{ invoice.totalPrice | number }}</span>
           <span class="col-span-3">هزینه ارسال</span>
-          <span class="col-span-3">{{ invoice.shippingPrice }}</span>
+          <span class="col-span-3">{{ invoice.shippingPrice | number }}</span>
           <span class="col-span-3">تخفیف</span>
-          <span class="col-span-3">{{ invoice.discount }}</span>
+          <span class="col-span-3">{{ invoice.discount | number }}</span>
           <span class="col-span-3">پرداختی</span>
-          <span class="col-span-3">{{ invoice.paidPrice }}</span>
+          <span dir="ltr" class="col-span-3">{{ invoice.paidPrice | number }}</span>
         </li>
       } @empty {
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>

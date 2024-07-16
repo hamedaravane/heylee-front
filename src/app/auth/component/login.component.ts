@@ -7,17 +7,19 @@ import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
   selector: 'login',
   standalone: true,
-  imports: [NzFormModule, NzInputModule, NzButtonModule, ReactiveFormsModule],
+  imports: [NzFormModule, NzInputModule, NzButtonModule, ReactiveFormsModule, AsyncPipe],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
   private readonly authFacade = inject(AuthFacade);
   private readonly router = inject(Router);
   private readonly nzMessageService = inject(NzMessageService);
+  loginLoading$ = this.authFacade.loginLoading$;
 
   loginForm = new FormGroup({
     username: new FormControl<string>('', [Validators.required]),
@@ -27,9 +29,8 @@ export class LoginComponent {
   login() {
     const authRequest = this.loginForm.value as AuthRequest;
     this.authFacade.login(authRequest).then(() => {
-      this.router.navigate(['/home']).then(() => {
-        this.nzMessageService.success('Login successful');
-      });
+      this.nzMessageService.success('با موفقیت وارد شدید');
+      this.router.navigateByUrl('/').then();
     });
   }
 }

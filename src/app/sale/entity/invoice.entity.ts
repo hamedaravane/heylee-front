@@ -1,3 +1,5 @@
+import {colors} from "@colors";
+
 export interface InvoiceDTO {
   ok: boolean;
   result: {
@@ -16,14 +18,14 @@ export interface InvoiceItemDTO {
   postal_code: string | null;
   address: string;
   description: string;
-  payment_status: string;
-  shipping_status: string;
+  payment_status: 'unpaid' | 'paid';
+  shipping_status: 'canceled' | 'shipped' | 'ready-to-ship';
   total_price: number;
   discount: number;
   shipping_price: number;
   paid_price: number;
   created_at: string;
-  customer: CustomerDTO;
+  customer: CustomerDTO | undefined;
 }
 
 export interface CustomerDTO {
@@ -58,6 +60,12 @@ export interface Invoice {
   meta: Meta;
 }
 
+interface Status {
+  value: string;
+  persianLabel: string;
+  color: string;
+}
+
 export interface InvoiceItem {
   id: number;
   number: string;
@@ -67,14 +75,14 @@ export interface InvoiceItem {
   postalCode: string | null;
   address: string;
   description: string;
-  paymentStatus: string;
-  shippingStatus: string;
+  paymentStatus: Status;
+  shippingStatus: Status;
   totalPrice: number;
   discount: number;
   shippingPrice: number;
   paidPrice: number;
   createdAt: Date;
-  customer: Customer;
+  customer?: Customer;
 }
 
 export interface Customer {
@@ -111,6 +119,23 @@ export function mapInvoiceDTOToEntity(dto: InvoiceDTO): Invoice {
   };
 }
 
+function statusValueToPersianLabel(value: 'unpaid' | 'paid' | 'canceled' | 'shipped' | 'ready-to-ship'): Status {
+  switch (value) {
+    case "paid":
+      return {value, persianLabel: 'پرداخت شده', color: colors.teal_5};
+    case "unpaid":
+      return {value, persianLabel: 'پرداخت نشده', color: colors.rose_5};
+    case "canceled":
+      return {value, persianLabel: 'لغو شده', color: colors.rose_5};
+    case "shipped":
+      return {value, persianLabel: 'ارسال شده', color: colors.teal_5};
+    case "ready-to-ship":
+      return {value, persianLabel: 'آماده ارسال', color: colors.sky_5};
+    default:
+      throw new Error(`Unknown status value: ${value}`);
+  }
+}
+
 function mapInvoiceItemDTOToEntity(dto: InvoiceItemDTO): InvoiceItem {
   return {
     id: dto.id,
@@ -121,14 +146,14 @@ function mapInvoiceItemDTOToEntity(dto: InvoiceItemDTO): InvoiceItem {
     postalCode: dto.postal_code,
     address: dto.address,
     description: dto.description,
-    paymentStatus: dto.payment_status,
-    shippingStatus: dto.shipping_status,
+    paymentStatus: statusValueToPersianLabel(dto.payment_status),
+    shippingStatus: statusValueToPersianLabel(dto.shipping_status),
     totalPrice: dto.total_price,
     discount: dto.discount,
     shippingPrice: dto.shipping_price,
     paidPrice: dto.paid_price,
     createdAt: new Date(dto.created_at),
-    customer: mapCustomerDTOToEntity(dto.customer),
+    customer: dto.customer ? mapCustomerDTOToEntity(dto.customer) : undefined,
   };
 }
 

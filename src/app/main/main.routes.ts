@@ -12,7 +12,7 @@ export const mainRoutes: Routes = [
         path: '',
         pathMatch: 'full',
         component: WelcomeComponent,
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
       },
       {
         path: 'login',
@@ -21,12 +21,12 @@ export const mainRoutes: Routes = [
       {
         path: 'sale',
         loadComponent: () => import('../sale/component/invoice/sale-invoice.component').then(c => c.SaleInvoiceComponent),
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
       },
       {
         path: 'invoices',
         loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
       },
       {
         path: 'purchase',

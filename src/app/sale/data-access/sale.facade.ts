@@ -32,6 +32,7 @@ export class SaleFacade {
       }
     } catch (e) {
       const err = e as Error;
+      console.error(err);
       this.nzMessageService.error(err.message);
     }
   }
@@ -47,6 +48,7 @@ export class SaleFacade {
       }
     } catch (e) {
       const err = e as Error;
+      console.error(err);
       this.nzMessageService.error(err.message);
     }
   }
