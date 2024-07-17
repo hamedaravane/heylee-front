@@ -10,6 +10,7 @@ import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
 import {NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
 import {NzEmptyComponent} from "ng-zorro-antd/empty";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
+import {NzDividerModule} from "ng-zorro-antd/divider";
 
 @Component({
   selector: 'purchase-invoice',
@@ -18,6 +19,7 @@ import {NzWaveDirective} from "ng-zorro-antd/core/wave";
     BidiModule,
     NgTemplateOutlet,
     NzAutosizeDirective,
+    NzDividerModule,
     NzButtonComponent,
     NzColDirective,
     NzFormControlComponent,

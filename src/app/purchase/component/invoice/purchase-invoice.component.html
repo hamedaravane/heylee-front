@@ -80,9 +80,11 @@
       <nz-form-label nzXs="4" nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
         <button nz-button nzType="dashed" (click)="addItem()">افزودن آیتم</button>
+        <nz-divider></nz-divider>
         <ng-container *ngTemplateOutlet="ordersTemplate"></ng-container>
       </nz-form-control>
     </nz-form-item>
+    <!-- submit -->
     <nz-form-item>
       <nz-form-control>
         <button [disabled]="purchaseForm.invalid" nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
