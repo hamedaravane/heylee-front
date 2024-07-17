@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, Observable } from 'rxjs';
-import { ProductResponse } from '../entity/product.entity';
-import { environment } from '@environment';
-import { InvoiceDTO } from '@sale/entity/invoice.entity';
+import {inject, Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {catchError, Observable} from 'rxjs';
+import {ProductResponse} from '../entity/product.entity';
+import {environment} from '@environment';
+import {InvoiceDTO} from '@sale/entity/invoice.entity';
 
 @Injectable({
   providedIn: 'root'

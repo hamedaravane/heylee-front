@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { PurchaseDTO } from '@purchase/entity/purchase.entity';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '@environment';
+import {inject, Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {PurchaseDTO} from '@purchase/entity/purchase.entity';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '@environment';
 
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,7 @@
-import { Routes } from '@angular/router';
-import { MainComponent } from './component/main/main.component';
-import { WelcomeComponent } from './component/welcome/welcome.component';
-import { AuthGuard } from '@auth/guards/auth.guard';
+import {Routes} from '@angular/router';
+import {MainComponent} from './component/main/main.component';
+import {WelcomeComponent} from './component/welcome/welcome.component';
+import {AuthGuard} from '@auth/guards/auth.guard';
 
 export const mainRoutes: Routes = [
   {

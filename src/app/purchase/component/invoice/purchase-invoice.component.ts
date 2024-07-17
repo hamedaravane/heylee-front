@@ -1,11 +1,38 @@
-import { Component, inject } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Purchase } from '@purchase/entity/purchase.entity';
-import { PurchaseFacade } from '@purchase/data-access/purchase.facade';
+import {Component, inject} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Purchase} from '@purchase/entity/purchase.entity';
+import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
+import {BidiModule} from "@angular/cdk/bidi";
+import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
+import {NzAutosizeDirective, NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
+import {NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
+import {NzEmptyComponent} from "ng-zorro-antd/empty";
+import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 
 @Component({
   selector: 'purchase-invoice',
   templateUrl: './purchase-invoice.component.html',
+  imports: [
+    BidiModule,
+    NgTemplateOutlet,
+    NzAutosizeDirective,
+    NzButtonComponent,
+    NzColDirective,
+    NzFormControlComponent,
+    NzFormDirective,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzInputDirective,
+    NzInputGroupComponent,
+    NzRowDirective,
+    ReactiveFormsModule,
+    DecimalPipe,
+    NgOptimizedImage,
+    NzEmptyComponent,
+    NzWaveDirective
+  ],
   standalone: true
 })
 export class PurchaseInvoiceComponent {
@@ -41,7 +68,7 @@ export class PurchaseInvoiceComponent {
     this.items.removeAt(index);
   }
 
-  async onSubmit(): Promise<void> {
+  async submitPurchaseForm(): Promise<void> {
     try {
       const formValue = this.purchaseForm.getRawValue() as Purchase;
       await this.purchaseFacade.createPurchase(formValue);

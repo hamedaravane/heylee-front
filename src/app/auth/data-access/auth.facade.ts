@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { AuthInfra } from '../infrastructure/auth.infra';
-import { AuthRequest, AuthToken, User } from '../entity/auth.entity';
-import { firstValueFrom, Subject } from 'rxjs';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {inject, Injectable} from '@angular/core';
+import {AuthInfra} from '../infrastructure/auth.infra';
+import {AuthRequest, AuthToken, User} from '../entity/auth.entity';
+import {firstValueFrom, Subject} from 'rxjs';
+import {NzMessageService} from 'ng-zorro-antd/message';
 
 @Injectable({
   providedIn: 'root'
