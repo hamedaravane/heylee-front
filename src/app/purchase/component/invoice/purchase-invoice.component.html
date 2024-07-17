@@ -79,6 +79,7 @@
     <nz-form-item>
       <nz-form-label nzXs="4" nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
+        <button nz-button nzType="dashed" (click)="addItem()">افزودن آیتم</button>
         <ng-container *ngTemplateOutlet="ordersTemplate"></ng-container>
       </nz-form-control>
     </nz-form-item>
