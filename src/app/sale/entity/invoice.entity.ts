@@ -1,4 +1,4 @@
-import {colors} from "@colors";
+import { colors } from '@colors';
 
 export interface InvoiceDTO {
   ok: boolean;
@@ -81,7 +81,7 @@ export interface InvoiceItem {
   discount: number;
   shippingPrice: number;
   paidPrice: number;
-  createdAt: Date;
+  createdAt: string;
   customer?: Customer;
 }
 
@@ -91,7 +91,7 @@ export interface Customer {
   phone: string;
   city: string;
   address: string;
-  createdAt: Date | null;
+  createdAt: string | null;
 }
 
 export interface Links {
@@ -136,6 +136,18 @@ function statusValueToPersianLabel(value: 'unpaid' | 'paid' | 'canceled' | 'ship
   }
 }
 
+// utils/date-formatter.ts
+export function formatDateToPersian(date: Date): string {
+  return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+    timeZone: 'Asia/Tehran',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(date);
+}
+
 function mapInvoiceItemDTOToEntity(dto: InvoiceItemDTO): InvoiceItem {
   return {
     id: dto.id,
@@ -152,7 +164,7 @@ function mapInvoiceItemDTOToEntity(dto: InvoiceItemDTO): InvoiceItem {
     discount: dto.discount,
     shippingPrice: dto.shipping_price,
     paidPrice: dto.paid_price,
-    createdAt: new Date(dto.created_at),
+    createdAt: formatDateToPersian(new Date(dto.created_at)),
     customer: dto.customer ? mapCustomerDTOToEntity(dto.customer) : undefined,
   };
 }
@@ -164,7 +176,7 @@ function mapCustomerDTOToEntity(dto: CustomerDTO): Customer {
     phone: dto.phone,
     city: dto.city,
     address: dto.address,
-    createdAt: dto.created_at ? new Date(dto.created_at) : null,
+    createdAt: dto.created_at ? formatDateToPersian(new Date(dto.created_at)) : null,
   };
 }
 

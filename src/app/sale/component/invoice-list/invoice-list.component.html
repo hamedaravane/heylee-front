@@ -1,11 +1,15 @@
-<div class="bg-gray-50 rounded-sm overflow-clip border border-solid border-gray-400 p-4">
+<div class="bg-gray-50 rounded-sm overflow-clip border border-solid border-gray-300 p-4">
+  <div class="bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
+    <nz-checkbox-group [(ngModel)]="expandOptions" (ngModelChange)="expandWith(expandOptions)"></nz-checkbox-group>
+  </div>
+  <nz-divider></nz-divider>
   @if (invoiceData$ | async; as invoiceData) {
     <ul>
       @for (invoice of invoiceData.items; track $index) {
-        <li class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-400 p-2">
+        <li class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
           <span class="col-span-3">شماره فاکتور</span>
           <span class="col-span-3">{{ invoice.id }}</span>
-          <span class="col-span-6 text-end">{{ invoice.createdAt | date: 'short' }}</span>
+          <span class="col-span-6 text-end">{{ invoice.createdAt }}</span>
           @if (invoice.customer) {
             <span class="col-span-3">نام مشتری</span>
             <span class="col-span-3">{{ invoice.customer.name }}</span>
@@ -18,12 +22,12 @@
           <span class="col-span-3">{{ invoice.city }}</span>
           <span class="col-span-3">کد پستی</span>
           <span class="col-span-3">{{ invoice.postalCode ?? 'ندارد' }}</span>
-          <span class="col-span-6">وضعیت پرداختی</span>
-          <div class="col-span-6">
+          <span class="col-span-4">وضعیت پرداختی</span>
+          <div class="col-span-8">
             <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.paymentStatus.color">{{ invoice.paymentStatus.persianLabel }}</span>
           </div>
-          <span class="col-span-6">وضعیت ارسال</span>
-          <div class="col-span-6">
+          <span class="col-span-4">وضعیت ارسال</span>
+          <div class="col-span-8">
             <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.shippingStatus.color">{{ invoice.shippingStatus.persianLabel }}</span>
           </div>
           <span class="col-span-6">مجموع قیمت سفارشات</span>
@@ -37,6 +41,20 @@
         </li>
       } @empty {
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
+      }
+    </ul>
+    <nz-divider></nz-divider>
+    <nz-pagination [nzPageIndex]="invoiceData.meta.currentPage"
+                   nzHideOnSinglePage
+                   [nzPageSize]="invoiceData.meta.perPage"
+                   [nzPageSizeOptions]="[5, 10, 20, 50]"
+                   [nzTotal]="invoiceData.meta.totalCount"></nz-pagination>
+  } @else {
+    <ul>
+      @for (_ of [].constructor(5); track $index) {
+        <li class="mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-4">
+          <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
+        </li>
       }
     </ul>
   }

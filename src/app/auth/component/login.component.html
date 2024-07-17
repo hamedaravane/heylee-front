@@ -1,9 +1,10 @@
 <form nz-form
       nzLayout="vertical"
       nzLabelAlign="right"
+      autocomplete="off"
       (ngSubmit)="login()"
       [formGroup]="loginForm">
-  <div class="p-4 border border-solid border-gray-400 rounded-sm bg-gray-50 overflow-clip">
+  <div class="p-4 border max-w-sm mx-auto border-solid border-gray-300 rounded-sm bg-gray-50 overflow-clip">
     <nz-form-item>
       <nz-form-label nzFor="username">نام کاربری</nz-form-label>
       <nz-form-control>
@@ -18,14 +19,27 @@
     <nz-form-item>
       <nz-form-label nzFor="password">کلمه عبور</nz-form-label>
       <nz-form-control>
-        <input nz-input
-               required
-               name="password"
-               type="password"
-               id="password"
-               formControlName="password"/>
+        <nz-input-group [nzSuffix]="suffixTemplate">
+          <input nz-input
+                 required
+                 name="password"
+                 [type]="passwordVisible ? 'text' : 'password'"
+                 id="password"
+                 formControlName="password"/>
+        </nz-input-group>
+        <ng-template #suffixTemplate>
+          <span nz-icon
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible">
+          </span>
+        </ng-template>
       </nz-form-control>
     </nz-form-item>
-    <button nz-button [nzLoading]="loginLoading$ | async" nzBlock nzType="primary" [disabled]="loginForm.invalid">ورود</button>
+    <button nz-button
+            [nzLoading]="loginLoading$ | async"
+            nzBlock
+            nzType="primary"
+            [disabled]="loginForm.invalid">ورود
+    </button>
   </div>
 </form>
