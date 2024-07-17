@@ -6,7 +6,7 @@
   @if (invoiceData$ | async; as invoiceData) {
     <ul>
       @for (invoice of invoiceData.items; track $index) {
-        <li class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
+        <li [routerLink]="invoice.id.toString()" class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
           <span class="col-span-3">شماره فاکتور</span>
           <span class="col-span-3">{{ invoice.id }}</span>
           <span class="col-span-6 text-end">{{ invoice.createdAt }}</span>
@@ -43,7 +43,6 @@
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
       }
     </ul>
-    <nz-divider></nz-divider>
     <nz-pagination [nzPageIndex]="invoiceData.meta.currentPage"
                    nzHideOnSinglePage
                    [nzPageSize]="invoiceData.meta.perPage"

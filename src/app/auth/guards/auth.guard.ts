@@ -1,6 +1,6 @@
-import {inject, Injectable} from "@angular/core";
-import {CanActivate, Router} from "@angular/router";
-import {AuthFacade} from "../data-access/auth.facade";
+import { inject, Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { AuthFacade } from '../data-access/auth.facade';
 
 @Injectable({
   providedIn: 'root'

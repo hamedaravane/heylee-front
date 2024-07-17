@@ -1,7 +1,7 @@
-import {Routes} from '@angular/router';
-import {MainComponent} from './component/main/main.component';
-import {WelcomeComponent} from './component/welcome/welcome.component';
-import {AuthGuard} from "@auth/guards/auth.guard";
+import { Routes } from '@angular/router';
+import { MainComponent } from './component/main/main.component';
+import { WelcomeComponent } from './component/welcome/welcome.component';
+import { AuthGuard } from '@auth/guards/auth.guard';
 
 export const mainRoutes: Routes = [
   {
@@ -26,7 +26,14 @@ export const mainRoutes: Routes = [
       {
         path: 'invoices',
         loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
+            canActivate: [AuthGuard],
+          }
+        ]
       },
       {
         path: 'purchase',
