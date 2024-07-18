@@ -4,50 +4,43 @@ import {Purchase} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from "@angular/cdk/bidi";
 import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
-import {NzAutosizeDirective, NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
-import {NzButtonComponent} from "ng-zorro-antd/button";
-import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
-import {NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
-import {NzEmptyComponent} from "ng-zorro-antd/empty";
-import {NzWaveDirective} from "ng-zorro-antd/core/wave";
+import {NzInputModule} from "ng-zorro-antd/input";
+import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzFormModule} from "ng-zorro-antd/form";
+import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {NzDividerModule} from "ng-zorro-antd/divider";
+import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
 
 @Component({
   selector: 'purchase-invoice',
   templateUrl: './purchase-invoice.component.html',
   imports: [
+    NzFormModule,
+    NzInputModule,
+    NzButtonModule,
+    NzDividerModule,
+    NzEmptyModule,
+    NzAutocompleteModule,
     BidiModule,
     NgTemplateOutlet,
-    NzAutosizeDirective,
-    NzDividerModule,
-    NzButtonComponent,
-    NzColDirective,
-    NzFormControlComponent,
-    NzFormDirective,
-    NzFormItemComponent,
-    NzFormLabelComponent,
-    NzInputDirective,
-    NzInputGroupComponent,
-    NzRowDirective,
     ReactiveFormsModule,
     DecimalPipe,
     NgOptimizedImage,
-    NzEmptyComponent,
-    NzWaveDirective
   ],
   standalone: true
 })
 export class PurchaseInvoiceComponent {
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly fb = inject(FormBuilder);
+  suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
 
   purchaseForm = this.fb.group({
     number: new FormControl<string>('', Validators.required),
     supplierId: new FormControl<number>(0, Validators.required),
     description: new FormControl<string>('', Validators.required),
-    totalPrice: new FormControl<number>(0, Validators.required),
+    totalPrice: new FormControl<number>({value: 0, disabled: true}, Validators.required),
     discount: new FormControl<number>(0, Validators.required),
-    paidPrice: new FormControl<number>(0, Validators.required),
+    paidPrice: new FormControl<number>({value: 0, disabled: true}, Validators.required),
     items: this.fb.array([])
   });
 

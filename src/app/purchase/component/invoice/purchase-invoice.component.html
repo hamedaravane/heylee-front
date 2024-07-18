@@ -26,11 +26,10 @@
     </nz-form-item>
     <!-- description -->
     <nz-form-item>
-      <nz-form-label nzRequired nzXs="4" nzFor="description">توضیحات بیشتر</nz-form-label>
+      <nz-form-label nzXs="4" nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
           nz-input
-          required
           name="description"
           type="text"
           id="description" pattern="^[\u0600-\u06FF\s-]+$"
@@ -42,7 +41,7 @@
     <!-- total price -->
     <nz-form-item>
       <nz-form-label nzXs="4" nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
-      <nz-form-control dir="ltr">
+      <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
                  nz-input name="totalPrice"
@@ -54,7 +53,7 @@
     <!-- discount -->
     <nz-form-item>
       <nz-form-label nzXs="4" nzFor="discount">تخفیف</nz-form-label>
-      <nz-form-control dir="ltr">
+      <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
                  nz-input name="discount"
@@ -66,7 +65,7 @@
     <!-- paid price -->
     <nz-form-item>
       <nz-form-label nzXs="4" nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
-      <nz-form-control dir="ltr">
+      <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
                  nz-input name="paidPrice"
@@ -77,11 +76,74 @@
     </nz-form-item>
     <!-- items -->
     <nz-form-item>
-      <nz-form-label nzXs="4" nzFor="items">سفارشات</nz-form-label>
+      <nz-form-label nzRequired nzXs="4" nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
-        <button nz-button nzType="dashed" (click)="addItem()">افزودن آیتم</button>
+        <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن آیتم</button>
         <nz-divider></nz-divider>
-        <ng-container *ngTemplateOutlet="ordersTemplate"></ng-container>
+        <div formArrayName="items" class="p-2 border border-solid border-gray-300 rounded-sm">
+          @for (item of items.controls; track i; let i = $index) {
+            <div [formGroupName]="i">
+              <!-- product id -->
+              <nz-form-item>
+                <nz-form-label nzRequired nzXs="4" nzFor="productId">شناسه محصول</nz-form-label>
+                <nz-form-control>
+                  <input nz-input name="productId" type="number" inputmode="numeric" formControlName="productId"/>
+                </nz-form-control>
+              </nz-form-item>
+              <!-- product id -->
+              <nz-form-item>
+                <nz-form-label nzRequired nzXs="4" nzFor="colorId">شناسه رنگ</nz-form-label>
+                <nz-form-control>
+                  <input nz-input name="colorId" type="number" inputmode="numeric" formControlName="colorId"/>
+                </nz-form-control>
+              </nz-form-item>
+              <!-- size id -->
+              <nz-form-item>
+                <nz-form-label nzRequired nzXs="4" nzFor="sizeId">شناسه سایز</nz-form-label>
+                <nz-form-control>
+                  <input nz-input name="sizeId" type="number" inputmode="numeric" formControlName="sizeId"/>
+                </nz-form-control>
+              </nz-form-item>
+              <!-- quantity -->
+              <nz-form-item>
+                <nz-form-label nzRequired nzXs="4" nzFor="quantity">تعداد</nz-form-label>
+                <nz-form-control>
+                  <input nz-input name="quantity" type="number" inputmode="numeric" formControlName="quantity"/>
+                </nz-form-control>
+              </nz-form-item>
+              <!-- purchase unit price -->
+              <nz-form-item>
+                <nz-form-label nzRequired nzXs="4" nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
+                <nz-form-control dir="ltr">
+                  <nz-input-group nzAddOnBefore="ریال">
+                    <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
+                           formControlName="purchaseUnitPrice"/>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+              <!-- selling unit price -->
+              <nz-form-item>
+                <nz-form-label nzXs="4" nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
+                <nz-form-control dir="ltr">
+                  <nz-input-group nzAddOnBefore="ریال">
+                    <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"
+                           formControlName="sellingUnitPrice" [nzAutocomplete]="suggestionSellPrices"/>
+                    <nz-autocomplete #suggestionSellPrices>
+                      @for (suggestion of suggestionSellPricesByPercentage; track $index) {
+                        <nz-auto-option [nzValue]="item.value.purchaseUnitPrice * ((100 + suggestion) / 100)">
+                          {{ item.value.purchaseUnitPrice * ((100 + suggestion) / 100) }}
+                        </nz-auto-option>
+                      }
+                    </nz-autocomplete>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <nz-divider></nz-divider>
+          } @empty {
+            <nz-empty nzNotFoundContent="کالایی موجود نیست"></nz-empty>
+          }
+        </div>
       </nz-form-control>
     </nz-form-item>
     <!-- submit -->
@@ -92,52 +154,3 @@
     </nz-form-item>
   </form>
 </div>
-
-<ng-template #ordersTemplate>
-  <div formArrayName="items">
-    @for (item of items.controls; let i = $index; track i) {
-      <form [formGroupName]="i">
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="productId">شناسه محصول</nz-form-label>
-          <nz-form-control>
-            <input nz-input name="productId" type="number" inputmode="numeric" formControlName="productId"/>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="colorId">شناسه رنگ</nz-form-label>
-          <nz-form-control>
-            <input nz-input name="colorId" type="number" inputmode="numeric" formControlName="colorId"/>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="sizeId">شناسه سایز</nz-form-label>
-          <nz-form-control>
-            <input nz-input name="sizeId" type="number" inputmode="numeric" formControlName="sizeId"/>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="quantity">تعداد</nz-form-label>
-          <nz-form-control>
-            <input nz-input name="quantity" type="number" inputmode="numeric" formControlName="quantity"/>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
-          <nz-form-control dir="ltr">
-            <nz-input-group nzAddOnBefore="ریال">
-              <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric" formControlName="purchaseUnitPrice"/>
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label nzXs="4" nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
-          <nz-form-control dir="ltr">
-            <nz-input-group nzAddOnBefore="ریال">
-              <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric" formControlName="sellingUnitPrice"/>
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    }
-  </div>
-</ng-template>
