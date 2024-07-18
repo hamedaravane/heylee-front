@@ -30,7 +30,7 @@ export const mainRoutes: Routes = [
         children: [
           {
             path: ':id',
-            loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
+            loadComponent: () => import('../sale/component/invoice-item/invoice-item.component').then(c => c.InvoiceItemComponent),
             canActivate: [AuthGuard],
           }
         ]

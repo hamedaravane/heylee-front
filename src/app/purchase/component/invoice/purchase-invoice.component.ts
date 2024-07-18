@@ -1,15 +1,7 @@
-import {Component, inject} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Purchase} from '@purchase/entity/purchase.entity';
-import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
-import {BidiModule} from "@angular/cdk/bidi";
-import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
-import {NzInputModule} from "ng-zorro-antd/input";
-import {NzButtonModule} from "ng-zorro-antd/button";
-import {NzFormModule} from "ng-zorro-antd/form";
-import {NzEmptyModule} from "ng-zorro-antd/empty";
-import {NzDividerModule} from "ng-zorro-antd/divider";
-import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
+import { Component, inject } from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { Purchase } from '@purchase/entity/purchase.entity';
+import { PurchaseFacade } from '@purchase/data-access/purchase.facade';
 
 @Component({
   selector: 'purchase-invoice',
@@ -34,7 +26,7 @@ export class PurchaseInvoiceComponent {
   private readonly fb = inject(FormBuilder);
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
 
-  purchaseForm = this.fb.group({
+  purchaseForm = new FormGroup({
     number: new FormControl<string>('', Validators.required),
     supplierId: new FormControl<number>(0, Validators.required),
     description: new FormControl<string>('', Validators.required),
