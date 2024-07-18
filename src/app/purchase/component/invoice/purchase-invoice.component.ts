@@ -1,7 +1,15 @@
-import { Component, inject } from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import { Purchase } from '@purchase/entity/purchase.entity';
-import { PurchaseFacade } from '@purchase/data-access/purchase.facade';
+import {Component, inject} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Purchase} from '@purchase/entity/purchase.entity';
+import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
+import {BidiModule} from '@angular/cdk/bidi';
+import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 
 @Component({
   selector: 'purchase-invoice',
