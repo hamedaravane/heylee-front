@@ -31,7 +31,8 @@
       "@order/*": ["app/order/*"],
       "@purchase/*": ["app/purchase/*"],
       "@sale/*": ["app/sale/*"],
-      "@colors": ["styles/colors.ts"]
+      "@colors": ["styles/colors.ts"],
+      "@shared/*": ["app/shared/*"]
     }
   },
   "angularCompilerOptions": {

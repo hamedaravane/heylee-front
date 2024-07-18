@@ -87,21 +87,21 @@
               <nz-form-item>
                 <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
                 <nz-form-control>
-                  <input nz-input name="productId" type="number" inputmode="numeric" formControlName="productId"/>
+                  <input nz-input name="productId" type="text" formControlName="productId"/>
                 </nz-form-control>
               </nz-form-item>
               <!-- product id -->
               <nz-form-item>
                 <nz-form-label nzRequired nzXs="4" nzFor="colorId">رنگ</nz-form-label>
                 <nz-form-control>
-                  <input nz-input name="colorId" type="number" inputmode="numeric" formControlName="colorId"/>
+                  <input nz-input name="colorId" type="text" formControlName="colorId"/>
                 </nz-form-control>
               </nz-form-item>
               <!-- size id -->
               <nz-form-item>
                 <nz-form-label nzRequired nzXs="4" nzFor="sizeId">سایز</nz-form-label>
                 <nz-form-control>
-                  <input nz-input name="sizeId" type="number" inputmode="numeric" formControlName="sizeId"/>
+                  <input nz-input name="sizeId" type="text" formControlName="sizeId"/>
                 </nz-form-control>
               </nz-form-item>
               <!-- quantity -->
@@ -138,6 +138,12 @@
                   </nz-input-group>
                 </nz-form-control>
               </nz-form-item>
+              <div>
+                <button nz-button nzType="primary" nzDanger nzBlock type="button" (click)="removeItem(i)">
+                  <span>حدف محصول</span>
+                  <i class="fa-solid fa-trash mx-2"></i>
+                </button>
+              </div>
             </div>
           } @empty {
             <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
