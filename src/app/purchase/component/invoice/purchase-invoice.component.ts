@@ -1,5 +1,13 @@
 import {Component, inject} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {Purchase} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -43,6 +51,9 @@ export class PurchaseInvoiceComponent {
     paidPrice: new FormControl<number>({value: 0, disabled: true}, Validators.required),
     items: this.fb.array([])
   });
+
+  totalPriceControl = this.purchaseForm.get('totalPrice') as AbstractControl<number>;
+  paidPriceControl = this.purchaseForm.get('paidPrice') as AbstractControl<number>;
 
   get items(): FormArray {
     return this.purchaseForm.get('items') as FormArray;

@@ -80,9 +80,9 @@
       <nz-form-control>
         <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن محصول</button>
         <nz-divider></nz-divider>
-        <div formArrayName="items" class="p-2 border border-solid border-gray-300 rounded-sm">
+        <div formArrayName="items">
           @for (item of items.controls; track i; let i = $index) {
-            <div [formGroupName]="i">
+            <div [formGroupName]="i" class="p-2 mb-3 last:mb-0 border border-solid border-gray-300 rounded-sm">
               <!-- product id -->
               <nz-form-item>
                 <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
@@ -139,7 +139,6 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <nz-divider></nz-divider>
           } @empty {
             <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
           }
