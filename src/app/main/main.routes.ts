@@ -27,13 +27,13 @@ export const mainRoutes: Routes = [
         path: 'invoices',
         loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
         canActivate: [AuthGuard],
-        children: [
+        /*children: [
           {
             path: ':id',
             loadComponent: () => import('../sale/component/invoice-item/invoice-item.component').then(c => c.InvoiceItemComponent),
             canActivate: [AuthGuard],
           }
-        ]
+        ]*/
       },
       {
         path: 'purchase',

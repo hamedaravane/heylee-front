@@ -13,7 +13,7 @@
     </nz-form-item>
     <!-- supplier id -->
     <nz-form-item>
-      <nz-form-label nzRequired nzXs="4" nzFor="supplierId">شناسه تامین کننده</nz-form-label>
+      <nz-form-label nzRequired nzXs="4" nzFor="supplierId">تامین کننده</nz-form-label>
       <nz-form-control>
         <input nz-input
                required
@@ -78,28 +78,28 @@
     <nz-form-item>
       <nz-form-label nzRequired nzXs="4" nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
-        <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن آیتم</button>
+        <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن محصول</button>
         <nz-divider></nz-divider>
         <div formArrayName="items" class="p-2 border border-solid border-gray-300 rounded-sm">
           @for (item of items.controls; track i; let i = $index) {
             <div [formGroupName]="i">
               <!-- product id -->
               <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="productId">شناسه محصول</nz-form-label>
+                <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
                 <nz-form-control>
                   <input nz-input name="productId" type="number" inputmode="numeric" formControlName="productId"/>
                 </nz-form-control>
               </nz-form-item>
               <!-- product id -->
               <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="colorId">شناسه رنگ</nz-form-label>
+                <nz-form-label nzRequired nzXs="4" nzFor="colorId">رنگ</nz-form-label>
                 <nz-form-control>
                   <input nz-input name="colorId" type="number" inputmode="numeric" formControlName="colorId"/>
                 </nz-form-control>
               </nz-form-item>
               <!-- size id -->
               <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="sizeId">شناسه سایز</nz-form-label>
+                <nz-form-label nzRequired nzXs="4" nzFor="sizeId">سایز</nz-form-label>
                 <nz-form-control>
                   <input nz-input name="sizeId" type="number" inputmode="numeric" formControlName="sizeId"/>
                 </nz-form-control>
@@ -141,7 +141,7 @@
             </div>
             <nz-divider></nz-divider>
           } @empty {
-            <nz-empty nzNotFoundContent="کالایی موجود نیست"></nz-empty>
+            <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
           }
         </div>
       </nz-form-control>
