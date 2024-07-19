@@ -11,6 +11,7 @@ import {NzDrawerModule} from "ng-zorro-antd/drawer";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {NzAutosizeDirective, NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
+import {NzDividerModule} from "ng-zorro-antd/divider";
 
 @Component({
   standalone: true,
@@ -21,6 +22,7 @@ import {NzAutosizeDirective, NzInputDirective, NzInputGroupComponent} from "ng-z
     BidiModule,
     NzDrawerModule,
     NzFormModule,
+    NzDividerModule,
     NzSkeletonModule,
     NzEmptyModule,
     NzButtonModule,

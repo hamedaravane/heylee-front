@@ -1,12 +1,9 @@
 <div class="bg-gray-50 border border-solid border-gray-300 rounded-sm p-4 overflow-clip">
-  <div class="mb-2 bg-gray-100 rounded-sm overflow-clip border border-solid border-gray-300 p-2">
-    <div class="flex gap-2">
-      <button nzType="primary" nz-button nzBlock (click)="isAddSupplierVisible = true">
-        <i class="fa-solid fa-plus mx-2"></i>
-        <span>افزودن تامین کننده</span>
-      </button>
-    </div>
-  </div>
+  <button nzType="primary" nz-button nzBlock (click)="isAddSupplierVisible = true">
+    <i class="fa-solid fa-plus mx-2"></i>
+    <span>افزودن تامین کننده</span>
+  </button>
+  <nz-divider></nz-divider>
   @if (suppliersIndex$ | async; as suppliers) {
     <ul>
       @for (supplier of suppliers.items; track $index) {
@@ -43,7 +40,7 @@
   } @else {
     <ul>
       @for (_ of [].constructor(3); track $index) {
-        <li class="mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-4">
+        <li class="mb-3 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-4">
           <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
         </li>
       }
