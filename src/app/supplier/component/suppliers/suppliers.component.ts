@@ -40,8 +40,8 @@ export class SuppliersComponent implements OnInit {
     name: new FormControl('', Validators.required),
     address: new FormControl('', Validators.required),
     phone: new FormControl('', Validators.required),
-    telegram: new FormControl(''),
-    instagram: new FormControl(''),
+    instagram: new FormControl('', [Validators.minLength(1), Validators.maxLength(30)]),
+    telegram: new FormControl('', [Validators.minLength(5), Validators.maxLength(32)]),
   })
 
   ngOnInit() {

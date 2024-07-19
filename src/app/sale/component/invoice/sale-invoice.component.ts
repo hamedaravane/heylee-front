@@ -50,15 +50,15 @@ export class SaleInvoiceComponent implements OnInit {
   discount = signal(0);
 
   customerForm = new FormGroup({
-    fullName: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
-    phone: new FormControl('', [Validators.required]),
-    city: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
-    address: new FormControl('', [Validators.required, Validators.pattern('^[\u0600-\u06FF\\s-]+$')]),
+    fullName: new FormControl('', Validators.required),
+    phone: new FormControl('', Validators.required),
+    city: new FormControl('', Validators.required),
+    address: new FormControl('', Validators.required),
     instagram: new FormControl('', [Validators.minLength(1), Validators.maxLength(30)]),
     telegram: new FormControl('', [Validators.minLength(5), Validators.maxLength(32)]),
-    refNumber: new FormControl('', [Validators.required]),
-    discount: new FormControl<number>(0, [Validators.required]),
-    items: new FormControl<ProductData[]>([], [Validators.minLength(1)])
+    refNumber: new FormControl('', Validators.required),
+    discount: new FormControl<number>(0, Validators.required),
+    items: new FormControl<ProductData[]>([], Validators.minLength(1))
   })
 
   private readonly itemsControl = this.customerForm.get('items') as AbstractControl<ProductData[]>;
