@@ -1,6 +1,6 @@
 {
-  "name": "heylee-front",
-  "short_name": "heylee-front",
+  "name": "heylee",
+  "short_name": "heylee",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
