@@ -14,6 +14,15 @@ export class SupplierFacade {
     return this.supplierResponseSubject.asObservable()
   };
 
+  async loadSuppliers() {
+    try {
+      const suppliers = await firstValueFrom(this.supplierInfra.getSuppliers());
+      this.supplierResponseSubject.next(suppliers);
+    } catch (error) {
+      console.error('Error in SupplierFacade loadSuppliers:', error);
+    }
+  }
+
   async createSupplier(supplier: Supplier): Promise<void> {
     try {
       const newSupplier = await firstValueFrom(this.supplierInfra.createSupplier(supplier));
