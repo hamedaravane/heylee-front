@@ -1,24 +1,24 @@
-export interface SupplierDTO {
-  name: string;
-  address: string;
-  phone: string;
-  telegram: string;
-  instagram: string;
-  created_at?: string;
-  id?: number;
-}
-
 export interface Supplier {
+  id: number;
   name: string;
   address: string;
   phone: string;
   telegram: string;
   instagram: string;
   createdAt: string;
-  id: number;
 }
 
-export function mapSupplierDTOToSupplier(dto: SupplierDTO): Supplier {
+export interface SupplierDto {
+  id?: number;
+  name: string;
+  address: string;
+  phone: string;
+  telegram: string;
+  instagram: string;
+  created_at?: string;
+}
+
+export function mapSupplierDtoToSupplier(dto: SupplierDto): Supplier {
   try {
     return {
       ...dto,
@@ -30,4 +30,12 @@ export function mapSupplierDTOToSupplier(dto: SupplierDTO): Supplier {
   }
 }
 
-
+export function mapSupplierToSupplierDto(supplier: Supplier): SupplierDto {
+  return {
+    name: supplier.name,
+    address: supplier.address,
+    phone: supplier.phone,
+    telegram: supplier.telegram,
+    instagram: supplier.instagram,
+  }
+}

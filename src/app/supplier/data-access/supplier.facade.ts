@@ -2,22 +2,28 @@ import {inject, Injectable} from "@angular/core";
 import {SupplierInfra} from "../infrastructure/supplier.infra";
 import {firstValueFrom, Subject} from "rxjs";
 import {Supplier} from "../entity/supplier.entity";
+import {IndexResponse} from "@shared/entity/server-response.entity";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupplierFacade {
   private readonly supplierInfra = inject(SupplierInfra);
-  private readonly supplierResponseSubject = new Subject<Supplier>();
+  private readonly supplierSubject = new Subject<Supplier>();
+  private readonly suppliersIndexSubject = new Subject<IndexResponse<Supplier>>();
 
-  get supplierResponse$() {
-    return this.supplierResponseSubject.asObservable()
+  get supplier$() {
+    return this.supplierSubject.asObservable()
+  };
+
+  get suppliersIndex$() {
+    return this.suppliersIndexSubject.asObservable()
   };
 
   async loadSuppliers() {
     try {
-      const suppliers = await firstValueFrom(this.supplierInfra.getSuppliers());
-      this.supplierResponseSubject.next(suppliers);
+      const response = await firstValueFrom(this.supplierInfra.fetchSuppliers());
+      this.suppliersIndexSubject.next(response);
     } catch (error) {
       console.error('Error in SupplierFacade loadSuppliers:', error);
     }
@@ -26,9 +32,26 @@ export class SupplierFacade {
   async createSupplier(supplier: Supplier): Promise<void> {
     try {
       const newSupplier = await firstValueFrom(this.supplierInfra.createSupplier(supplier));
-      this.supplierResponseSubject.next(newSupplier);
+      this.supplierSubject.next(newSupplier);
     } catch (error) {
       console.error('Error in SupplierFacade createSupplier:', error);
+    }
+  }
+
+  async editSupplier(id: number, supplier: Supplier) {
+    try {
+      const response = await firstValueFrom(this.supplierInfra.editSupplier(id, supplier));
+      this.supplierSubject.next(response);
+    } catch (error) {
+      console.error('Error in SupplierFacade editSupplier:', error);
+    }
+  }
+
+  async deleteSupplier(id: number) {
+    try {
+      await firstValueFrom(this.supplierInfra.deleteSupplier(id));
+    } catch (error) {
+      console.error('Error in SupplierFacade deleteSupplier:', error);
     }
   }
 }
