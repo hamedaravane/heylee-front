@@ -16,9 +16,8 @@ import { environment } from '@environment';
 export class ProductInfra {
   private readonly http = inject(HttpClient);
 
-  createProduct(product: Product): Observable<Product> {
-    const dto = mapProductToDto(product);
-    return this.http.post<ServerResponse<ProductDto>>(`${environment.apiUrl}/product/create`, dto)
+  createProduct(formData: FormData): Observable<Product> {
+    return this.http.post<ServerResponse<ProductDto>>(`${environment.apiUrl}/product/create`, formData)
       .pipe(
         map<ServerResponse<ProductDto>, Product>((res) => {
           if (res.ok) {

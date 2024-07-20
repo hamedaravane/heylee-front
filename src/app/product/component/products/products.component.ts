@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { BidiModule } from '@angular/cdk/bidi';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -12,9 +12,8 @@ import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductFacade } from '../../data-access/product.facade';
 import { Product } from '../../entity/product.entity';
-import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Observable, Observer } from 'rxjs';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
 import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
@@ -46,15 +45,17 @@ import { CardContainerComponent } from '@shared/component/card-container/card-co
 export class ProductsComponent implements OnInit {
   private readonly productFacade = inject(ProductFacade);
   private readonly nzMessageService = inject(NzMessageService);
+  @ViewChild('imageSelector') imageSelector!: ElementRef<HTMLInputElement>;
   productsIndex$ = this.productFacade.productsIndex$;
   isAddProductVisible = false;
   loading = false;
-  imageUrl?: string;
+  selectedImage?: string;
+  imageFile: File | null = null;
 
   createProductForm = new FormGroup({
     code: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
-    description: new FormControl('', Validators.required),
+    description: new FormControl<string | null>(null),
   })
 
   ngOnInit() {
@@ -66,56 +67,40 @@ export class ProductsComponent implements OnInit {
   }
 
   createProduct() {
+    const form = this.createProductForm.getRawValue() as Product;
+    const formData = new FormData();
+
+    formData.append('code', form.code);
+    formData.append('name', form.name);
+    formData.append('description', form.description);
+    if (this.imageFile) {
+      const blob = new Blob([this.imageFile], { type: this.imageFile?.type });
+      formData.append('image', blob);
+    }
+    this.productFacade.createProduct(formData).then(() => this.productFacade.loadProducts());
   }
 
   deleteProduct(id: number) {
-    this.productFacade.deleteProduct(id).then();
+    this.productFacade.deleteProduct(id).then(() => this.productFacade.loadProducts());
   }
 
   closeAddProduct() {
     this.isAddProductVisible = false;
   }
 
-  beforeUpload = (file: NzUploadFile, _fileList: NzUploadFile[]): Observable<boolean> =>
-    new Observable((observer: Observer<boolean>) => {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-      if (!isJpgOrPng) {
-        this.nzMessageService.error('You can only upload JPG file!');
-        observer.complete();
-        return;
-      }
-      const isLt2M = file.size! / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        this.nzMessageService.error('Image must smaller than 2MB!');
-        observer.complete();
-        return;
-      }
-      observer.next(isJpgOrPng && isLt2M);
-      observer.complete();
-    });
-
-  private getBase64(img: File, callback: (img: string) => void): void {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result!.toString()));
-    reader.readAsDataURL(img);
+  selectImage() {
+    this.imageSelector.nativeElement.click();
   }
 
-  handleChange(info: { file: NzUploadFile }): void {
-    switch (info.file.status) {
-      case 'uploading':
-        this.loading = true;
-        break;
-      case 'done':
-        // Get this url from response in real world.
-        this.getBase64(info.file!.originFileObj!, (img: string) => {
-          this.loading = false;
-          this.imageUrl = img;
-        });
-        break;
-      case 'error':
-        this.nzMessageService.error('Network error');
-        this.loading = false;
-        break;
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.imageFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.selectedImage = e.target?.result as string;
+      }
+      reader.readAsDataURL(this.imageFile);
     }
   }
 }

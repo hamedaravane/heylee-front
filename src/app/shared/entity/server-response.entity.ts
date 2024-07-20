@@ -3,6 +3,13 @@ export interface ServerResponse<T> {
   result: T;
 }
 
+export interface ServerError extends Error {
+  error: {
+    ok: boolean;
+    result: any;
+  }
+}
+
 export function dtoConvertor<T, U>(data: T, convertor: (data: T) => U): U {
   return convertor(data);
 }
