@@ -1,7 +1,7 @@
 <page-container>
   <div class="grid grid-cols-1 gap-y-4">
     @for (button of buttons; track $index) {
-      <button [routerLink]="button.link" nz-button nzType="primary" nzSize="large" nzBlock>
+      <button [routerLink]="button.link" nz-button nzType="primary" nzSize="large">
         <span class="text-sm">{{button.text}}</span>
       </button>
     }
