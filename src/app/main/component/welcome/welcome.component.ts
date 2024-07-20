@@ -10,4 +10,14 @@ import { PageContainerComponent } from '@shared/component/page-container/page-co
   imports: [NzButtonModule, NzGridModule, RouterLink, PageContainerComponent],
   templateUrl: './welcome.component.html',
 })
-export class WelcomeComponent {}
+export class WelcomeComponent {
+  buttons: {text: string; link: string}[] = [
+    {text: 'ثبت فاکتور فروش', link: 'sale'},
+    {text: 'موجودی انبار', link: 'inventory'},
+    {text: 'ثبت فاکتور خرید', link: 'purchase'},
+    {text: 'فاکتورهای فروش', link: 'invoices'},
+    {text: 'تامین کننده‌ها', link: 'supplier'},
+    {text: 'مشتریان', link: 'customer'},
+    {text: 'محصولات', link: 'product'},
+  ];
+}
