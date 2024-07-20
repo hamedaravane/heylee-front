@@ -10,27 +10,25 @@ import {BidiModule} from "@angular/cdk/bidi";
 import {NzDrawerModule} from "ng-zorro-antd/drawer";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NzFormModule} from "ng-zorro-antd/form";
-import {NzAutosizeDirective, NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
 import {NzDividerModule} from "ng-zorro-antd/divider";
+import {NzInputModule} from "ng-zorro-antd/input";
 
 @Component({
   standalone: true,
   selector: 'suppliers',
-  templateUrl: 'suppliers.component.html',
+  templateUrl: './suppliers.component.html',
   imports: [
     AsyncPipe,
     BidiModule,
     NzDrawerModule,
     NzFormModule,
+    NzInputModule,
     NzDividerModule,
     NzSkeletonModule,
     NzEmptyModule,
     NzButtonModule,
     RouterLink,
     ReactiveFormsModule,
-    NzInputDirective,
-    NzInputGroupComponent,
-    NzAutosizeDirective
   ]
 })
 export class SuppliersComponent implements OnInit {
