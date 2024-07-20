@@ -1,4 +1,4 @@
-<div class="bg-gray-50 border border-solid border-gray-300 rounded-sm p-4 overflow-clip">
+<div class="border border-solid border-gray-600 rounded-sm p-4 overflow-clip">
   <button nzType="primary" nz-button nzBlock (click)="isAddCustomerVisible = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن مشتری</span>
@@ -7,7 +7,7 @@
   @if (customersIndex$ | async; as customers) {
     <ul>
       @for (customer of customers.items; track $index) {
-        <li class="grid grid-cols-4 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
+        <li class="grid grid-cols-4 gap-y-1 mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
           <span class="col-span-1">شناسه</span>
           <span class="col-span-3">{{ customer.id}}</span>
           <span class="col-span-1">نام</span>
@@ -50,7 +50,7 @@
   } @else {
     <ul>
       @for (_ of [].constructor(3); track $index) {
-        <li class="mb-3 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-4">
+        <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
           <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
         </li>
       }

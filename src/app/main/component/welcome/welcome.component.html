@@ -1,37 +1,26 @@
-<div class="grid grid-cols-2 max-w-sm mx-auto gap-4">
-  <div routerLink="sale"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-cart-shopping"></i>
-    <div>ثبت فاکتور فروش</div>
-  </div>
-  <div disabled
-       routerLink="inventory"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-cubes"></i>
-    <div>موجودی انبار</div>
-  </div>
-  <div disabled
-       routerLink="purchase"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-shop"></i>
-    <div>ثبت فاکتور خرید</div>
-  </div>
-  <div disabled
-       routerLink="invoices"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-file-invoice"></i>
-    <div>فاکتورهای فروش</div>
-  </div>
-  <div disabled
-       routerLink="supplier"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-user-tie"></i>
-    <div>تامین کننده‌ها</div>
-  </div>
-  <div disabled
-       routerLink="customer"
-       class="text-center bg-blue-500 rounded-md overflow-clip border border-solid border-blue-50 text-gray-50 py-4">
-    <i class="m-3 fa-solid fa-user-group"></i>
-    <div>مشتریان</div>
-  </div>
+<div class="grid grid-cols-1 max-w-sm mx-auto gap-4">
+  <button routerLink="sale" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-cart-shopping"></i>-->
+    <span class="text-sm">ثبت فاکتور فروش</span>
+  </button>
+  <button routerLink="inventory" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-cubes"></i>-->
+    <span class="text-sm">موجودی انبار</span>
+  </button>
+  <button routerLink="purchase" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-shop"></i>-->
+    <span class="text-sm">ثبت فاکتور خرید</span>
+  </button>
+  <button routerLink="invoices" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-file-invoice"></i>-->
+    <span class="text-sm">فاکتورهای فروش</span>
+  </button>
+  <button routerLink="supplier" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-user-tie"></i>-->
+    <span class="text-sm">تامین کننده‌ها</span>
+  </button>
+  <button routerLink="customer" nz-button nzType="primary" nzSize="large" nzBlock>
+<!--    <i class="m-3 fa-solid fa-xs fa-user-group"></i>-->
+    <span class="text-sm">مشتریان</span>
+  </button>
 </div>

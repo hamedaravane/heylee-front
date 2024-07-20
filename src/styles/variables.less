@@ -4,6 +4,45 @@
 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
 'Noto Color Emoji';
 
+@base-primary: @indigo-6;
+@primary-color: @base-primary;
+
+@body-background: @gray-8;
+@component-background: @gray-8;
+@background-color-light: fade(@gray-10, 12%);
+@background-color-base: fade(@gray-10, 16%);
+@border-color-base: @gray-7;
+@border-color-split: @gray-6;
+
+@text-color: fade(@gray-0, 85%);
+@text-color-secondary: fade(@gray-0, 45%);
+@text-color-inverse: @gray-10;
+@icon-color-hover: fade(@gray-0, 75%);
+@heading-color: fade(@gray-0, 85%);
+@text-color-dark: fade(@gray-10, 85%);
+@text-color-secondary-dark: fade(@gray-10, 65%);
+@disabled-color: fade(@gray-0, 25%);
+@disabled-active-bg: tint(@gray-0, 90%);
+@disabled-color-dark: fade(@gray-10, 35%);
+@item-hover-bg: fade(@gray-10, 8%);
+
+// Shadow
+// ---
+@shadow-color: rgba(0, 0, 0, 0.45);
+@shadow-1-up: 0 -6px 16px -8px rgba(0, 0, 0, 0.32), 0 -9px 28px 0 rgba(0, 0, 0, 0.2),
+  0 -12px 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-1-down: 0 6px 16px -8px rgba(0, 0, 0, 0.32), 0 9px 28px 0 rgba(0, 0, 0, 0.2),
+0 12px 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-1-right: 6px 0 16px -8px rgba(0, 0, 0, 0.32), 9px 0 28px 0 rgba(0, 0, 0, 0.2),
+12px 0 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-2: 0 3px 6px -4px rgba(0, 0, 0, 0.48), 0 6px 16px 0 rgba(0, 0, 0, 0.32),
+0 9px 28px 8px rgba(0, 0, 0, 0.2);
+
+@input-bg: transparent;
+@input-placeholder-color: fade(@gray-0, 30%);
+@input-icon-color: fade(@gray-0, 30%);
+@input-icon-hover-color: fade(@gray-0, 85%);
+
 // Layout
-@layout-body-background: @gray-1;
-@layout-header-background: @gray-1;
+@layout-body-background: @gray-8;
+@layout-header-background: @gray-8;

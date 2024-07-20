@@ -1,12 +1,12 @@
-<div class="bg-gray-50 rounded-sm overflow-clip border border-solid border-gray-300 p-4">
-  <div class="bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
+<div class="rounded-sm overflow-clip border border-solid border-gray-600 p-4">
+  <div class="text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
     <nz-checkbox-group [(ngModel)]="expandOptions" (ngModelChange)="expandWith(expandOptions)"></nz-checkbox-group>
   </div>
   <nz-divider></nz-divider>
   @if (invoiceData$ | async; as invoiceData) {
     <ul>
       @for (invoice of invoiceData.items; track $index) {
-        <li [routerLink]="invoice.id.toString()" class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-2">
+        <li [routerLink]="invoice.id.toString()" class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
           <span class="col-span-3">شماره فاکتور</span>
           <span class="col-span-3">{{ invoice.id }}</span>
           <span class="col-span-6 text-end">{{ invoice.createdAt }}</span>
@@ -51,7 +51,7 @@
   } @else {
     <ul>
       @for (_ of [].constructor(5); track $index) {
-        <li class="mb-2 last:mb-0 bg-gray-100 text-xs rounded-sm overflow-clip border border-solid border-gray-300 p-4">
+        <li class="mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
           <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
         </li>
       }

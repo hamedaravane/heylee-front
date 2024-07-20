@@ -1,19 +1,18 @@
-<div class="h-full bg-gray-100">
-  <nz-layout>
-    <nz-header>
-      <div nz-row class="h-full">
-        <div class="h-full" nz-col nzSpan="8"></div>
-        <div class="h-full" nz-col nzSpan="8" routerLink="/">
-          <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="460" height="124" />
-        </div>
-        <div class="h-full" nz-col nzSpan="8"></div>
+<nz-layout>
+  <nz-header>
+    <div nz-row class="h-full">
+      <div class="h-full" nz-col nzSpan="8"></div>
+      <div class="h-full" nz-col nzSpan="8" routerLink="/">
+        <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="460"
+             height="124"/>
       </div>
-    </nz-header>
-    <nz-content>
-      <div class="container">
-        <router-outlet></router-outlet>
-      </div>
-    </nz-content>
-    <nz-footer></nz-footer>
-  </nz-layout>
-</div>
+      <div class="h-full" nz-col nzSpan="8"></div>
+    </div>
+  </nz-header>
+  <nz-content>
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </nz-content>
+  <nz-footer></nz-footer>
+</nz-layout>

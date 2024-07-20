@@ -1,4 +1,4 @@
-<div class="bg-gray-50 border border-solid border-gray-300 overflow-clip rounded-sm p-4">
+<div class="border border-solid border-gray-600 overflow-clip rounded-sm p-4">
   <form nz-form
         nzLabelAlign="right"
         nzLayout="vertical"
@@ -82,7 +82,7 @@
         <nz-divider></nz-divider>
         <div formArrayName="items">
           @for (item of items.controls; track i; let i = $index) {
-            <div [formGroupName]="i" class="p-2 mb-3 last:mb-0 border border-solid border-gray-300 rounded-sm">
+            <div [formGroupName]="i" class="p-2 mb-3 last:mb-0 border border-solid border-gray-600 rounded-sm">
               <!-- product id -->
               <nz-form-item>
                 <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
