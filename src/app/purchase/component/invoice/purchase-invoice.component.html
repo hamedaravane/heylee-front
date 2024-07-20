@@ -1,4 +1,4 @@
-<div class="border border-solid border-gray-600 overflow-clip rounded-sm p-4">
+<page-container>
   <form nz-form
         nzLabelAlign="right"
         nzLayout="vertical"
@@ -29,12 +29,12 @@
       <nz-form-label nzXs="4" nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
-          nz-input
-          name="description"
-          type="text"
-          id="description" pattern="^[\u0600-\u06FF\s-]+$"
-          formControlName="description"
-          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+            nz-input
+            name="description"
+            type="text"
+            id="description" pattern="^[\u0600-\u06FF\s-]+$"
+            formControlName="description"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -82,69 +82,71 @@
         <nz-divider></nz-divider>
         <div formArrayName="items">
           @for (item of items.controls; track i; let i = $index) {
-            <div [formGroupName]="i" class="p-2 mb-3 last:mb-0 border border-solid border-gray-600 rounded-sm">
-              <!-- product id -->
-              <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
-                <nz-form-control>
-                  <input nz-input name="productId" type="text" formControlName="productId"/>
-                </nz-form-control>
-              </nz-form-item>
-              <!-- product id -->
-              <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="colorId">رنگ</nz-form-label>
-                <nz-form-control>
-                  <input nz-input name="colorId" type="text" formControlName="colorId"/>
-                </nz-form-control>
-              </nz-form-item>
-              <!-- size id -->
-              <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="sizeId">سایز</nz-form-label>
-                <nz-form-control>
-                  <input nz-input name="sizeId" type="text" formControlName="sizeId"/>
-                </nz-form-control>
-              </nz-form-item>
-              <!-- quantity -->
-              <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="quantity">تعداد</nz-form-label>
-                <nz-form-control>
-                  <input nz-input name="quantity" type="number" inputmode="numeric" formControlName="quantity"/>
-                </nz-form-control>
-              </nz-form-item>
-              <!-- purchase unit price -->
-              <nz-form-item>
-                <nz-form-label nzRequired nzXs="4" nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
-                <nz-form-control dir="ltr">
-                  <nz-input-group nzAddOnBefore="ریال">
-                    <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
-                           formControlName="purchaseUnitPrice"/>
-                  </nz-input-group>
-                </nz-form-control>
-              </nz-form-item>
-              <!-- selling unit price -->
-              <nz-form-item>
-                <nz-form-label nzXs="4" nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
-                <nz-form-control dir="ltr">
-                  <nz-input-group nzAddOnBefore="ریال">
-                    <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"
-                           formControlName="sellingUnitPrice" [nzAutocomplete]="suggestionSellPrices"/>
-                    <nz-autocomplete #suggestionSellPrices>
-                      @for (suggestion of suggestionSellPricesByPercentage; track $index) {
-                        <nz-auto-option [nzValue]="item.value.purchaseUnitPrice * ((100 + suggestion) / 100)">
-                          {{ item.value.purchaseUnitPrice * ((100 + suggestion) / 100) }}
-                        </nz-auto-option>
-                      }
-                    </nz-autocomplete>
-                  </nz-input-group>
-                </nz-form-control>
-              </nz-form-item>
-              <div>
-                <button nz-button nzType="primary" nzDanger nzBlock type="button" (click)="removeItem(i)">
-                  <span>حدف محصول</span>
-                  <i class="fa-solid fa-trash mx-2"></i>
-                </button>
+            <card-container class="mb-3 last:mb-0">
+              <div [formGroupName]="i">
+                <!-- product id -->
+                <nz-form-item>
+                  <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input name="productId" type="text" formControlName="productId"/>
+                  </nz-form-control>
+                </nz-form-item>
+                <!-- product id -->
+                <nz-form-item>
+                  <nz-form-label nzRequired nzXs="4" nzFor="colorId">رنگ</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input name="colorId" type="text" formControlName="colorId"/>
+                  </nz-form-control>
+                </nz-form-item>
+                <!-- size id -->
+                <nz-form-item>
+                  <nz-form-label nzRequired nzXs="4" nzFor="sizeId">سایز</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input name="sizeId" type="text" formControlName="sizeId"/>
+                  </nz-form-control>
+                </nz-form-item>
+                <!-- quantity -->
+                <nz-form-item>
+                  <nz-form-label nzRequired nzXs="4" nzFor="quantity">تعداد</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input name="quantity" type="number" inputmode="numeric" formControlName="quantity"/>
+                  </nz-form-control>
+                </nz-form-item>
+                <!-- purchase unit price -->
+                <nz-form-item>
+                  <nz-form-label nzRequired nzXs="4" nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
+                  <nz-form-control dir="ltr">
+                    <nz-input-group nzAddOnBefore="ریال">
+                      <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
+                             formControlName="purchaseUnitPrice"/>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+                <!-- selling unit price -->
+                <nz-form-item>
+                  <nz-form-label nzXs="4" nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
+                  <nz-form-control dir="ltr">
+                    <nz-input-group nzAddOnBefore="ریال">
+                      <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"
+                             formControlName="sellingUnitPrice" [nzAutocomplete]="suggestionSellPrices"/>
+                      <nz-autocomplete #suggestionSellPrices>
+                        @for (suggestion of suggestionSellPricesByPercentage; track $index) {
+                          <nz-auto-option [nzValue]="item.value.purchaseUnitPrice * ((100 + suggestion) / 100)">
+                            {{ item.value.purchaseUnitPrice * ((100 + suggestion) / 100) }}
+                          </nz-auto-option>
+                        }
+                      </nz-autocomplete>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+                <div>
+                  <button nz-button nzType="default" nzDanger nzBlock type="button" (click)="removeItem(i)">
+                    <span>حدف محصول</span>
+                    <i class="fa-solid fa-trash mx-2"></i>
+                  </button>
+                </div>
               </div>
-            </div>
+            </card-container>
           } @empty {
             <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
           }
@@ -158,4 +160,4 @@
       </nz-form-control>
     </nz-form-item>
   </form>
-</div>
+</page-container>

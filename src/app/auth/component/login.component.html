@@ -1,10 +1,10 @@
-<form nz-form
-      nzLayout="vertical"
-      nzLabelAlign="right"
-      autocomplete="off"
-      (ngSubmit)="login()"
-      [formGroup]="loginForm">
-  <div class="p-4 border max-w-sm mx-auto border-solid border-gray-600 rounded-sm overflow-clip">
+<page-container>
+  <form nz-form
+        nzLayout="vertical"
+        nzLabelAlign="right"
+        autocomplete="off"
+        (ngSubmit)="login()"
+        [formGroup]="loginForm">
     <nz-form-item>
       <nz-form-label nzFor="username">نام کاربری</nz-form-label>
       <nz-form-control>
@@ -41,5 +41,5 @@
             nzType="primary"
             [disabled]="loginForm.invalid">ورود
     </button>
-  </div>
-</form>
+  </form>
+</page-container>

@@ -1,0 +1,110 @@
+<page-container>
+  <button nzType="primary" nz-button nzBlock (click)="isAddProductVisible = true">
+    <i class="fa-solid fa-plus mx-2"></i>
+    <span>افزودن محصول</span>
+  </button>
+  <nz-divider></nz-divider>
+  @if (productsIndex$ | async; as products) {
+    <ul>
+      @for (product of products.items; track $index) {
+        <card-container class="mb-3 last:mb-0">
+          <div class="grid grid-cols-12 gap-4">
+            <div
+                class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+              @if (product.image) {
+                <img [ngSrc]="product.image"
+                     class="w-12 h-full object-cover"
+                     width="60"
+                     height="60"
+                     alt="product image"/>
+              } @else {
+                <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+              }
+            </div>
+            <div class="col-span-8">
+              <div class="w-full text-xs">
+                <div class="font-mono font-bold">{{ product.code }}</div>
+                <div>{{ product.name }}</div>
+                <div>{{ product.description }}</div>
+              </div>
+            </div>
+            <div class="col-span-1 justify-self-end self-center">
+              <button class="mb-2" nzType="default" nzSize="small" nzBlock nz-button>
+                <i class="fa-solid leading-none fa-pen fa-xs mx-2"></i>
+              </button>
+              <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteProduct(product.id)">
+                <i class="fa-solid leading-none fa-trash fa-xs mx-2"></i>
+              </button>
+            </div>
+          </div>
+        </card-container>
+      } @empty {
+        <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
+      }
+    </ul>
+  } @else {
+    <ul>
+      @for (_ of [].constructor(3); track $index) {
+        <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
+          <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+        </li>
+      }
+    </ul>
+  }
+</page-container>
+
+<nz-drawer [nzFooter]="createProductFooter"
+           nzClosable
+           nzHeight="75%"
+           nzPlacement="bottom"
+           nzTitle="افزودن تامین کننده"
+           [nzVisible]="isAddProductVisible"
+           (nzOnClose)="closeAddProduct()">
+  <ng-container *nzDrawerContent>
+    <form nz-form nzLabelAlign="right"
+          nzLayout="vertical"
+          [formGroup]="createProductForm"
+          (ngSubmit)="createProduct()">
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="code">کد محصول</nz-form-label>
+        <nz-form-control>
+          <input nz-input required name="code" type="text" id="code"
+                 formControlName="code"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="name">نام محصول</nz-form-label>
+        <nz-form-control>
+          <input nz-input required name="name" type="text" id="name"
+                 formControlName="name"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="description">توضیحات</nz-form-label>
+        <nz-form-control>
+        <textarea
+            nz-input
+            required
+            name="description"
+            id="description"
+            formControlName="description"
+            [nzAutosize]="{ minRows: 1, maxRows: 2 }"
+        ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="mt-6">
+        <div class="pb-2">
+          <label>انتخاب عکس</label>
+        </div>
+        <div class="rounded-sm h-48 w-48 border border-dashed border-gray-600 mx-auto"></div>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #createProductFooter>
+  <button nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createProductForm.invalid" (click)="createProduct()">
+    <i class="fa-solid fa-plus mx-2"></i>
+    <span>افزودن</span>
+  </button>
+</ng-template>

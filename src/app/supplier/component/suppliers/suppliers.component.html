@@ -1,4 +1,4 @@
-<div class="border border-solid border-gray-600 rounded-sm p-4 overflow-clip">
+<page-container>
   <button nzType="primary" nz-button nzBlock (click)="isAddSupplierVisible = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن تامین کننده</span>
@@ -7,32 +7,34 @@
   @if (suppliersIndex$ | async; as suppliers) {
     <ul>
       @for (supplier of suppliers.items; track $index) {
-        <li class="grid grid-cols-4 gap-y-1 mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
-          <span class="col-span-1">شناسه</span>
-          <span class="col-span-3">{{ supplier.id}}</span>
-          <span class="col-span-1">نام</span>
-          <span class="col-span-3">{{ supplier.name}}</span>
-          <span class="col-span-1">آدرس</span>
-          <span class="col-span-3">{{ supplier.address}}</span>
-          <span class="col-span-1">شماره تماس</span>
-          <span class="col-span-3" dir="ltr">{{ supplier.phone}}</span>
-          <span class="col-span-1">تلگرام</span>
-          <span class="col-span-3 font-mono" dir="ltr">{{ supplier.telegram}}</span>
-          <span class="col-span-1">اینستاگرام</span>
-          <span class="col-span-3 font-mono" dir="ltr">{{ supplier.instagram}}</span>
-          <div class="col-span-4 mt-4">
-            <div class="flex gap-2">
-              <button nzType="default" nzSize="small" nzBlock nz-button>
-                <i class="fa-solid fa-pen fa-xs mx-2"></i>
-                <span>ویرایش</span>
-              </button>
-              <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteSupplier(supplier.id)">
-                <i class="fa-solid fa-trash fa-xs mx-2"></i>
-                <span>حذف</span>
-              </button>
+        <card-container class="mb-2 last:mb-0">
+          <li class="grid grid-cols-4 gap-y-1">
+            <span class="col-span-1">شناسه</span>
+            <span class="col-span-3">{{ supplier.id}}</span>
+            <span class="col-span-1">نام</span>
+            <span class="col-span-3">{{ supplier.name}}</span>
+            <span class="col-span-1">آدرس</span>
+            <span class="col-span-3">{{ supplier.address}}</span>
+            <span class="col-span-1">شماره تماس</span>
+            <span class="col-span-3" dir="ltr">{{ supplier.phone}}</span>
+            <span class="col-span-1">تلگرام</span>
+            <span class="col-span-3 font-mono" dir="ltr">{{ supplier.telegram}}</span>
+            <span class="col-span-1">اینستاگرام</span>
+            <span class="col-span-3 font-mono" dir="ltr">{{ supplier.instagram}}</span>
+            <div class="col-span-4 mt-4">
+              <div class="flex gap-2">
+                <button nzType="default" nzSize="small" nzBlock nz-button>
+                  <i class="fa-solid fa-pen fa-xs mx-2"></i>
+                  <span>ویرایش</span>
+                </button>
+                <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteSupplier(supplier.id)">
+                  <i class="fa-solid fa-trash fa-xs mx-2"></i>
+                  <span>حذف</span>
+                </button>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
+        </card-container>
       } @empty {
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
@@ -46,7 +48,7 @@
       }
     </ul>
   }
-</div>
+</page-container>
 
 <nz-drawer [nzFooter]="createSupplierFooter"
            nzClosable
