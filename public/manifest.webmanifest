@@ -1,11 +1,12 @@
 {
-  "name": "heylee",
-  "short_name": "heylee",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "HeyLee",
+  "short_name": "HeyLee",
+  "theme_color": "#1f2937",
+  "background_color": "#1f2937",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
