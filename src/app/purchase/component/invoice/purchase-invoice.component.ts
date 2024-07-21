@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -8,23 +8,23 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Purchase } from '@purchase/entity/purchase.entity';
-import { PurchaseFacade } from '@purchase/data-access/purchase.facade';
-import { BidiModule } from '@angular/cdk/bidi';
-import { DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
-import { combineLatestWith, map, startWith } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
-import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
-import { colorLabels, sizeLabels } from '@labels';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import {Purchase} from '@purchase/entity/purchase.entity';
+import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
+import {BidiModule} from '@angular/cdk/bidi';
+import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
+import {combineLatestWith, map, startWith} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {colorLabels, sizeLabels} from '@labels';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 @Component({
   selector: 'purchase-invoice',

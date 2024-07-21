@@ -1,22 +1,22 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { BidiModule } from '@angular/cdk/bidi';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { RouterLink } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductFacade } from '../../data-access/product.facade';
-import { Product } from '../../entity/product.entity';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
-import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzDrawerModule} from 'ng-zorro-antd/drawer';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {RouterLink} from '@angular/router';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ProductFacade} from '../../data-access/product.facade';
+import {Product} from '../../entity/product.entity';
+import {NzUploadModule} from 'ng-zorro-antd/upload';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzIconModule} from 'ng-zorro-antd/icon';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 
 @Component({
   standalone: true,

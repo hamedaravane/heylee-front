@@ -18,20 +18,8 @@ import {RouterLink} from '@angular/router';
 export class InvoiceListComponent implements OnInit {
   private readonly saleFacade = inject(SaleFacade);
   invoiceData$ = this.saleFacade.invoice$;
-  expandOptions = [
-    { label: 'مشتری‌ها', value: 'customer', checked: true, disabled: false },
-    { label: 'محصولات', value: 'sales_item.product', checked: false, disabled: true },
-    { label: 'آیتم‌ها', value: 'sales_item', checked: false, disabled: true }
-  ];
 
   ngOnInit() {
-    this.saleFacade.fetchInvoices(['customer']).then();
-  }
-
-  expandWith(value: {label: string, value: string, checked: boolean, disabled: boolean}[]): void {
-    const values = value
-      .filter(item => item.checked)
-      .map(item => item.value);
-    this.saleFacade.fetchInvoices(values).then();
+    this.saleFacade.fetchInvoices().then();
   }
 }

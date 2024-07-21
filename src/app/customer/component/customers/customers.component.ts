@@ -1,19 +1,19 @@
-import { Component, inject } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
-import { BidiModule } from '@angular/cdk/bidi';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { RouterLink } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CustomerFacade } from '../../data-access/customer.facade';
-import { Customer } from '../../entity/customer.entity';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
-import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import {Component, inject} from '@angular/core';
+import {AsyncPipe} from '@angular/common';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzDrawerModule} from 'ng-zorro-antd/drawer';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {RouterLink} from '@angular/router';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CustomerFacade} from '../../data-access/customer.facade';
+import {Customer} from '../../entity/customer.entity';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 
 @Component({
   standalone: true,

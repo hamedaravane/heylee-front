@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { ProductInfra } from '../infrastructure/product.infra';
-import { firstValueFrom, Subject } from 'rxjs';
-import { Product } from '../entity/product.entity';
-import { IndexResponse, ServerError } from '@shared/entity/server-response.entity';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {inject, Injectable} from '@angular/core';
+import {ProductInfra} from '../infrastructure/product.infra';
+import {firstValueFrom, Subject} from 'rxjs';
+import {Product} from '../entity/product.entity';
+import {IndexResponse, ServerError} from '@shared/entity/server-response.entity';
+import {NzMessageService} from 'ng-zorro-antd/message';
 
 @Injectable({
   providedIn: 'root'

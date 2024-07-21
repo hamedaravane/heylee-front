@@ -1,9 +1,18 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {catchError, Observable} from 'rxjs';
-import {ProductResponse} from '../entity/product.entity';
+import {map, Observable} from 'rxjs';
 import {environment} from '@environment';
-import {InvoiceDTO} from '@sale/entity/invoice.entity';
+import {dtoConvertor, ServerResponse} from "@shared/entity/server-response.entity";
+import {
+  CreateInvoice,
+  CreateInvoiceDto,
+  FullInvoice,
+  FullInvoiceDto,
+  Invoice,
+  InvoiceDto,
+  mapInvoiceDtoToInvoice
+} from "@sale/entity/invoice.entity";
+import {toCamelCase, toSnakeCase} from "@shared/entity/utility.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -11,25 +20,43 @@ import {InvoiceDTO} from '@sale/entity/invoice.entity';
 export class SaleInfra {
   private readonly http = inject(HttpClient);
 
-  getAvailableProducts(): Observable<ProductResponse> {
-    return this.http.get<ProductResponse>(`${environment.apiUrl}/inventory/available-products`)
+  getSaleInvoices(): Observable<Invoice[]> {
+    let params = new HttpParams().append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size');
+    return this.http.get<ServerResponse<InvoiceDto[]>>(`${environment.apiUrl}/sales-invoice/index`, {params})
       .pipe(
-        catchError((err) => {
-          throw new Error(err);
+        map(res => {
+          if (res.ok) {
+            return res.result.map(dto => dtoConvertor(dto, mapInvoiceDtoToInvoice))
+          } else {
+            throw res.result as unknown;
+          }
         })
       )
   }
 
-  getInvoices(expand: string[] = []): Observable<InvoiceDTO> {
-    let params = new HttpParams();
-    if (expand.length > 0) {
-      params = params.append('expand', expand.join(','));
-    }
-    return this.http.get<InvoiceDTO>(`${environment.apiUrl}/sales-invoice/index`, {params})
-      .pipe(
-        catchError((err) => {
-          throw new Error(err);
-        })
-      )
+  createSaleInvoice(createInvoice: CreateInvoice): Observable<FullInvoice> {
+    const dto = toSnakeCase<CreateInvoice, CreateInvoiceDto>(createInvoice);
+    return this.http.post<ServerResponse<FullInvoiceDto>>(`${environment.apiUrl}/sales-invoice/create`, {dto}).pipe(
+      map(res => {
+        if (res.ok) {
+          return dtoConvertor(res.result, toCamelCase<FullInvoiceDto, FullInvoice>);
+        } else {
+          throw res.result as unknown;
+        }
+      }),
+    )
+  }
+
+  updateSaleInvoice(id: number, invoice: CreateInvoice): Observable<FullInvoice> {
+    const dto = toSnakeCase<CreateInvoice, CreateInvoiceDto>(invoice);
+    return this.http.post<ServerResponse<FullInvoiceDto>>(`${environment.apiUrl}/sales-invoice/update/${id}`, {dto}).pipe(
+      map(res => {
+        if (res.ok) {
+          return dtoConvertor(res.result, toCamelCase<FullInvoiceDto, FullInvoice>);
+        } else {
+          throw res.result as unknown;
+        }
+      }),
+    )
   }
 }

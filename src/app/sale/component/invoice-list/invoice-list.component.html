@@ -1,11 +1,7 @@
 <div class="rounded-sm overflow-clip border border-solid border-gray-600 p-4">
-  <div class="text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
-    <nz-checkbox-group [(ngModel)]="expandOptions" (ngModelChange)="expandWith(expandOptions)"></nz-checkbox-group>
-  </div>
-  <nz-divider></nz-divider>
   @if (invoiceData$ | async; as invoiceData) {
     <ul>
-      @for (invoice of invoiceData.items; track $index) {
+      @for (invoice of invoiceData; track $index) {
         <li [routerLink]="invoice.id.toString()" class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
           <span class="col-span-3">شماره فاکتور</span>
           <span class="col-span-3">{{ invoice.id }}</span>
@@ -43,11 +39,11 @@
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
       }
     </ul>
-    <nz-pagination [nzPageIndex]="invoiceData.meta.currentPage"
-                   nzHideOnSinglePage
-                   [nzPageSize]="invoiceData.meta.perPage"
-                   [nzPageSizeOptions]="[5, 10, 20, 50]"
-                   [nzTotal]="invoiceData.meta.totalCount"></nz-pagination>
+<!--    <nz-pagination [nzPageIndex]="invoiceData._meta.currentPage"-->
+<!--                   nzHideOnSinglePage-->
+<!--                   [nzPageSize]="invoiceData._meta.perPage"-->
+<!--                   [nzPageSizeOptions]="[5, 10, 20, 50]"-->
+<!--                   [nzTotal]="invoiceData._meta.totalCount"></nz-pagination>-->
   } @else {
     <ul>
       @for (_ of [].constructor(5); track $index) {

@@ -1,51 +1,31 @@
-import {inject, Injectable} from '@angular/core';
-import {SaleInfra} from '../infrastructure/sale.infra';
-import {firstValueFrom, Subject} from 'rxjs';
-import {ProductData, productDtoToProductData} from '../entity/product.entity';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {Invoice, mapInvoiceDTOToEntity} from '@sale/entity/invoice.entity';
+import {inject, Injectable} from "@angular/core";
+import {SaleInfra} from "@sale/infrastructure/sale.infra";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {firstValueFrom, Subject} from "rxjs";
+import {Invoice} from "@sale/entity/invoice.entity";
+import {InventoryApi} from "@inventory/api/inventory.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleFacade {
   private readonly productInfra = inject(SaleInfra);
+  private readonly inventoryApi = inject(InventoryApi);
   private readonly nzMessageService = inject(NzMessageService);
-  private readonly availableProductsSubject = new Subject<ProductData[]>();
-  private readonly invoiceSubject = new Subject<Invoice>();
+  private readonly invoiceSubject = new Subject<Invoice[]>();
 
   get availableProducts$() {
-    return this.availableProductsSubject.asObservable();
+    return this.inventoryApi.availableProducts$;
   }
 
   get invoice$() {
     return this.invoiceSubject.asObservable();
   }
 
-  async getAvailableProducts() {
+  async fetchInvoices() {
     try {
-      const response = await firstValueFrom(this.productInfra.getAvailableProducts());
-      if (response.ok) {
-        this.availableProductsSubject.next(response.result.map(result => productDtoToProductData(result)));
-      } else {
-        this.nzMessageService.error('لیست محصولات دریافت نشد');
-      }
-    } catch (e) {
-      const err = e as Error;
-      console.error(err);
-      this.nzMessageService.error(err.message);
-    }
-  }
-
-  async fetchInvoices(expand: string[] = []) {
-    try {
-      const response = await firstValueFrom(this.productInfra.getInvoices(expand));
-      if (response.ok) {
-        const invoice = mapInvoiceDTOToEntity(response);
-        this.invoiceSubject.next(invoice);
-      } else {
-        this.nzMessageService.error('لیست سفارشات دریافت نشد');
-      }
+      const response = await firstValueFrom(this.productInfra.getSaleInvoices());
+      this.invoiceSubject.next(response);
     } catch (e) {
       const err = e as Error;
       console.error(err);

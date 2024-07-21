@@ -1,27 +1,20 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { BidiModule } from '@angular/cdk/bidi';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { SaleFacade } from '../../data-access/sale.facade';
-import { AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { ProductData } from '../../entity/product.entity';
-import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
-import { firstValueFrom } from 'rxjs';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
-import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {SaleFacade} from '../../data-access/sale.facade';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {NzCollapseModule} from 'ng-zorro-antd/collapse';
+import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
+import {firstValueFrom} from 'rxjs';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {StockItem} from "@inventory/entity/inventory.entity";
 
 @Component({
   selector: 'sale-invoice',
@@ -52,8 +45,8 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly availableProducts$ = this.productFacade.availableProducts$;
   private readonly constantPostFee = 380_000;
   searchText = '';
-  availableProducts: ProductData[] = [];
-  selectedProducts: ProductData[] = [];
+  availableProducts: StockItem[] = [];
+  selectedProducts: StockItem[] = [];
   totalOrderPrice = signal(0);
   postFee = signal(0);
   totalOrderQuantity = signal(0);
@@ -69,15 +62,14 @@ export class SaleInvoiceComponent implements OnInit {
     telegram: new FormControl('', [Validators.minLength(5), Validators.maxLength(32)]),
     refNumber: new FormControl('', Validators.required),
     discount: new FormControl<number>(0, Validators.required),
-    items: new FormControl<ProductData[]>([], Validators.minLength(1))
+    items: new FormControl<StockItem[]>([], Validators.minLength(1))
   })
 
-  private readonly itemsControl = this.customerForm.get('items') as AbstractControl<ProductData[]>;
+  private readonly itemsControl = this.customerForm.get('items') as AbstractControl<StockItem[]>;
   private readonly discountControl = this.customerForm.get('discount') as AbstractControl<number>;
   private readonly cityControl = this.customerForm.get('city') as AbstractControl<string>;
 
   ngOnInit() {
-    this.productFacade.getAvailableProducts().then();
     firstValueFrom(this.availableProducts$).then(products => {
       this.availableProducts = products;
     });
@@ -98,7 +90,7 @@ export class SaleInvoiceComponent implements OnInit {
     })
   }
 
-  moveProductToOrder(product: ProductData) {
+  moveProductToOrder(product: StockItem) {
     const existingProductInSelected = this.selectedProducts.find(p => p.product.id === product.product.id);
     if (existingProductInSelected) {
       existingProductInSelected.availableQuantity++;
@@ -118,7 +110,7 @@ export class SaleInvoiceComponent implements OnInit {
     this.itemsControl?.setValue(this.selectedProducts);
   }
 
-  removeSelectedProduct(product: ProductData) {
+  removeSelectedProduct(product: StockItem) {
     const selectedProduct = this.selectedProducts.find(p => p.product.id === product.product.id);
     if (selectedProduct) {
       selectedProduct.availableQuantity--;

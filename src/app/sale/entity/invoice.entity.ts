@@ -1,15 +1,8 @@
-import {colors} from '@colors';
+import {Customer, CustomerDto, mapCustomerDtoToCustomer, mapCustomerToDto} from "@customer/entity/customer.entity";
+import {mapProductDtoToProduct, mapProductToDto, Product, ProductDto} from "@product/entity/product.entity";
+import {IdLabel} from "@shared/entity/common.entity";
 
-export interface InvoiceDTO {
-  ok: boolean;
-  result: {
-    items: InvoiceItemDTO[];
-    _links: LinksDTO;
-    _meta: MetaDTO;
-  };
-}
-
-export interface InvoiceItemDTO {
+export interface InvoiceDto {
   id: number;
   number: string;
   user_id: number;
@@ -18,55 +11,19 @@ export interface InvoiceItemDTO {
   postal_code: string | null;
   address: string;
   description: string;
-  payment_status: 'unpaid' | 'paid';
-  shipping_status: 'canceled' | 'shipped' | 'ready-to-ship';
+  payment_status: string;
+  shipping_status: string;
+  ref_number: string | null;
   total_price: number;
   discount: number;
   shipping_price: number;
   paid_price: number;
   created_at: string;
-  customer: CustomerDTO | undefined;
-}
-
-export interface CustomerDTO {
-  id: number;
-  name: string;
-  phone: string;
-  city: string;
-  address: string;
-  created_at: string | null;
-}
-
-export interface LinksDTO {
-  self: LinkDTO;
-  first: LinkDTO;
-  last: LinkDTO;
-}
-
-export interface LinkDTO {
-  href: string;
-}
-
-export interface MetaDTO {
-  totalCount: number;
-  pageCount: number;
-  currentPage: number;
-  perPage: number;
+  customer: CustomerDto;
+  sales_item: SaleItemDto[];
 }
 
 export interface Invoice {
-  items: InvoiceItem[];
-  links: Links;
-  meta: Meta;
-}
-
-interface Status {
-  value: string;
-  persianLabel: string;
-  color: string;
-}
-
-export interface InvoiceItem {
   id: number;
   number: string;
   userId: number;
@@ -75,130 +32,181 @@ export interface InvoiceItem {
   postalCode: string | null;
   address: string;
   description: string;
-  paymentStatus: Status;
-  shippingStatus: Status;
+  paymentStatus: string;
+  shippingStatus: string;
+  refNumber: string | null;
   totalPrice: number;
   discount: number;
   shippingPrice: number;
   paidPrice: number;
   createdAt: string;
-  customer?: Customer;
+  customer: Customer;
+  salesItems: SaleItem[];
 }
 
-export interface Customer {
+export interface SaleItemDto {
   id: number;
-  name: string;
-  phone: string;
-  city: string;
-  address: string;
-  createdAt: string | null;
+  user_id: number;
+  sales_invoice_id: number;
+  product_id: number;
+  color_id: number;
+  size_id: number;
+  quantity: number;
+  purchase_unit_price: number;
+  unit_price: number;
+  total_price: number;
+  created_at: string;
+  product: ProductDto;
+  color: IdLabel;
+  size: IdLabel;
 }
 
-export interface Links {
-  self: Link;
-  first: Link;
-  last: Link;
+export interface SaleItem {
+  id: number;
+  userId: number;
+  salesInvoiceId: number;
+  productId: number;
+  colorId: number;
+  sizeId: number;
+  quantity: number;
+  purchaseUnitPrice: number;
+  unitPrice: number;
+  totalPrice: number;
+  createdAt: string;
+  product: Product;
+  color: IdLabel;
+  size: IdLabel;
 }
 
-export interface Link {
-  href: string;
-}
-
-export interface Meta {
-  totalCount: number;
-  pageCount: number;
-  currentPage: number;
-  perPage: number;
-}
-
-export function mapInvoiceDTOToEntity(dto: InvoiceDTO): Invoice {
+export function mapSaleItemDtoToSaleItem(dto: SaleItemDto): SaleItem {
   return {
-    items: dto.result.items.map(mapInvoiceItemDTOToEntity),
-    links: mapLinksDTOToEntity(dto.result._links),
-    meta: mapMetaDTOToEntity(dto.result._meta),
+    ...dto,
+    userId: dto.user_id,
+    salesInvoiceId: dto.sales_invoice_id,
+    productId: dto.product_id,
+    colorId: dto.color_id,
+    sizeId: dto.size_id,
+    purchaseUnitPrice: dto.purchase_unit_price,
+    unitPrice: dto.unit_price,
+    totalPrice: dto.total_price,
+    createdAt: dto.created_at,
+    product: mapProductDtoToProduct(dto.product),
   };
 }
 
-function statusValueToPersianLabel(value: 'unpaid' | 'paid' | 'canceled' | 'shipped' | 'ready-to-ship'): Status {
-  switch (value) {
-    case "paid":
-      return {value, persianLabel: 'پرداخت شده', color: colors.teal_5};
-    case "unpaid":
-      return {value, persianLabel: 'پرداخت نشده', color: colors.rose_5};
-    case "canceled":
-      return {value, persianLabel: 'لغو شده', color: colors.rose_5};
-    case "shipped":
-      return {value, persianLabel: 'ارسال شده', color: colors.teal_5};
-    case "ready-to-ship":
-      return {value, persianLabel: 'آماده ارسال', color: colors.sky_5};
-    default:
-      throw new Error(`Unknown status value: ${value}`);
-  }
-}
-
-// utils/date-formatter.ts
-export function formatDateToPersian(date: Date): string {
-  return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
-    timeZone: 'Asia/Tehran',
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  }).format(date);
-}
-
-function mapInvoiceItemDTOToEntity(dto: InvoiceItemDTO): InvoiceItem {
+export function mapInvoiceDtoToInvoice(dto: InvoiceDto): Invoice {
   return {
-    id: dto.id,
-    number: dto.number,
+    ...dto,
     userId: dto.user_id,
     customerId: dto.customer_id,
-    city: dto.city,
     postalCode: dto.postal_code,
-    address: dto.address,
-    description: dto.description,
-    paymentStatus: statusValueToPersianLabel(dto.payment_status),
-    shippingStatus: statusValueToPersianLabel(dto.shipping_status),
+    paymentStatus: dto.payment_status,
+    shippingStatus: dto.shipping_status,
+    refNumber: dto.ref_number,
     totalPrice: dto.total_price,
-    discount: dto.discount,
     shippingPrice: dto.shipping_price,
     paidPrice: dto.paid_price,
-    createdAt: formatDateToPersian(new Date(dto.created_at)),
-    customer: dto.customer ? mapCustomerDTOToEntity(dto.customer) : undefined,
+    createdAt: dto.created_at,
+    customer: mapCustomerDtoToCustomer(dto.customer),
+    salesItems: dto.sales_item.map(mapSaleItemDtoToSaleItem)
   };
 }
 
-function mapCustomerDTOToEntity(dto: CustomerDTO): Customer {
+export function mapSaleItemToDto(data: SaleItem): SaleItemDto {
   return {
-    id: dto.id,
-    name: dto.name,
-    phone: dto.phone,
-    city: dto.city,
-    address: dto.address,
-    createdAt: dto.created_at ? formatDateToPersian(new Date(dto.created_at)) : null,
+    ...data,
+    user_id: data.userId,
+    sales_invoice_id: data.salesInvoiceId,
+    product_id: data.productId,
+    color_id: data.colorId,
+    size_id: data.sizeId,
+    purchase_unit_price: data.purchaseUnitPrice,
+    unit_price: data.unitPrice,
+    total_price: data.totalPrice,
+    created_at: data.createdAt,
+    product: mapProductToDto(data.product),
   };
 }
 
-function mapLinksDTOToEntity(dto: LinksDTO): Links {
+export function mapInvoiceToInvoiceDto(data: Invoice): InvoiceDto {
   return {
-    self: mapLinkDTOToEntity(dto.self),
-    first: mapLinkDTOToEntity(dto.first),
-    last: mapLinkDTOToEntity(dto.last),
+    ...data,
+    user_id: data.userId,
+    customer_id: data.customerId,
+    postal_code: data.postalCode,
+    payment_status: data.paymentStatus,
+    shipping_status: data.shippingStatus,
+    ref_number: data.refNumber,
+    total_price: data.totalPrice,
+    shipping_price: data.shippingPrice,
+    paid_price: data.paidPrice,
+    created_at: data.createdAt,
+    customer: mapCustomerToDto(data.customer),
+    sales_item: data.salesItems.map(mapSaleItemToDto)
   };
 }
 
-function mapLinkDTOToEntity(dto: LinkDTO): Link {
-  return {
-    href: dto.href,
-  };
-}
+export type CreateInvoice = Pick<
+  Invoice,
+  'customerId' | 'city' | 'address' | 'description' | 'paymentStatus' | 'shippingStatus' | 'shippingPrice' | 'discount'
+> & {
+  items: CreateInvoiceItem[];
+};
 
-function mapMetaDTOToEntity(dto: MetaDTO): Meta {
-  return {
-    totalCount: dto.totalCount,
-    pageCount: dto.pageCount,
-    currentPage: dto.currentPage,
-    perPage: dto.perPage,
-  };
-}
+type CreateInvoiceItem = Pick<
+  SaleItem,
+  'productId' | 'colorId' | 'sizeId' | 'quantity'
+>;
+
+export type CreateInvoiceDto = Pick<
+  InvoiceDto,
+  'customer_id' | 'city' | 'address' | 'description' | 'payment_status' | 'shipping_status' | 'shipping_price' | 'discount'
+> & {
+  items: CreateInvoiceItemDto[];
+};
+
+type CreateInvoiceItemDto = Pick<
+  SaleItemDto,
+  'product_id' | 'color_id' | 'size_id' | 'quantity'
+>;
+
+export type FullInvoice = Pick<
+  Invoice,
+  | 'id'
+  | 'number'
+  | 'userId'
+  | 'customerId'
+  | 'city'
+  | 'postalCode'
+  | 'address'
+  | 'description'
+  | 'paymentStatus'
+  | 'shippingStatus'
+  | 'refNumber'
+  | 'totalPrice'
+  | 'discount'
+  | 'shippingPrice'
+  | 'paidPrice'
+  | 'createdAt'
+>;
+
+export type FullInvoiceDto = Pick<
+  InvoiceDto,
+  | 'id'
+  | 'number'
+  | 'user_id'
+  | 'customer_id'
+  | 'city'
+  | 'postal_code'
+  | 'address'
+  | 'description'
+  | 'payment_status'
+  | 'shipping_status'
+  | 'ref_number'
+  | 'total_price'
+  | 'discount'
+  | 'shipping_price'
+  | 'paid_price'
+  | 'created_at'
+>;
+
