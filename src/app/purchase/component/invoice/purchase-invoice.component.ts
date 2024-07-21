@@ -22,6 +22,9 @@ import { combineLatestWith, map, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
 import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import { colorLabels, sizeLabels } from '@labels';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 @Component({
   selector: 'purchase-invoice',
@@ -29,9 +32,11 @@ import { CardContainerComponent } from '@shared/component/card-container/card-co
   imports: [
     NzFormModule,
     NzInputModule,
+    NzInputNumberModule,
     NzButtonModule,
     NzDividerModule,
     NzEmptyModule,
+    NzSelectModule,
     NzAutocompleteModule,
     BidiModule,
     NgTemplateOutlet,
@@ -47,6 +52,8 @@ export class PurchaseInvoiceComponent implements OnInit {
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  sizeLabels = sizeLabels;
+  colorLabels = colorLabels;
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
 
   purchaseForm = new FormGroup({

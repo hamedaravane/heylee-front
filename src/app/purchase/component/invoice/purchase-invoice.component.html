@@ -6,14 +6,14 @@
         [formGroup]="purchaseForm">
     <!-- invoice number -->
     <nz-form-item>
-      <nz-form-label nzRequired nzXs="4" nzFor="invoiceNumber">شماره فاکتور</nz-form-label>
+      <nz-form-label nzRequired nzFor="invoiceNumber">شماره فاکتور</nz-form-label>
       <nz-form-control dir="ltr">
         <input nz-input required name="invoiceNumber" type="text" id="invoiceNumber" formControlName="number"/>
       </nz-form-control>
     </nz-form-item>
     <!-- supplier id -->
     <nz-form-item>
-      <nz-form-label nzRequired nzXs="4" nzFor="supplierId">تامین کننده</nz-form-label>
+      <nz-form-label nzRequired nzFor="supplierId">تامین کننده</nz-form-label>
       <nz-form-control>
         <input nz-input
                required
@@ -26,7 +26,7 @@
     </nz-form-item>
     <!-- description -->
     <nz-form-item>
-      <nz-form-label nzXs="4" nzFor="description">توضیحات بیشتر</nz-form-label>
+      <nz-form-label nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
             nz-input
@@ -40,7 +40,7 @@
     </nz-form-item>
     <!-- total price -->
     <nz-form-item>
-      <nz-form-label nzXs="4" nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
+      <nz-form-label nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
       <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
@@ -52,7 +52,7 @@
     </nz-form-item>
     <!-- discount -->
     <nz-form-item>
-      <nz-form-label nzXs="4" nzFor="discount">تخفیف</nz-form-label>
+      <nz-form-label nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
@@ -64,7 +64,7 @@
     </nz-form-item>
     <!-- paid price -->
     <nz-form-item>
-      <nz-form-label nzXs="4" nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
+      <nz-form-label nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
       <nz-form-control>
         <nz-input-group nzAddOnBefore="ریال">
           <input class="font-mono"
@@ -76,7 +76,7 @@
     </nz-form-item>
     <!-- items -->
     <nz-form-item>
-      <nz-form-label nzRequired nzXs="4" nzFor="items">سفارشات</nz-form-label>
+      <nz-form-label nzRequired nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
         <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن محصول</button>
         <nz-divider></nz-divider>
@@ -86,35 +86,43 @@
               <div [formGroupName]="i">
                 <!-- product id -->
                 <nz-form-item>
-                  <nz-form-label nzRequired nzXs="4" nzFor="productId">محصول</nz-form-label>
+                  <nz-form-label nzRequired nzFor="productId">محصول</nz-form-label>
                   <nz-form-control>
                     <input nz-input name="productId" type="text" formControlName="productId"/>
                   </nz-form-control>
                 </nz-form-item>
                 <!-- product id -->
                 <nz-form-item>
-                  <nz-form-label nzRequired nzXs="4" nzFor="colorId">رنگ</nz-form-label>
+                  <nz-form-label nzRequired nzFor="colorId">رنگ</nz-form-label>
                   <nz-form-control>
-                    <input nz-input name="colorId" type="text" formControlName="colorId"/>
+                    <nz-select formControlName="colorId">
+                      @for (color of colorLabels; track $index) {
+                        <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
+                      }
+                    </nz-select>
                   </nz-form-control>
                 </nz-form-item>
                 <!-- size id -->
                 <nz-form-item>
-                  <nz-form-label nzRequired nzXs="4" nzFor="sizeId">سایز</nz-form-label>
+                  <nz-form-label nzRequired nzFor="sizeId">سایز</nz-form-label>
                   <nz-form-control>
-                    <input nz-input name="sizeId" type="text" formControlName="sizeId"/>
+                    <nz-select formControlName="sizeId">
+                      @for (size of sizeLabels; track $index) {
+                        <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
+                      }
+                    </nz-select>
                   </nz-form-control>
                 </nz-form-item>
                 <!-- quantity -->
                 <nz-form-item>
-                  <nz-form-label nzRequired nzXs="4" nzFor="quantity">تعداد</nz-form-label>
+                  <nz-form-label nzRequired nzFor="quantity">تعداد</nz-form-label>
                   <nz-form-control>
-                    <input nz-input name="quantity" type="number" inputmode="numeric" formControlName="quantity"/>
+                    <nz-input-number class="w-full" nzInputMode="number" [nzStep]="1" [nzMin]="1" formControlName="quantity"></nz-input-number>
                   </nz-form-control>
                 </nz-form-item>
                 <!-- purchase unit price -->
                 <nz-form-item>
-                  <nz-form-label nzRequired nzXs="4" nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
+                  <nz-form-label nzRequired nzFor="purchaseUnitPrice">قیمت واحد</nz-form-label>
                   <nz-form-control dir="ltr">
                     <nz-input-group nzAddOnBefore="ریال">
                       <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
@@ -124,7 +132,7 @@
                 </nz-form-item>
                 <!-- selling unit price -->
                 <nz-form-item>
-                  <nz-form-label nzXs="4" nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
+                  <nz-form-label nzFor="sellingUnitPrice">قیمت فروش</nz-form-label>
                   <nz-form-control dir="ltr">
                     <nz-input-group nzAddOnBefore="ریال">
                       <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"

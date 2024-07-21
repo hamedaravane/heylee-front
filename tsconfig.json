@@ -27,12 +27,16 @@
     "paths": {
       "@environment": ["environments/environment.ts"],
       "@auth/*": ["app/auth/*"],
+      "@customer/*": ["app/customer/*"],
       "@inventory/*": ["app/inventory/*"],
+      "@product/*": ["app/product/*"],
+      "@labels": ["app/product/constant/labels.constant.ts"],
       "@order/*": ["app/order/*"],
       "@purchase/*": ["app/purchase/*"],
       "@sale/*": ["app/sale/*"],
+      "@shared/*": ["app/shared/*"],
+      "@supplier/*": ["app/supplier/*"],
       "@colors": ["styles/colors.ts"],
-      "@shared/*": ["app/shared/*"]
     }
   },
   "angularCompilerOptions": {
