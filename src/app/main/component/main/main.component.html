@@ -1,17 +1,19 @@
 <nz-layout>
-  <nz-header>
-    <div nz-row class="h-full">
-      <div class="h-full" nz-col nzSpan="8"></div>
-      <div class="h-full py-2" nz-col nzSpan="8" routerLink="/">
-        <img ngSrc="/images/logo.png"
-             priority alt="logo" fill
-             class="inline-block object-contain h-full"/>
+  <div class="container">
+    <nz-header>
+      <div nz-row class="h-16">
+        <div class="h-full" nz-col nzSpan="8"></div>
+        <div class="h-full py-2" nz-col nzSpan="8" routerLink="/">
+          <img ngSrc="/images/logo.png"
+               priority alt="logo" fill
+               class="inline-block object-contain mx-auto max-w-24 h-full"/>
+        </div>
+        <div class="h-full text-end" nz-col nzSpan="8">
+          <i class="fa-solid fa-chevron-left" (click)="goBack()"></i>
+        </div>
       </div>
-      <div class="h-full text-end" nz-col nzSpan="8">
-        <i class="fa-solid fa-chevron-left" (click)="goBack()"></i>
-      </div>
-    </div>
-  </nz-header>
+    </nz-header>
+  </div>
   <nz-content>
     <div class="container">
       <router-outlet></router-outlet>
