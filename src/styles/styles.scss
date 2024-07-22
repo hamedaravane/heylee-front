@@ -49,3 +49,18 @@ input:-webkit-autofill {
   background-clip: text;
   color: lightgray !important;
 }
+
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: lightgray !important;
+}
+
+textarea:-webkit-autofill {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: lightgray !important;
+}

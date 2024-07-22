@@ -1,9 +1,14 @@
-import {inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "@environment";
-import {Customer, CustomerDto, mapCustomerDtoToCustomer, mapCustomerToDto} from "../entity/customer.entity";
-import {map, Observable} from "rxjs";
-import {dtoConvertor, IndexResponse, ServerResponse} from "@shared/entity/server-response.entity";
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@environment';
+import {
+  CreateCustomer,
+  Customer,
+  CustomerDto,
+  mapCustomerDtoToCustomer
+} from '../entity/customer.entity';
+import { map, Observable } from 'rxjs';
+import { dtoConvertor, IndexResponse, ServerResponse } from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +16,8 @@ import {dtoConvertor, IndexResponse, ServerResponse} from "@shared/entity/server
 export class CustomerInfra {
   private readonly http = inject(HttpClient);
 
-  createCustomer(customer: Customer): Observable<Customer> {
-    const dto = mapCustomerToDto(customer);
-    return this.http.post<ServerResponse<CustomerDto>>(`${environment.apiUrl}/customer/create`, dto)
+  createCustomer(customer: CreateCustomer): Observable<Customer> {
+    return this.http.post<ServerResponse<CustomerDto>>(`${environment.apiUrl}/customer/create`, customer)
       .pipe(
         map<ServerResponse<CustomerDto>, Customer>((res) => {
           if (res.ok) {
@@ -25,9 +29,8 @@ export class CustomerInfra {
       )
   }
 
-  editCustomer(id: number, customer: Customer): Observable<Customer> {
-    const dto = mapCustomerToDto(customer);
-    return this.http.post<ServerResponse<CustomerDto>>(`${environment.apiUrl}/customer/update/${id}`, dto)
+  editCustomer(id: number, customer: CreateCustomer): Observable<Customer> {
+    return this.http.post<ServerResponse<CustomerDto>>(`${environment.apiUrl}/customer/update/${id}`, customer)
       .pipe(
         map<ServerResponse<CustomerDto>, Customer>((res) => {
           if (res.ok) {

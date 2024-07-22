@@ -22,6 +22,8 @@ export interface CustomerDto {
   created_at: string | null;
 }
 
+export type CreateCustomer = Omit<CustomerDto, 'id' | 'created_at'>;
+
 export function mapCustomerDtoToCustomer(dto: CustomerDto): Customer {
   return {
     id: dto.id,

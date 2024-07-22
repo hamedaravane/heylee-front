@@ -1,8 +1,8 @@
-import {inject, Injectable} from "@angular/core";
-import {CustomerInfra} from "../infrastructure/customer.infra";
-import {firstValueFrom, Subject} from "rxjs";
-import {IndexResponse} from "@shared/entity/server-response.entity";
-import {Customer} from "../entity/customer.entity";
+import { inject, Injectable } from '@angular/core';
+import { CustomerInfra } from '../infrastructure/customer.infra';
+import { firstValueFrom, Subject } from 'rxjs';
+import { IndexResponse } from '@shared/entity/server-response.entity';
+import { CreateCustomer, Customer } from '../entity/customer.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,7 @@ export class CustomerFacade {
     }
   }
 
-  async createCustomer(customer: Customer): Promise<void> {
+  async createCustomer(customer: CreateCustomer): Promise<void> {
     try {
       const newCustomer = await firstValueFrom(this.customerInfra.createCustomer(customer));
       this.customerSubject.next(newCustomer);
@@ -38,7 +38,7 @@ export class CustomerFacade {
     }
   }
 
-  async editCustomer(id: number, customer: Customer) {
+  async editCustomer(id: number, customer: CreateCustomer) {
     try {
       const response = await firstValueFrom(this.customerInfra.editCustomer(id, customer));
       this.customerSubject.next(response);

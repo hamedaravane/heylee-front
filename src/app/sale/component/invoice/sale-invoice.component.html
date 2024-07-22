@@ -6,24 +6,24 @@
     </div>
     <div class="col-span-4">
       <span class="text-xs">قیمت سفارشات:</span>
-      <span class="mx-2">
-          <span class="font-mono">{{ totalOrderPrice() | number }}</span>
-          <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
-        </span>
+      <div class="mx-2 inline-block">
+        <span class="font-mono">{{ totalOrderPrice() | number }}</span>
+        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
     </div>
     <div class="col-span-2">
-      <span class="text-xs">هزینه پست:</span>
-      <span class="mx-2">
-          <span class="font-mono">{{ postFee() | number }}</span>
-          <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
-        </span>
+      <span class="text-xs">پست:</span>
+      <div class="mx-2 inline-block">
+        <span class="font-mono">{{ postFee() | number }}</span>
+        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
     </div>
     <div class="col-span-4">
       <span class="text-xs">تخفیف:</span>
-      <span class="mx-2">
-          <span class="font-mono">{{ discount() | number }}</span>
-          <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
-        </span>
+      <div class="mx-2 inline-block">
+        <span class="font-mono">{{ discount() | number }}</span>
+        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+      </div>
     </div>
   </div>
   <nz-divider></nz-divider>
@@ -89,21 +89,28 @@
   </nz-collapse>
 </page-container>
 <page-container>
-  <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="customerForm">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="saleInvoiceForm">
     <nz-form-item>
       <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="+98">
-          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
-                 inputmode="numeric" id="phone" formControlName="phone"/>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="شماره موبایل بدون صفر" formControlName="phone">
+            @for (customer of customers; track customer.id) {
+              <nz-option id="phone"
+                         type="tel"
+                         inputmode="numeric"
+                         [nzLabel]="customer.phone"
+                         [nzValue]="customer.phone"></nz-option>
+            }
+          </nz-select>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-label nzRequired nzFor="fullName">نام کامل مشتری</nz-form-label>
+      <nz-form-label nzRequired nzFor="name">نام کامل مشتری</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="fullName" type="text" id="fullName"
-               formControlName="fullName"/>
+        <input nz-input required name="name" type="text" id="name"
+               formControlName="name"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -124,6 +131,13 @@
             formControlName="address"
             [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="postalCode">کد پستی</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="postalCode" type="text" inputmode="numeric" id="postalCode"
+               formControlName="postalCode"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -151,6 +165,18 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
+      <nz-form-label nzRequired nzFor="description">توضیحات</nz-form-label>
+      <nz-form-control>
+        <textarea
+            nz-input
+            required
+            name="description"
+            id="description"
+            formControlName="description"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
       <nz-form-label nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
@@ -171,11 +197,9 @@
         <ng-container *ngTemplateOutlet="selectedProductsTemplate"></ng-container>
       </nz-form-control>
     </nz-form-item>
-    <nz-form-item>
-      <nz-form-control>
-        <button [disabled]="customerForm.invalid" nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
-      </nz-form-control>
-    </nz-form-item>
+    <button [nzLoading]="createInvoiceLoading$ | async" [disabled]="saleInvoiceForm.invalid" nz-button
+            nzType="primary" nzBlock type="submit">ثبت فاکتور
+    </button>
   </form>
 </page-container>
 
@@ -185,42 +209,42 @@
 
 <ng-template #selectedProductsTemplate>
   @for (selectedProduct of selectedProducts; track $index) {
-      <card-container class="mb-2 last:mb-0">
-        <div class="grid grid-cols-12 gap-4">
-          <div
-              class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-            @if (selectedProduct.product.image) {
-              <img [ngSrc]="selectedProduct.product.image"
-                   class="w-12 h-full object-cover"
-                   width="60"
-                   height="60"
-                   alt="product image"/>
-            } @else {
-              <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-            }
-          </div>
-          <div class="col-span-8">
-            <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
-              <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
-              <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
-              <span class="line-clamp-1">
+    <card-container class="mb-2 last:mb-0">
+      <div class="grid grid-cols-12 gap-4">
+        <div
+            class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+          @if (selectedProduct.product.image) {
+            <img [ngSrc]="selectedProduct.product.image"
+                 class="w-12 h-full object-cover"
+                 width="60"
+                 height="60"
+                 alt="product image"/>
+          } @else {
+            <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+          }
+        </div>
+        <div class="col-span-8">
+          <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
+            <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
+            <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
+            <span class="line-clamp-1">
                   <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
                   <span class="mx-1 opacity-50" style="font-size: 0.6rem">ریال</span>
                 </span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
-            </div>
-          </div>
-          <div class="col-span-1 justify-self-end self-center">
-            <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small"
-                    (click)="removeSelectedProduct(selectedProduct)">
-              <i class="fa-solid fa-trash fa-sm leading-tight"></i>
-            </button>
+            <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
           </div>
         </div>
-      </card-container>
-    } @empty {
-      <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
-    }
+        <div class="col-span-1 justify-self-end self-center">
+          <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small"
+                  (click)="removeSelectedProduct(selectedProduct)">
+            <i class="fa-solid fa-trash fa-sm leading-tight"></i>
+          </button>
+        </div>
+      </div>
+    </card-container>
+  } @empty {
+    <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
+  }
 </ng-template>

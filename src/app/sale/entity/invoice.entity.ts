@@ -1,8 +1,18 @@
-import {Customer, CustomerDto, mapCustomerDtoToCustomer, mapCustomerToDto} from "@customer/entity/customer.entity";
-import {mapProductDtoToProduct, mapProductToDto, Product, ProductDto} from "@product/entity/product.entity";
-import {IdLabel} from "@shared/entity/common.entity";
+import {
+  Customer,
+  CustomerDto,
+  mapCustomerDtoToCustomer,
+  mapCustomerToDto
+} from '@customer/entity/customer.entity';
+import {
+  mapProductDtoToProduct,
+  mapProductToDto,
+  Product,
+  ProductDto
+} from '@product/entity/product.entity';
+import { IdLabel } from '@shared/entity/common.entity';
 
-export interface InvoiceDto {
+export interface SaleInvoiceDto {
   id: number;
   number: string;
   user_id: number;
@@ -23,7 +33,7 @@ export interface InvoiceDto {
   sales_item: SaleItemDto[];
 }
 
-export interface Invoice {
+export interface SaleInvoice {
   id: number;
   number: string;
   userId: number;
@@ -94,7 +104,7 @@ export function mapSaleItemDtoToSaleItem(dto: SaleItemDto): SaleItem {
   };
 }
 
-export function mapInvoiceDtoToInvoice(dto: InvoiceDto): Invoice {
+export function mapInvoiceDtoToInvoice(dto: SaleInvoiceDto): SaleInvoice {
   return {
     ...dto,
     userId: dto.user_id,
@@ -128,7 +138,7 @@ export function mapSaleItemToDto(data: SaleItem): SaleItemDto {
   };
 }
 
-export function mapInvoiceToInvoiceDto(data: Invoice): InvoiceDto {
+export function mapInvoiceToInvoiceDto(data: SaleInvoice): SaleInvoiceDto {
   return {
     ...data,
     user_id: data.userId,
@@ -147,7 +157,7 @@ export function mapInvoiceToInvoiceDto(data: Invoice): InvoiceDto {
 }
 
 export type CreateInvoice = Pick<
-  Invoice,
+  SaleInvoice,
   'customerId' | 'city' | 'address' | 'description' | 'paymentStatus' | 'shippingStatus' | 'shippingPrice' | 'discount'
 > & {
   items: CreateInvoiceItem[];
@@ -159,7 +169,7 @@ type CreateInvoiceItem = Pick<
 >;
 
 export type CreateInvoiceDto = Pick<
-  InvoiceDto,
+  SaleInvoiceDto,
   'customer_id' | 'city' | 'address' | 'description' | 'payment_status' | 'shipping_status' | 'shipping_price' | 'discount'
 > & {
   items: CreateInvoiceItemDto[];
@@ -171,7 +181,7 @@ type CreateInvoiceItemDto = Pick<
 >;
 
 export type FullInvoice = Pick<
-  Invoice,
+  SaleInvoice,
   | 'id'
   | 'number'
   | 'userId'
@@ -191,7 +201,7 @@ export type FullInvoice = Pick<
 >;
 
 export type FullInvoiceDto = Pick<
-  InvoiceDto,
+  SaleInvoiceDto,
   | 'id'
   | 'number'
   | 'user_id'

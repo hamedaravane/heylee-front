@@ -2,11 +2,14 @@
   <nz-header>
     <div nz-row class="h-full">
       <div class="h-full" nz-col nzSpan="8"></div>
-      <div class="h-full" nz-col nzSpan="8" routerLink="/">
-        <img ngSrc="/images/logo.png" priority class="inline-block object-contain h-1/2" alt="logo" width="440"
-             height="136"/>
+      <div class="h-full py-2" nz-col nzSpan="8" routerLink="/">
+        <img ngSrc="/images/logo.png"
+             priority alt="logo" fill
+             class="inline-block object-contain h-full"/>
       </div>
-      <div class="h-full" nz-col nzSpan="8"></div>
+      <div class="h-full text-end" nz-col nzSpan="8">
+        <i class="fa-solid fa-chevron-left" (click)="goBack()"></i>
+      </div>
     </div>
   </nz-header>
   <nz-content>
