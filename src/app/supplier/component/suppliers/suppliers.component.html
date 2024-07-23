@@ -1,5 +1,5 @@
 <page-container>
-  <button nzType="primary" nz-button nzBlock (click)="isAddSupplierVisible = true">
+  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock (click)="supplierFormDrawer = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن تامین کننده</span>
   </button>
@@ -23,11 +23,11 @@
             <span class="col-span-3 font-mono" dir="ltr">{{ supplier.instagram}}</span>
             <div class="col-span-4 mt-4">
               <div class="flex gap-2">
-                <button nzType="default" nzSize="small" nzBlock nz-button>
+                <button [disabled]="loadingState" [nzLoading]="loadingState" (click)="selectIdToEdit(supplier.id)" nzType="default" nzSize="small" nzBlock nz-button>
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteSupplier(supplier.id)">
+                <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteSupplier(supplier.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>
@@ -39,7 +39,7 @@
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
     </ul>
-  } @else {
+  } @else if (loadingState) {
     <ul>
       @for (_ of [].constructor(3); track $index) {
         <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
@@ -55,23 +55,40 @@
            nzHeight="75%"
            nzPlacement="bottom"
            nzTitle="افزودن تامین کننده"
-           [nzVisible]="isAddSupplierVisible"
-           (nzOnClose)="closeAddSupplier()">
+           [nzVisible]="supplierFormDrawer"
+           (nzOnClose)="closeSupplierFormDrawer()">
   <ng-container *nzDrawerContent>
-    <form nz-form nzLabelAlign="right"
-          nzLayout="vertical"
-          [formGroup]="createSupplierForm"
-          (ngSubmit)="createSupplier()">
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="name">نام تامین کننده</nz-form-label>
-        <nz-form-control>
-          <input nz-input required name="name" type="text" id="name"
-                 formControlName="name"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzXs="4" nzFor="address">آدرس</nz-form-label>
-        <nz-form-control>
+    <ng-container *ngTemplateOutlet="supplierFormTemp; context: {$implicit: supplierForm}"></ng-container>
+  </ng-container>
+</nz-drawer>
+
+<nz-drawer [nzFooter]="editSupplierFooter"
+           nzClosable
+           nzHeight="75%"
+           nzPlacement="bottom"
+           nzTitle="افزودن تامین کننده"
+           [nzVisible]="supplierFormDrawer"
+           (nzOnClose)="closeSupplierFormDrawer()">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngTemplateOutlet="supplierFormTemp; context: {$implicit: supplierForm}"></ng-container>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #supplierFormTemp let-supplierForm>
+  <form nz-form nzLabelAlign="right"
+        nzLayout="vertical"
+        [formGroup]="supplierForm"
+        (ngSubmit)="createSupplier()">
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="name">نام تامین کننده</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="name" type="text" id="name"
+               formControlName="name"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="address">آدرس</nz-form-label>
+      <nz-form-control>
         <textarea
           nz-input
           required
@@ -80,48 +97,52 @@
           formControlName="address"
           [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzXs="4" nzFor="phone">شماره موبایل</nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="+98">
-            <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
-                   inputmode="numeric" id="phone" formControlName="phone"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzXs="4" nzFor="instagram">
-          <span>اینستاگرام</span>
-          <i class="fa-brands fa-instagram mx-2"></i>
-        </nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
-            <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
-                   pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzFor="telegram">
-          <span>تلگرام</span>
-          <i class="fa-brands fa-telegram mx-2"></i>
-        </nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
-            <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
-                   pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-  </ng-container>
-</nz-drawer>
-
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzXs="4" nzFor="phone">شماره موبایل</nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="+98">
+          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
+                 inputmode="numeric" id="phone" formControlName="phone"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzXs="4" nzFor="instagram">
+        <span>اینستاگرام</span>
+        <i class="fa-brands fa-instagram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
+          <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
+                 pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="telegram">
+        <span>تلگرام</span>
+        <i class="fa-brands fa-telegram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
+          <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
+                 pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
 <ng-template #createSupplierFooter>
-  <button nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createSupplierForm.invalid" (click)="createSupplier()">
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="supplierForm.invalid || loadingState" (click)="createSupplier()">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
+  </button>
+</ng-template>
+<ng-template #editSupplierFooter>
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="supplierForm.invalid || loadingState" (click)="editSupplier()">
+    <i class="fa-solid fa-pen mx-2"></i>
+    <span>ویرایش</span>
   </button>
 </ng-template>

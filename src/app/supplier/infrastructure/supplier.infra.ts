@@ -1,9 +1,10 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '@environment';
-import {mapSupplierDtoToSupplier, mapSupplierToSupplierDto, Supplier, SupplierDto} from '../entity/supplier.entity';
+import {CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto} from '../entity/supplier.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
+import {toSnakeCase} from "@shared/entity/utility.entity";
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +12,8 @@ import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server
 export class SupplierInfra {
   private readonly http = inject(HttpClient);
 
-  createSupplier(supplier: Supplier): Observable<Supplier> {
-    const dto = mapSupplierToSupplierDto(supplier);
+  createSupplier(supplier: CreateSupplierDto): Observable<Supplier> {
+    const dto: CreateSupplierDto = toSnakeCase(supplier);
     return this.http.post<ServerResponse<SupplierDto>>(`${environment.apiUrl}/supplier/create`, dto)
       .pipe(
         map<ServerResponse<SupplierDto>, Supplier>((res) => {
@@ -25,8 +26,8 @@ export class SupplierInfra {
       )
   }
 
-  editSupplier(id: number, supplier: Supplier): Observable<Supplier> {
-    const dto = mapSupplierToSupplierDto(supplier);
+  editSupplier(id: number, supplier: CreateSupplierDto): Observable<Supplier> {
+    const dto: CreateSupplierDto = toSnakeCase(supplier);
     return this.http.post<ServerResponse<SupplierDto>>(`${environment.apiUrl}/supplier/update/${id}`, dto)
       .pipe(
         map<ServerResponse<SupplierDto>, Supplier>((res) => {

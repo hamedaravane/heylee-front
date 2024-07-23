@@ -1,11 +1,11 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {AsyncPipe} from '@angular/common';
+import {Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AsyncPipe, NgTemplateOutlet} from '@angular/common';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {RouterLink} from '@angular/router';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {SupplierFacade} from '../../data-access/supplier.facade';
-import {Supplier} from '../../entity/supplier.entity';
+import {CreateSupplierDto} from '../../entity/supplier.entity';
 import {BidiModule} from '@angular/cdk/bidi';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -14,6 +14,7 @@ import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   standalone: true,
@@ -32,15 +33,20 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
     RouterLink,
     ReactiveFormsModule,
     PageContainerComponent,
-    CardContainerComponent
+    CardContainerComponent,
+    NgTemplateOutlet
   ]
 })
 export class SuppliersComponent implements OnInit {
   private readonly supplierFacade = inject(SupplierFacade);
+  private readonly destroyRef = inject(DestroyRef);
   suppliersIndex$ = this.supplierFacade.suppliersIndex$;
-  isAddSupplierVisible = false;
+  @ViewChild('supplier') supplierTempRef!: TemplateRef<void>;
+  selectedSupplierId: number | null = null;
+  supplierFormDrawer = false;
+  loadingState = false;
 
-  createSupplierForm = new FormGroup({
+  supplierForm = new FormGroup({
     name: new FormControl('', Validators.required),
     address: new FormControl('', Validators.required),
     phone: new FormControl('', Validators.required),
@@ -49,21 +55,44 @@ export class SuppliersComponent implements OnInit {
   })
 
   ngOnInit() {
+    this.loadSuppliers();
+    this.supplierFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(loading => {
+      this.loadingState = loading;
+    })
+  }
+
+  loadSuppliers() {
     this.supplierFacade.loadSuppliers().then();
   }
 
-  editSupplier(id: number, supplier: Supplier) {
-    this.supplierFacade.editSupplier(id, supplier).then();
+  selectIdToEdit(id: number) {
+    this.selectedSupplierId = id;
+    this.supplierFormDrawer = true;
+  }
+
+  editSupplier() {
+    const editedSupplier = this.supplierForm.getRawValue() as CreateSupplierDto;
+    if (this.selectedSupplierId) {
+      this.supplierFacade.editSupplier(this.selectedSupplierId, editedSupplier).then(() => {
+        this.closeSupplierFormDrawer();
+      });
+    }
   }
 
   createSupplier() {
+    const newSupplier = this.supplierForm.getRawValue() as CreateSupplierDto;
+    this.supplierFacade.createSupplier(newSupplier).then(() => {
+      this.closeSupplierFormDrawer();
+    });
   }
 
   deleteSupplier(id: number) {
-    this.supplierFacade.deleteSupplier(id).then();
+    this.supplierFacade.deleteSupplier(id).then(() => {
+      this.closeSupplierFormDrawer();
+    });
   }
 
-  closeAddSupplier() {
-    this.isAddSupplierVisible = false;
+  closeSupplierFormDrawer() {
+    this.supplierFormDrawer = false;
   }
 }
