@@ -1,18 +1,10 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
-import { environment } from '@environment';
-import { dtoConvertor, ServerResponse } from '@shared/entity/server-response.entity';
-import {
-  CreateInvoice,
-  CreateInvoiceDto,
-  FullInvoice,
-  FullInvoiceDto,
-  mapInvoiceDtoToInvoice,
-  SaleInvoice,
-  SaleInvoiceDto
-} from '@sale/entity/invoice.entity';
-import { toCamelCase, toSnakeCase } from '@shared/entity/utility.entity';
+import {inject, Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {map, Observable} from 'rxjs';
+import {environment} from '@environment';
+import {dtoConvertor, ServerResponse} from '@shared/entity/server-response.entity';
+import {CreateInvoice, CreateInvoiceDto, FullInvoice, FullInvoiceDto, mapInvoiceDtoToInvoice, SaleInvoice, SaleInvoiceDto} from '@sale/entity/invoice.entity';
+import {toCamelCase, toSnakeCase} from '@shared/entity/utility.entity';
 
 @Injectable({
   providedIn: 'root'

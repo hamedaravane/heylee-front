@@ -1,9 +1,9 @@
-import {inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "@environment";
-import {mapSupplierDtoToSupplier, mapSupplierToSupplierDto, Supplier, SupplierDto} from "../entity/supplier.entity";
-import {map, Observable} from "rxjs";
-import {dtoConvertor, IndexResponse, ServerResponse} from "@shared/entity/server-response.entity";
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '@environment';
+import {mapSupplierDtoToSupplier, mapSupplierToSupplierDto, Supplier, SupplierDto} from '../entity/supplier.entity';
+import {map, Observable} from 'rxjs';
+import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root',

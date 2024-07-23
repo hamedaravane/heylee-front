@@ -1,5 +1,5 @@
 import {Pipe} from '@angular/core';
-import {StockItem} from "@inventory/entity/inventory.entity";
+import {StockItem} from '@inventory/entity/inventory.entity';
 
 @Pipe({
   standalone: true,

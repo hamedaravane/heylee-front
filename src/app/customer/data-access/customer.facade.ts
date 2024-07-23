@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { CustomerInfra } from '../infrastructure/customer.infra';
-import { firstValueFrom, Subject } from 'rxjs';
-import { IndexResponse } from '@shared/entity/server-response.entity';
-import { CreateCustomer, Customer } from '../entity/customer.entity';
+import {inject, Injectable} from '@angular/core';
+import {CustomerInfra} from '../infrastructure/customer.infra';
+import {firstValueFrom, Subject} from 'rxjs';
+import {IndexResponse} from '@shared/entity/server-response.entity';
+import {CreateCustomer, Customer} from '../entity/customer.entity';
 
 @Injectable({
   providedIn: 'root'

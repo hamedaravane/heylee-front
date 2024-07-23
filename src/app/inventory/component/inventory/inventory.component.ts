@@ -1,10 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {InventoryFacade} from "@inventory/data-access/inventory.facade";
-import {PageContainerComponent} from "@shared/component/page-container/page-container.component";
-import {CardContainerComponent} from "@shared/component/card-container/card-container.component";
-import {AsyncPipe, DecimalPipe, NgOptimizedImage} from "@angular/common";
-import {NzEmptyModule} from "ng-zorro-antd/empty";
-import {NzSkeletonModule} from "ng-zorro-antd/skeleton";
+import {InventoryFacade} from '@inventory/data-access/inventory.facade';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
 
 @Component({
   selector: 'inventory-inventory',

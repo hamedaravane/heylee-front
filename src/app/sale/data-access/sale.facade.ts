@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { SaleInfra } from '@sale/infrastructure/sale.infra';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { firstValueFrom, Subject } from 'rxjs';
-import { CreateInvoice, SaleInvoice } from '@sale/entity/invoice.entity';
-import { InventoryApi } from '@inventory/api/inventory.api';
+import {inject, Injectable} from '@angular/core';
+import {SaleInfra} from '@sale/infrastructure/sale.infra';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {firstValueFrom, Subject} from 'rxjs';
+import {CreateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
+import {InventoryApi} from '@inventory/api/inventory.api';
 
 @Injectable({
   providedIn: 'root'

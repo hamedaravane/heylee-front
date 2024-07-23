@@ -1,8 +1,8 @@
-import {inject, Injectable} from "@angular/core";
-import {SupplierInfra} from "../infrastructure/supplier.infra";
-import {firstValueFrom, Subject} from "rxjs";
-import {Supplier} from "../entity/supplier.entity";
-import {IndexResponse} from "@shared/entity/server-response.entity";
+import {inject, Injectable} from '@angular/core';
+import {SupplierInfra} from '../infrastructure/supplier.infra';
+import {firstValueFrom, Subject} from 'rxjs';
+import {Supplier} from '../entity/supplier.entity';
+import {IndexResponse} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'

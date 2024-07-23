@@ -1,5 +1,5 @@
-import {IdLabel} from "@shared/entity/common.entity";
-import {Product, ProductDto} from "@product/entity/product.entity";
+import {IdLabel} from '@shared/entity/common.entity';
+import {Product, ProductDto} from '@product/entity/product.entity';
 
 export interface StockItem {
   product: Omit<Product, 'createdAt' | 'updatedAt'>;

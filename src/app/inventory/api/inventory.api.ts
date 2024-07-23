@@ -1,7 +1,7 @@
-import {inject, Injectable} from "@angular/core";
-import {InventoryFacade} from "@inventory/data-access/inventory.facade";
-import {Observable} from "rxjs";
-import {StockItem} from "@inventory/entity/inventory.entity";
+import {inject, Injectable} from '@angular/core';
+import {InventoryFacade} from '@inventory/data-access/inventory.facade';
+import {Observable} from 'rxjs';
+import {StockItem} from '@inventory/entity/inventory.entity';
 
 @Injectable({
   providedIn: 'root'

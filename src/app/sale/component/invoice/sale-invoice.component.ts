@@ -1,31 +1,24 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { BidiModule } from '@angular/cdk/bidi';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { SaleFacade } from '../../data-access/sale.facade';
-import { AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
-import { firstValueFrom } from 'rxjs';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
-import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
-import { StockItem } from '@inventory/entity/inventory.entity';
-import { CreateInvoice } from '@sale/entity/invoice.entity';
-import { CustomerFacade } from '@customer/data-access/customer.facade';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { CreateCustomer, Customer } from '@customer/entity/customer.entity';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {SaleFacade} from '../../data-access/sale.facade';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {NzCollapseModule} from 'ng-zorro-antd/collapse';
+import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
+import {firstValueFrom} from 'rxjs';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {StockItem} from '@inventory/entity/inventory.entity';
+import {CreateInvoice} from '@sale/entity/invoice.entity';
+import {CustomerFacade} from '@customer/data-access/customer.facade';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {CreateCustomer, Customer} from '@customer/entity/customer.entity';
 
 @Component({
   selector: 'sale-invoice',

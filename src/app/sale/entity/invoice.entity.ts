@@ -1,16 +1,6 @@
-import {
-  Customer,
-  CustomerDto,
-  mapCustomerDtoToCustomer,
-  mapCustomerToDto
-} from '@customer/entity/customer.entity';
-import {
-  mapProductDtoToProduct,
-  mapProductToDto,
-  Product,
-  ProductDto
-} from '@product/entity/product.entity';
-import { IdLabel } from '@shared/entity/common.entity';
+import {Customer, CustomerDto, mapCustomerDtoToCustomer, mapCustomerToDto} from '@customer/entity/customer.entity';
+import {mapProductDtoToProduct, mapProductToDto, Product, ProductDto} from '@product/entity/product.entity';
+import {IdLabel} from '@shared/entity/common.entity';
 
 export interface SaleInvoiceDto {
   id: number;
