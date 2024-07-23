@@ -24,7 +24,7 @@ export class InventoryFacade {
     } catch (e) {
       const error = e as ServerError;
       console.error(error.error.result);
-      this.nzMessageService.error(error.error.result);
+      this.nzMessageService.error(error.error.result.message);
     }
   }
 }
