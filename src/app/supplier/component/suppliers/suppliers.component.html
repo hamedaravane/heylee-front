@@ -16,11 +16,11 @@
             <span class="col-span-1">آدرس</span>
             <span class="col-span-3">{{ supplier.address}}</span>
             <span class="col-span-1">شماره تماس</span>
-            <span class="col-span-3" dir="ltr">{{ supplier.phone}}</span>
+            <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500 col-span-3 font-mono" dir="ltr">+98 {{ supplier.phone}}</a>
             <span class="col-span-1">تلگرام</span>
-            <span class="col-span-3 font-mono" dir="ltr">{{ supplier.telegram}}</span>
+            <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500 col-span-3 font-mono" dir="ltr">{{ supplier.telegram}}</a>
             <span class="col-span-1">اینستاگرام</span>
-            <span class="col-span-3 font-mono" dir="ltr">{{ supplier.instagram}}</span>
+            <a [href]="'https://instagram.com/' + supplier.instagram" class="text-indigo-500 col-span-3 font-mono" dir="ltr">{{ supplier.instagram}}</a>
             <div class="col-span-4 mt-4">
               <div class="flex gap-2">
                 <button [disabled]="loadingState" [nzLoading]="loadingState" (click)="selectIdToEdit(supplier.id)" nzType="default" nzSize="small" nzBlock nz-button>
