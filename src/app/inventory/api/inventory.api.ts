@@ -8,6 +8,7 @@ import {StockItem} from '@inventory/entity/inventory.entity';
 })
 export class InventoryApi {
   private readonly inventoryFacade = inject(InventoryFacade);
+  private isFetched = false;
 
   /**
    * A getter that returns an observable stream of available products.
@@ -25,10 +26,11 @@ export class InventoryApi {
    * });
    */
   get availableProducts$(): Observable<StockItem[]> {
-    if (!this.inventoryFacade.isFetched) {
+    if (!this.isFetched) {
       this.inventoryFacade.fetchAvailableProducts().then(() => {
-        return this.inventoryFacade.availableProducts$;
+        this.isFetched = true;
       });
+      return this.inventoryFacade.availableProducts$;
     }
     return this.inventoryFacade.availableProducts$;
   }
