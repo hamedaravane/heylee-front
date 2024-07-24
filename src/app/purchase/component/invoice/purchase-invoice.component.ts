@@ -3,7 +3,7 @@ import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Reactiv
 import {Purchase} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
-import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {NzFormModule} from 'ng-zorro-antd/form';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzButtonModule} from 'ng-zorro-antd/button';
@@ -17,6 +17,7 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {colorLabels, sizeLabels} from '@labels';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
+import {SupplierApi} from '@supplier/api/supplier.api';
 
 @Component({
   selector: 'purchase-invoice',
@@ -36,7 +37,8 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
     DecimalPipe,
     NgOptimizedImage,
     PageContainerComponent,
-    CardContainerComponent
+    CardContainerComponent,
+    AsyncPipe
   ],
   standalone: true
 })
@@ -44,6 +46,8 @@ export class PurchaseInvoiceComponent implements OnInit {
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly supplierApi = inject(SupplierApi);
+  suppliers$ = this.supplierApi.suppliers$;
   sizeLabels = sizeLabels;
   colorLabels = colorLabels;
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];

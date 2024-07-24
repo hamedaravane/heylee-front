@@ -15,13 +15,13 @@
     <nz-form-item>
       <nz-form-label nzRequired nzFor="supplierId">تامین کننده</nz-form-label>
       <nz-form-control>
-        <input nz-input
-               required
-               name="supplierId"
-               type="number"
-               inputmode="numeric"
-               id="supplierId"
-               formControlName="supplierId"/>
+        <nz-select>
+          @if (suppliers$ | async; as suppliers) {
+            @for (supplier of suppliers.items; track $index) {
+              <nz-option [nzValue]="supplier.id" [nzLabel]="supplier.name"></nz-option>
+            }
+          }
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
     <!-- description -->

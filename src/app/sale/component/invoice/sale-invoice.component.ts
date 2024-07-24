@@ -170,7 +170,7 @@ export class SaleInvoiceComponent implements OnInit {
       address: rawValue.address as string,
       instagram: rawValue.instagram,
       telegram: rawValue.telegram,
-      postal_code: rawValue.postalCode
+      postalCode: rawValue.postalCode
     };
     this.customerFacade.createCustomer(customer).then();
   }

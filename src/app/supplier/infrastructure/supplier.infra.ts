@@ -4,7 +4,7 @@ import {environment} from '@environment';
 import {CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto} from '../entity/supplier.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
-import {toSnakeCase} from "@shared/entity/utility.entity";
+import {toSnakeCase} from '@shared/entity/utility.entity';
 
 @Injectable({
   providedIn: 'root',

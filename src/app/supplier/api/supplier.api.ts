@@ -1,8 +1,8 @@
-import {inject, Injectable} from "@angular/core";
-import {SupplierFacade} from "@supplier/data-access/supplier.facade";
-import {Observable} from "rxjs";
-import {IndexResponse} from "@shared/entity/server-response.entity";
-import {Supplier} from "@supplier/entity/supplier.entity";
+import {inject, Injectable} from '@angular/core';
+import {SupplierFacade} from '@supplier/data-access/supplier.facade';
+import {Observable} from 'rxjs';
+import {IndexResponse} from '@shared/entity/server-response.entity';
+import {Supplier} from '@supplier/entity/supplier.entity';
 
 @Injectable({
   providedIn: 'root'

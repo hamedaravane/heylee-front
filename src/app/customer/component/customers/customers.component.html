@@ -1,5 +1,5 @@
 <page-container>
-  <button nzType="primary" nz-button nzBlock (click)="isAddCustomerVisible = true">
+  <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="primary" nz-button nzBlock (click)="isAddCustomerVisible = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن مشتری</span>
   </button>
@@ -8,36 +8,36 @@
     <ul>
       @for (customer of customers.items; track $index) {
         <card-container class="mb-3 last:mb-0">
-          <li class="grid grid-cols-4 gap-y-1">
-            <span class="col-span-1">شناسه</span>
-            <span class="col-span-3">{{ customer.id}}</span>
-            <span class="col-span-1">نام</span>
+          <li class="grid grid-cols-8 gap-y-1">
+            <div class="col-span-1"><i class="fa-solid fa-user mx-2"></i></div>
             <span class="col-span-3">{{ customer.name}}</span>
-            <span class="col-span-1">شماره تماس</span>
-            <span class="col-span-3" dir="ltr">{{ customer.phone}}</span>
-            <span class="col-span-1">شهر</span>
+            <div class="col-span-1"><i class="fa-solid fa-id-card mx-2"></i></div>
+            <span class="col-span-3">{{ customer.id}}</span>
+            <div class="col-span-1"><i class="fa-solid fa-phone mx-2"></i></div>
+            <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">+98{{ customer.phone}}</a>
+            <div class="col-span-1"><i class="fa-solid fa-city mx-2"></i></div>
             <span class="col-span-3">{{ customer.city}}</span>
-            <span class="col-span-1">آدرس</span>
-            <span class="col-span-3">{{ customer.address}}</span>
+            <div class="col-span-1"><i class="fa-solid fa-location-dot mx-2"></i></div>
+            <span class="col-span-7">{{ customer.address}}</span>
             @if (customer.postalCode) {
-              <span class="col-span-1">کد پستی</span>
+              <div class="col-span-1"><i class="fa-solid fa-map-location-dot mx-2"></i></div>
               <span class="col-span-3">{{ customer.postalCode}}</span>
             }
             @if (customer.telegram) {
-              <span class="col-span-1">تلگرام</span>
-              <span class="col-span-3 font-mono" dir="ltr">{{ customer.telegram}}</span>
+              <div class="col-span-1"><i class="fa-brands fa-telegram mx-2"></i></div>
+              <a [href]="'https://t.me/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram}}</a>
             }
             @if (customer.instagram) {
-              <span class="col-span-1">اینستاگرام</span>
-              <span class="col-span-3 font-mono" dir="ltr">{{ customer.instagram}}</span>
+              <div class="col-span-1"><i class="fa-brands fa-instagram mx-2"></i></div>
+              <a [href]="'https://instagram.com/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram}}</a>
             }
-            <div class="col-span-4 mt-4">
+            <div class="col-span-8 mt-4">
               <div class="flex gap-2">
-                <button nzType="default" nzSize="small" nzBlock nz-button>
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzSize="small" nzBlock nz-button (click)="selectCustomerToEdit(customer.id)">
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteCustomer(customer.id)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteCustomer(customer.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>
@@ -49,7 +49,7 @@
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
     </ul>
-  } @else {
+  } @else if (loadingState) {
     <ul>
       @for (_ of [].constructor(3); track $index) {
         <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
@@ -68,84 +68,106 @@
            [nzVisible]="isAddCustomerVisible"
            (nzOnClose)="closeAddCustomer()">
   <ng-container *nzDrawerContent>
-    <form nz-form nzLabelAlign="right"
-          nzLayout="vertical"
-          [formGroup]="createCustomerForm"
-          (ngSubmit)="createCustomer()">
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="name">نام مشتری</nz-form-label>
-        <nz-form-control>
-          <input nz-input required name="name" type="text" id="name"
-                 formControlName="name"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="phone">شماره موبایل</nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="+98">
-            <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
-                   inputmode="numeric" id="phone" formControlName="phone"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="city">شهر</nz-form-label>
-        <nz-form-control>
-          <input nz-input required name="city" type="text" id="city"
-                 formControlName="city"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
-        <nz-form-control>
-        <textarea
-          nz-input
-          required
-          name="address"
-          id="address"
-          formControlName="address"
-          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
-        ></textarea>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="postalCode">کد پستی</nz-form-label>
-        <nz-form-control dir="ltr">
-            <input nz-input required maxlength="10" minlength="10" name="postalCode" type="text" pattern="[0-9]*"
-                   inputmode="numeric" id="postalCode" formControlName="postalCode"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzFor="instagram">
-          <span>اینستاگرام</span>
-          <i class="fa-brands fa-instagram mx-2"></i>
-        </nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
-            <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
-                   pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzFor="telegram">
-          <span>تلگرام</span>
-          <i class="fa-brands fa-telegram mx-2"></i>
-        </nz-form-label>
-        <nz-form-control dir="ltr">
-          <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
-            <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
-                   pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
+    <ng-container *ngTemplateOutlet="customerFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
 
+<nz-drawer [nzFooter]="editCustomerFooter"
+           nzClosable
+           nzSize="large"
+           nzPlacement="bottom"
+           nzTitle="ویرایش مشتری"
+           [nzVisible]="isEditCustomerVisible"
+           (nzOnClose)="closeAddCustomer()">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngTemplateOutlet="customerFormTempRef"></ng-container>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #customerFormTempRef>
+  <form nz-form nzLabelAlign="right"
+        nzLayout="vertical"
+        [formGroup]="createCustomerForm"
+        (ngSubmit)="createCustomer()">
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="name">نام مشتری</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="name" type="text" id="name"
+               formControlName="name"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="phone">شماره موبایل</nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="+98">
+          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
+                 inputmode="numeric" id="phone" formControlName="phone"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="city">شهر</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="city" type="text" id="city"
+               formControlName="city"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
+      <nz-form-control>
+        <textarea
+            nz-input
+            required
+            name="address"
+            id="address"
+            formControlName="address"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="postalCode">کد پستی</nz-form-label>
+      <nz-form-control dir="ltr">
+        <input nz-input required maxlength="10" minlength="10" name="postalCode" type="text" pattern="[0-9]*"
+               inputmode="numeric" id="postalCode" formControlName="postalCode"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="instagram">
+        <span>اینستاگرام</span>
+        <i class="fa-brands fa-instagram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
+          <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
+                 pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="telegram">
+        <span>تلگرام</span>
+        <i class="fa-brands fa-telegram mx-2"></i>
+      </nz-form-label>
+      <nz-form-control dir="ltr">
+        <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
+          <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
+                 pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+
 <ng-template #createCustomerFooter>
-  <button nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createCustomerForm.invalid" (click)="createCustomer()">
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createCustomerForm.invalid || loadingState" (click)="createCustomer()">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
+  </button>
+</ng-template>
+<ng-template #editCustomerFooter>
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createCustomerForm.invalid || loadingState" (click)="editCustomer()">
+    <i class="fa-solid fa-pen mx-2"></i>
+    <span>ویرایش</span>
   </button>
 </ng-template>
