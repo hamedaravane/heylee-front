@@ -15,7 +15,7 @@
     <nz-form-item>
       <nz-form-label nzRequired nzFor="supplierId">تامین کننده</nz-form-label>
       <nz-form-control>
-        <nz-select>
+        <nz-select formControlName="supplierId">
           @if (suppliers$ | async; as suppliers) {
             @for (supplier of suppliers.items; track $index) {
               <nz-option [nzValue]="supplier.id" [nzLabel]="supplier.name"></nz-option>
@@ -26,13 +26,13 @@
     </nz-form-item>
     <!-- description -->
     <nz-form-item>
-      <nz-form-label nzFor="description">توضیحات بیشتر</nz-form-label>
+      <nz-form-label nzRequired nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
             nz-input
             name="description"
             type="text"
-            id="description" pattern="^[\u0600-\u06FF\s-]+$"
+            id="description"
             formControlName="description"
             [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
@@ -78,7 +78,7 @@
     <nz-form-item>
       <nz-form-label nzRequired nzFor="items">سفارشات</nz-form-label>
       <nz-form-control>
-        <button nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن محصول</button>
+        <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="dashed" type="button" nzBlock (click)="addItem()">افزودن محصول</button>
         <nz-divider></nz-divider>
         <div formArrayName="items">
           @for (item of items.controls; track i; let i = $index) {
@@ -89,14 +89,14 @@
                   <nz-form-label nzRequired nzFor="productId">محصول</nz-form-label>
                   <nz-form-control>
                     <nz-select formControlName="productId" [nzOptionHeightPx]="58">
-                      @if (availableProducts$ | async; as products) {
-                        @for (product of products; track $index) {
-                          <nz-option [nzValue]="product.product.id" nzCustomContent [nzLabel]="product.product.code">
+                      @if (products$ | async; as products) {
+                        @for (product of products.items; track $index) {
+                          <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
                             <div class="grid grid-cols-12 grid-rows-1 gap-2">
                               <div
                                   class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-                                @if (product.product.image) {
-                                  <img [src]="product.product.image"
+                                @if (product.image) {
+                                  <img [src]="product.image"
                                        class="w-12 h-full object-cover"
                                        alt="product image"/>
                                 } @else {
@@ -104,8 +104,8 @@
                                 }
                               </div>
                               <div class="col-span-9 grid grid-cols-9 grid-rows-2 w-full">
-                                <div class="col-span-5 text-xs">{{ product.product.name }}</div>
-                                <div class="col-span-5 font-mono font-bold text-xs">{{ product.product.code }}</div>
+                                <div class="col-span-5 text-xs">{{ product.name }}</div>
+                                <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
                               </div>
                             </div>
                           </nz-option>
@@ -171,7 +171,7 @@
                   </nz-form-control>
                 </nz-form-item>
                 <div>
-                  <button nz-button nzType="default" nzDanger nzBlock type="button" (click)="removeItem(i)">
+                  <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="default" nzDanger nzBlock type="button" (click)="removeItem(i)">
                     <span>حدف محصول</span>
                     <i class="fa-solid fa-trash mx-2"></i>
                   </button>
@@ -187,7 +187,7 @@
     <!-- submit -->
     <nz-form-item>
       <nz-form-control>
-        <button [disabled]="purchaseForm.invalid" nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
+        <button [nzLoading]="loadingState" [disabled]="purchaseForm.invalid || loadingState" nz-button nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
       </nz-form-control>
     </nz-form-item>
   </form>

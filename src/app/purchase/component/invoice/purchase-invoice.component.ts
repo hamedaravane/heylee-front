@@ -1,5 +1,13 @@
 import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {Purchase} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -18,7 +26,7 @@ import {colorLabels, sizeLabels} from '@labels';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
-import {InventoryApi} from '@inventory/api/inventory.api';
+import {ProductApi} from "@product/api/product.api";
 
 @Component({
   selector: 'purchase-invoice',
@@ -48,11 +56,12 @@ export class PurchaseInvoiceComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly supplierApi = inject(SupplierApi);
-  private readonly inventoryApi = inject(InventoryApi);
+  private readonly productApi = inject(ProductApi);
   suppliers$ = this.supplierApi.suppliers$;
-  availableProducts$ = this.inventoryApi.availableProducts$;
+  products$ = this.productApi.productsIndex$;
   sizeLabels = sizeLabels;
   colorLabels = colorLabels;
+  loadingState = false;
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
 
   purchaseForm = new FormGroup({
@@ -88,6 +97,7 @@ export class PurchaseInvoiceComponent implements OnInit {
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
+    this.purchaseFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => this.loadingState = value);
   }
 
   addItem() {
