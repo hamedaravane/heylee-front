@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {mapProductDtoToProduct, mapProductToDto, Product, ProductDto} from '../entity/product.entity';
+import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 import {environment} from '@environment';
@@ -24,9 +24,8 @@ export class ProductInfra {
       )
   }
 
-  editProduct(id: number, product: Product): Observable<Product> {
-    const dto = mapProductToDto(product);
-    return this.http.post<ServerResponse<ProductDto>>(`${environment.apiUrl}/product/update/${id}`, dto)
+  editProduct(id: number, formData: FormData): Observable<Product> {
+    return this.http.post<ServerResponse<ProductDto>>(`${environment.apiUrl}/product/update/${id}`, formData)
       .pipe(
         map<ServerResponse<ProductDto>, Product>((res) => {
           if (res.ok) {

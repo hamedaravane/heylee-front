@@ -1,5 +1,5 @@
-import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
-import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
+import {Component, DestroyRef, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {BidiModule} from '@angular/cdk/bidi';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -13,10 +13,10 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {ProductFacade} from '../../data-access/product.facade';
 import {Product} from '../../entity/product.entity';
 import {NzUploadModule} from 'ng-zorro-antd/upload';
-import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzIconModule} from 'ng-zorro-antd/icon';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -39,35 +39,64 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
     NgOptimizedImage,
     DecimalPipe,
     PageContainerComponent,
-    CardContainerComponent
+    CardContainerComponent,
+    NgTemplateOutlet
   ]
 })
 export class ProductsComponent implements OnInit {
   private readonly productFacade = inject(ProductFacade);
-  private readonly nzMessageService = inject(NzMessageService);
+  private readonly destroyRef = inject(DestroyRef);
   @ViewChild('imageSelector') imageSelector!: ElementRef<HTMLInputElement>;
   productsIndex$ = this.productFacade.productsIndex$;
   isAddProductVisible = false;
-  loading = false;
+  isEditProductVisible = false;
+  selectedIdToEdit: number | null = null;
+  loadingState = false;
   selectedImage?: string;
   imageFile: File | null = null;
 
-  createProductForm = new FormGroup({
-    code: new FormControl('', Validators.required),
-    name: new FormControl('', Validators.required),
+  productForm = new FormGroup({
+    code: new FormControl<string>('', Validators.required),
+    name: new FormControl<string>('', Validators.required),
     description: new FormControl<string | null>(null),
   })
 
   ngOnInit() {
     this.productFacade.loadProducts().then();
+    this.productFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((loading) => this.loadingState = loading)
   }
 
-  editProduct(id: number, product: Product) {
-    this.productFacade.editProduct(id, product).then();
+  selectProductId(id: number, product: { name: string, code: string, description: string}) {
+    this.selectedIdToEdit = id;
+    this.productForm.setValue({
+      name: product.name,
+      code: product.code,
+      description: product.description
+    })
+    this.isEditProductVisible = true;
+  }
+
+  editProduct() {
+    const formData = this.generateForm();
+    if (this.selectedIdToEdit) {
+      this.productFacade.editProduct(this.selectedIdToEdit, formData).then(() => {
+        this.closeProductFormDrawer();
+        this.productForm.reset();
+      });
+    }
   }
 
   createProduct() {
-    const form = this.createProductForm.getRawValue() as Product;
+    const formData = this.generateForm();
+    this.productFacade.createProduct(formData).then(() => {
+      this.closeProductFormDrawer();
+      this.productForm.reset();
+    });
+  }
+
+  generateForm(): FormData {
+    const form = this.productForm.getRawValue() as Product;
     const formData = new FormData();
 
     formData.append('code', form.code);
@@ -77,15 +106,20 @@ export class ProductsComponent implements OnInit {
       const blob = new Blob([this.imageFile], { type: this.imageFile?.type });
       formData.append('image', blob);
     }
-    this.productFacade.createProduct(formData).then(() => this.productFacade.loadProducts());
+    return formData;
   }
 
   deleteProduct(id: number) {
-    this.productFacade.deleteProduct(id).then(() => this.productFacade.loadProducts());
+    this.productFacade.deleteProduct(id).then(() => {
+      this.closeProductFormDrawer();
+      this.productForm.reset();
+    });
   }
 
-  closeAddProduct() {
+  closeProductFormDrawer() {
     this.isAddProductVisible = false;
+    this.isEditProductVisible = false;
+    this.selectedImage = undefined;
   }
 
   selectImage() {

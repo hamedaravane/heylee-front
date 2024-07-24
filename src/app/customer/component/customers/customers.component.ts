@@ -57,12 +57,8 @@ export class CustomersComponent implements OnInit {
   })
 
   ngOnInit() {
-    this.loadCustomers();
-    this.customerFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((loading) => this.loadingState = loading)
-  }
-
-  loadCustomers() {
     this.customerFacade.loadCustomers().then();
+    this.customerFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((loading) => this.loadingState = loading)
   }
 
   selectCustomerToEdit(id: number) {

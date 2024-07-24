@@ -1,5 +1,5 @@
 <page-container>
-  <button nzType="primary" nz-button nzBlock (click)="isAddProductVisible = true">
+  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock (click)="isAddProductVisible = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن محصول</span>
   </button>
@@ -12,7 +12,7 @@
             <div
                 class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
               @if (product.image) {
-                <img [ngSrc]="product.image"
+                <img [src]="product.image"
                      class="w-12 h-full object-cover"
                      width="60"
                      height="60"
@@ -29,10 +29,10 @@
               </div>
             </div>
             <div class="col-span-1 justify-self-end self-center">
-              <button class="mb-2" nzType="default" nzSize="small" nzBlock nz-button>
+              <button [nzLoading]="loadingState" class="mb-2" nzType="default" nzSize="small" nzBlock nz-button (click)="selectProductId(product.id, {name: product.name, code: product.code, description: product.description})">
                 <i class="fa-solid leading-none fa-pen fa-xs mx-2"></i>
               </button>
-              <button nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteProduct(product.id)">
+              <button [nzLoading]="loadingState" nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteProduct(product.id)">
                 <i class="fa-solid leading-none fa-trash fa-xs mx-2"></i>
               </button>
             </div>
@@ -42,7 +42,7 @@
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
     </ul>
-  } @else {
+  } @else if (loadingState) {
     <ul>
       @for (_ of [].constructor(3); track $index) {
         <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
@@ -57,31 +57,48 @@
            nzClosable
            nzHeight="75%"
            nzPlacement="bottom"
-           nzTitle="افزودن تامین کننده"
+           nzTitle="افزودن محصول"
            [nzVisible]="isAddProductVisible"
-           (nzOnClose)="closeAddProduct()">
+           (nzOnClose)="closeProductFormDrawer()">
   <ng-container *nzDrawerContent>
-    <form nz-form nzLabelAlign="right"
-          nzLayout="vertical"
-          [formGroup]="createProductForm"
-          (ngSubmit)="createProduct()">
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="code">کد محصول</nz-form-label>
-        <nz-form-control>
-          <input nz-input required name="code" type="text" id="code"
-                 formControlName="code"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="name">نام محصول</nz-form-label>
-        <nz-form-control>
-          <input nz-input required name="name" type="text" id="name"
-                 formControlName="name"/>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label nzFor="description">توضیحات</nz-form-label>
-        <nz-form-control>
+    <ng-container *ngTemplateOutlet="productFormTempRef"></ng-container>
+  </ng-container>
+</nz-drawer>
+<nz-drawer [nzFooter]="editProductFooter"
+           nzClosable
+           nzHeight="75%"
+           nzPlacement="bottom"
+           nzTitle="ویرایش محصول"
+           [nzVisible]="isEditProductVisible"
+           (nzOnClose)="closeProductFormDrawer()">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngTemplateOutlet="productFormTempRef"></ng-container>
+  </ng-container>
+</nz-drawer>
+<input #imageSelector id="imageSelector" type="file" alt="product image" accept=".jpg, .jpeg, .png" hidden (change)="onImageSelected($event)">
+
+<ng-template #productFormTempRef>
+  <form nz-form nzLabelAlign="right"
+        nzLayout="vertical"
+        [formGroup]="productForm"
+        (ngSubmit)="createProduct()">
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="code">کد محصول</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="code" type="text" id="code"
+               formControlName="code"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired nzFor="name">نام محصول</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="name" type="text" id="name"
+               formControlName="name"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="description">توضیحات</nz-form-label>
+      <nz-form-control>
         <textarea
             nz-input
             name="description"
@@ -89,28 +106,31 @@
             formControlName="description"
             [nzAutosize]="{ minRows: 1, maxRows: 2 }"
         ></textarea>
-        </nz-form-control>
-      </nz-form-item>
-      <div class="mt-6">
-        <div class="pb-2">
-          <label>انتخاب عکس</label>
-        </div>
-        <div class="rounded-sm h-44 w-44 border border-dashed border-gray-600 mx-auto text-center content-center" (click)="selectImage()">
-          @if (selectedImage) {
-            <img [src]="selectedImage" alt="productImage" class="w-full h-full object-cover">
-          } @else {
-            <i class="fa-solid fa-image fa-4x text-gray-400"></i>
-          }
-        </div>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="mt-6">
+      <div class="pb-2">
+        <label>انتخاب عکس</label>
       </div>
-    </form>
-  </ng-container>
-</nz-drawer>
-
+      <div class="rounded-sm h-44 w-44 border border-dashed border-gray-600 mx-auto text-center content-center" (click)="selectImage()">
+        @if (selectedImage) {
+          <img [src]="selectedImage" alt="productImage" class="w-full h-full object-cover">
+        } @else {
+          <i class="fa-solid fa-image fa-4x text-gray-400"></i>
+        }
+      </div>
+    </div>
+  </form>
+</ng-template>
 <ng-template #createProductFooter>
-  <button nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createProductForm.invalid" (click)="createProduct()">
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="productForm.invalid || loadingState" (click)="createProduct()">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
   </button>
 </ng-template>
-<input #imageSelector id="imageSelector" type="file" accept=".jpg, .jpeg, .png" hidden (change)="onImageSelected($event)">
+<ng-template #editProductFooter>
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="productForm.invalid || loadingState" (click)="editProduct()">
+    <i class="fa-solid fa-pen mx-2"></i>
+    <span>ویرایش</span>
+  </button>
+</ng-template>

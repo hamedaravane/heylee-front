@@ -1,3 +1,5 @@
+import {HttpErrorResponse} from '@angular/common/http';
+
 export interface ServerResponse<T> {
   ok: boolean;
   result: T;
@@ -7,6 +9,18 @@ export interface ServerError extends Error {
   error: {
     ok: boolean;
     result: any;
+  }
+}
+
+export class ErrorServerResponse {
+  response = {};
+  status: number = 400;
+  name: string = '';
+  constructor(error: unknown) {
+    const err = error as HttpErrorResponse;
+    this.response = err.error.result;
+    this.status = err.status;
+    this.name = err.error.result.name;
   }
 }
 
