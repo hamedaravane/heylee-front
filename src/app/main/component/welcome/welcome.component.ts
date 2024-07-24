@@ -14,9 +14,9 @@ export class WelcomeComponent {
   buttons: {text: string; link: string, icon: string, disabled: boolean}[] = [
     {text: 'ثبت سفارش مشتری', link: 'sale', icon: 'fa-cart-shopping', disabled: true},
     {text: 'فاکتورهای فروش', link: 'invoices', icon: 'fa-receipt', disabled: true},
-    {text: 'موجودی انبار', link: 'inventory', icon: 'fa-warehouse', disabled: true},
+    {text: 'موجودی انبار', link: 'inventory', icon: 'fa-warehouse', disabled: false},
     {text: 'محصولات', link: 'product', icon: 'fa-gifts', disabled: false},
-    {text: 'ثبت فاکتور خرید', link: 'purchase', icon: 'fa-wallet', disabled: true},
+    {text: 'ثبت فاکتور خرید', link: 'purchase', icon: 'fa-wallet', disabled: false},
     {text: 'تامین کننده‌ها', link: 'supplier', icon: 'fa-handshake', disabled: false},
     {text: 'مشتریان', link: 'customer', icon: 'fa-person-booth', disabled: false},
   ];

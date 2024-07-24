@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {InventoryInfra} from '@inventory/infrastructure/inventory.infra';
-import {firstValueFrom, Subject} from 'rxjs';
+import {BehaviorSubject, filter, firstValueFrom} from 'rxjs';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {ServerError} from '@shared/entity/server-response.entity';
 import {StockItem} from '@inventory/entity/inventory.entity';
@@ -11,10 +11,10 @@ import {StockItem} from '@inventory/entity/inventory.entity';
 export class InventoryFacade {
   private readonly inventoryInfra = inject(InventoryInfra);
   private readonly nzMessageService = inject(NzMessageService);
-  private readonly availableProductsSubject = new Subject<StockItem[]>();
+  private readonly availableProductsSubject = new BehaviorSubject<StockItem[] | null>(null);
 
   get availableProducts$() {
-    return this.availableProductsSubject.asObservable();
+    return this.availableProductsSubject.asObservable().pipe(filter(Boolean));
   }
 
   async fetchAvailableProducts() {

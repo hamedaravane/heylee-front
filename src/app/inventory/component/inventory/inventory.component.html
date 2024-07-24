@@ -6,10 +6,8 @@
           <div
             class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
             @if (stockItem.product.image) {
-              <img [ngSrc]="stockItem.product.image"
+              <img [src]="stockItem.product.image"
                    class="w-12 h-full object-cover"
-                   width="60"
-                   height="60"
                    alt="product image"/>
             } @else {
               <i class="fa-solid fa-image fa-xl text-gray-400"></i>

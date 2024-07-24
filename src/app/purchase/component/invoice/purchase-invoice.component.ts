@@ -18,6 +18,7 @@ import {colorLabels, sizeLabels} from '@labels';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
+import {InventoryApi} from '@inventory/api/inventory.api';
 
 @Component({
   selector: 'purchase-invoice',
@@ -47,7 +48,9 @@ export class PurchaseInvoiceComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly supplierApi = inject(SupplierApi);
+  private readonly inventoryApi = inject(InventoryApi);
   suppliers$ = this.supplierApi.suppliers$;
+  availableProducts$ = this.inventoryApi.availableProducts$;
   sizeLabels = sizeLabels;
   colorLabels = colorLabels;
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
