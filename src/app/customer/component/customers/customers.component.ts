@@ -10,7 +10,7 @@ import {NzButtonModule} from 'ng-zorro-antd/button';
 import {RouterLink} from '@angular/router';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CustomerFacade} from '../../data-access/customer.facade';
-import {CreateCustomer} from '../../entity/customer.entity';
+import {CreateCustomer, Customer} from '../../entity/customer.entity';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
@@ -61,8 +61,17 @@ export class CustomersComponent implements OnInit {
     this.customerFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((loading) => this.loadingState = loading)
   }
 
-  selectCustomerToEdit(id: number) {
-    this.selectedCustomerId = id;
+  selectCustomerToEdit(customer: Customer) {
+    this.selectedCustomerId = customer.id;
+    this.createCustomerForm.setValue({
+      name: customer.name,
+      phone: customer.phone,
+      address: customer.address,
+      postalCode: customer.postalCode,
+      city: customer.city,
+      instagram: customer.instagram,
+      telegram: customer.telegram
+    });
     this.isEditCustomerVisible = true;
   }
 
