@@ -14,7 +14,7 @@ import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -43,7 +43,8 @@ export class SuppliersComponent implements OnInit {
   suppliersIndex$ = this.supplierFacade.suppliersIndex$;
   @ViewChild('supplier') supplierTempRef!: TemplateRef<void>;
   selectedSupplierId: number | null = null;
-  supplierFormDrawer = false;
+  createSupplierFormDrawer = false;
+  editSupplierFormDrawer = false;
   loadingState = false;
 
   supplierForm = new FormGroup({
@@ -67,7 +68,7 @@ export class SuppliersComponent implements OnInit {
 
   selectIdToEdit(id: number) {
     this.selectedSupplierId = id;
-    this.supplierFormDrawer = true;
+    this.editSupplierFormDrawer = true;
   }
 
   editSupplier() {
@@ -77,6 +78,7 @@ export class SuppliersComponent implements OnInit {
         this.closeSupplierFormDrawer();
       });
     }
+    this.supplierForm.reset();
   }
 
   createSupplier() {
@@ -84,6 +86,7 @@ export class SuppliersComponent implements OnInit {
     this.supplierFacade.createSupplier(newSupplier).then(() => {
       this.closeSupplierFormDrawer();
     });
+    this.supplierForm.reset();
   }
 
   deleteSupplier(id: number) {
@@ -93,6 +96,7 @@ export class SuppliersComponent implements OnInit {
   }
 
   closeSupplierFormDrawer() {
-    this.supplierFormDrawer = false;
+    this.createSupplierFormDrawer = false;
+    this.editSupplierFormDrawer = false;
   }
 }
