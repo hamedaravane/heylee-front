@@ -77,7 +77,9 @@ export class SaleInvoiceComponent implements OnInit {
   ngOnInit() {
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => this.availableProducts = items)
     this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
-    this.saleFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => this.loadingState = value)
+    this.saleFacade.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.loadingState = value)
 
     this.cityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((city) => {
       this.postFee.set(city === 'مشهد' ? 0 : this.constantPostFee);
@@ -112,8 +114,8 @@ export class SaleInvoiceComponent implements OnInit {
               instagram: customer.instagram,
               telegram: customer.telegram,
               discount: this.discountControl.value,
-              description: this.saleInvoiceForm.get('description')?.value || '',
-              refNumber: this.saleInvoiceForm.get('refNumber')?.value || '',
+              description: this.descriptionControl.value,
+              refNumber: this.refNumberControl.value,
               items: this.itemsControl.value
             })
             this.disableCustomerControls();
@@ -131,6 +133,19 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   createNewCustomer() {
+    const customer = {
+      name: this.nameControl.value as string,
+      phone: this.phoneControl.value as string,
+      address: this.addressControl.value as string,
+      city: this.cityControl.value as string,
+      postalCode: this.postalCodeControl.value,
+      instagram: this.instagramControl.value,
+      telegram: this.telegramControl.value,
+    };
+    this.customerApi.createCustomer(customer).then((customer) => {
+      this.customerId = customer.id;
+      this.generateCreateInvoiceForm();
+    });
   }
 
   async submitOrderForm() {
@@ -142,13 +157,13 @@ export class SaleInvoiceComponent implements OnInit {
     if (this.customerId) {
       return {
         customerId: this.customerId,
-        city: this.saleInvoiceForm.get('city')?.value as string,
-        address: this.saleInvoiceForm.get('address')?.value as string,
-        description: this.saleInvoiceForm.get('description')?.value as string,
+        city: this.cityControl.value || '',
+        address: this.addressControl.value || '',
+        description: this.descriptionControl.value || '',
         paymentStatus: 'paid',
         shippingPrice: this.postFee(),
         shippingStatus: 'ready-to-ship',
-        discount: this.discountControl.value as number,
+        discount: this.discountControl.value || 0,
         items: this.itemsControl.value?.map((value) => {
           return {
             productId: value.product.id,

@@ -67,7 +67,7 @@
                 <span class="line-clamp-1 font-mono">{{ product.size.label }}</span>
                 <span class="line-clamp-1">
                   <span class="font-mono">{{ product.sellingUnitPrice | number }}</span>
-                  <span class="mx-1 opacity-50" style="font-size: 0.6rem">ریال</span>
+                  <currency-wrapper></currency-wrapper>
                 </span>
                 <span class="line-clamp-1 font-mono">{{ product.availableQuantity }}</span>
               </div>
@@ -229,7 +229,7 @@
             <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
             <span class="line-clamp-1">
                   <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
-                  <span class="mx-1 opacity-50" style="font-size: 0.6rem">ریال</span>
+                  <currency-wrapper></currency-wrapper>
                 </span>
             <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
           </div>
