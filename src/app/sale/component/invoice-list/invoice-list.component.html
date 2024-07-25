@@ -1,50 +1,90 @@
-<div class="rounded-sm overflow-clip border border-solid border-gray-600 p-4">
-  @if (invoiceData$ | async; as invoiceData) {
-    <ul>
-      @for (invoice of invoiceData; track $index) {
-        <li [routerLink]="invoice.id.toString()" class="grid grid-cols-12 gap-y-1 mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-2">
-          <span class="col-span-3">شماره فاکتور</span>
-          <span class="col-span-3">{{ invoice.id }}</span>
-          <span class="col-span-6 text-end">{{ invoice.createdAt }}</span>
-          @if (invoice.customer) {
-            <span class="col-span-3">نام مشتری</span>
-            <span class="col-span-3">{{ invoice.customer.name }}</span>
-            <span class="col-span-3">شماره همراه</span>
-            <span class="col-span-3">{{ invoice.customer.phone }}</span>
+<page-container>
+  <ul>
+    @for (invoice of invoiceData; track $index) {
+      <card-container class="mb-2 last:mb-0">
+        <li class="grid grid-cols-2 gap-y-2 text-xs">
+          <div>
+            <span class="inline-block opacity-70">شماره فاکتور</span>
+            <span class="mx-2">{{ invoice.id }}</span>
+          </div>
+          <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
+          @for (item of invoice.salesItem; track $index) {
+            <card-container class="col-span-2 mb-2">
+              <div class="grid grid-cols-12 gap-4">
+                <div
+                  class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+                  @if (item.product.image) {
+                    <img [src]="item.product.image"
+                         class="w-12 h-full object-cover"
+                         alt="product image"/>
+                  } @else {
+                    <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+                  }
+                </div>
+                <div class="col-span-9">
+                  <div class="grid grid-cols-3 grid-rows-3 text-start w-full text-xs">
+                    <span class="col-span-3 line-clamp-1">{{ item.product.name }}</span>
+                    <span class="line-clamp-1 font-mono">{{ item.product.code }}</span>
+                    <span class="line-clamp-1">{{ item.color.label }}</span>
+                    <span class="line-clamp-1 font-mono">{{ item.size.label }}</span>
+                  </div>
+                </div>
+              </div>
+            </card-container>
           }
-          <span class="col-span-3">آدرس</span>
-          <span class="col-span-9">{{ invoice.address }}</span>
-          <span class="col-span-3">شهر</span>
-          <span class="col-span-3">{{ invoice.city }}</span>
-          <span class="col-span-3">کد پستی</span>
-          <span class="col-span-3">{{ invoice.postalCode ?? 'ندارد' }}</span>
-          <span class="col-span-4">وضعیت پرداختی</span>
-          <div class="col-span-8">
-            <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.paymentStatus.color">{{ invoice.paymentStatus.persianLabel }}</span>
+          @if (invoice.customer) {
+            <div *ngIf="{show: false} as modal" (click)="modal.show = true">
+              <i class="fa-solid fa-user"></i>
+              <span class="mx-2">{{ invoice.customer.name }}</span>
+              <nz-modal [nzVisible]="modal.show"
+                        [nzTitle]="invoice.customer.name"
+                        (nzOnCancel)="modal.show = false"
+                        [nzFooter]="null">
+                <ng-container *nzModalContent>
+                  <div class="mb-2">
+                    <i class="fa-solid fa-phone"></i>
+                    <a [href]="'tel:+98' + invoice.customer.phone" dir="ltr" class="mx-2">+98{{ invoice.customer.phone }}</a>
+                  </div>
+                  <div class="mb-2">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="mx-2">{{ invoice.customer.city }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <i class="fa-solid fa-address-card"></i>
+                    <span class="mx-2">{{ invoice.customer.address }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <i class="fa-solid fa-card-club"></i>
+                    <span class="mx-2">{{ invoice.customer.postalCode }}</span>
+                  </div>
+                  @if (invoice.customer.telegram) {
+                    <div class="mb-2">
+                      <i class="fa-brands fa-telegram"></i>
+                      <a [href]="'https://t.me/' + invoice.customer.telegram" dir="ltr" class="mx-2">{{ invoice.customer.telegram }}</a>
+                    </div>
+                  }
+                  @if (invoice.customer.instagram) {
+                    <div>
+                      <i class="fa-brands fa-instagram"></i>
+                      <a [href]="'https://instagram.com/' + invoice.customer.instagram" dir="ltr" class="mx-2">{{ invoice.customer.instagram }}</a>
+                    </div>
+                  }
+                </ng-container>
+              </nz-modal>
+            </div>
+          }
+          <div class="col-span-2">
+            <span class="opacity-70">پرداختی</span>
+            <span class="ms-2">{{ invoice.paidPrice | number }}</span>
+            <currency-wrapper></currency-wrapper>
           </div>
-          <span class="col-span-4">وضعیت ارسال</span>
-          <div class="col-span-8">
-            <span class="px-2 leading-tight rounded-full text-center text-gray-50" [style.background-color]="invoice.shippingStatus.color">{{ invoice.shippingStatus.persianLabel }}</span>
-          </div>
-          <span class="col-span-6">مجموع قیمت سفارشات</span>
-          <span class="col-span-6">{{ invoice.totalPrice | number }}</span>
-          <span class="col-span-3">هزینه ارسال</span>
-          <span class="col-span-3">{{ invoice.shippingPrice | number }}</span>
-          <span class="col-span-3">تخفیف</span>
-          <span class="col-span-3">{{ invoice.discount | number }}</span>
-          <span class="col-span-3">پرداختی</span>
-          <span dir="ltr" class="col-span-3">{{ invoice.paidPrice | number }}</span>
         </li>
-      } @empty {
-        <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
-      }
-    </ul>
-<!--    <nz-pagination [nzPageIndex]="invoiceData._meta.currentPage"-->
-<!--                   nzHideOnSinglePage-->
-<!--                   [nzPageSize]="invoiceData._meta.perPage"-->
-<!--                   [nzPageSizeOptions]="[5, 10, 20, 50]"-->
-<!--                   [nzTotal]="invoiceData._meta.totalCount"></nz-pagination>-->
-  } @else {
+      </card-container>
+    } @empty {
+      <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
+    }
+  </ul>
+  @if (loadingState) {
     <ul>
       @for (_ of [].constructor(5); track $index) {
         <li class="mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
@@ -53,4 +93,14 @@
       }
     </ul>
   }
-</div>
+</page-container>
+
+<nz-drawer nzPlacement="bottom" [nzFooter]="footer" nzSize="large" [nzClosable]="false">
+
+</nz-drawer>
+<ng-template #footer>
+  <button nz-button nzType="primary">
+    <i class="fa-solid fa-check"></i>
+    <span>تایید</span>
+  </button>
+</ng-template>

@@ -4,6 +4,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
 import {CreateUpdateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
 import {InventoryApi} from "@inventory/api/inventory.api";
+import {ServerResponseError} from "@shared/entity/server-response.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -28,10 +29,15 @@ export class SaleFacade {
     try {
       const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices());
       this.invoicesSubject.next(response);
-    } catch (e) {
-      const err = e as Error;
-      console.error(err);
-      this.nzMessageService.error(err.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -43,10 +49,15 @@ export class SaleFacade {
       await firstValueFrom(this.saleInfra.createSaleInvoice(data));
       this.nzMessageService.success('سفارش فاکتور ثبت شد.');
       this.inventoryApi.fetchAvailableProducts();
-    } catch (e) {
-      const err = e as Error;
-      console.error(err);
-      this.nzMessageService.error(err.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -58,10 +69,15 @@ export class SaleFacade {
       await firstValueFrom(this.saleInfra.updateSaleInvoice(id, data));
       this.nzMessageService.success('سفارش فاکتور ویرایش شد.');
       this.inventoryApi.fetchAvailableProducts();
-    } catch (e) {
-      const err = e as Error;
-      console.error(err);
-      this.nzMessageService.error(err.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
