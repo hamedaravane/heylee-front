@@ -50,7 +50,7 @@
         <card-container>
           <div class="grid grid-cols-12 gap-4">
             <div
-                class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+              class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
               @if (product.product.image) {
                 <img [src]="product.product.image"
                      class="w-12 h-full object-cover"
@@ -122,12 +122,12 @@
       <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            required
-            name="address"
-            id="address"
-            formControlName="address"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+          nz-input
+          required
+          name="address"
+          id="address"
+          formControlName="address"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -166,12 +166,12 @@
       <nz-form-label nzRequired nzFor="description">توضیحات</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            required
-            name="description"
-            id="description"
-            formControlName="description"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
+          nz-input
+          required
+          name="description"
+          id="description"
+          formControlName="description"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -210,7 +210,7 @@
     <card-container class="mb-2 last:mb-0">
       <div class="grid grid-cols-12 gap-4">
         <div
-            class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+          class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
           @if (selectedProduct.product.image) {
             <img [ngSrc]="selectedProduct.product.image"
                  class="w-12 h-full object-cover"
@@ -227,10 +227,10 @@
             <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
             <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
             <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
-            <span class="line-clamp-1">
-                  <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
-                  <currency-wrapper></currency-wrapper>
-                </span>
+            <div class="line-clamp-1 col-span-1">
+              <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
             <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
           </div>
         </div>
