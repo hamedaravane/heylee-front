@@ -92,7 +92,7 @@
       <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="+98">
-          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="شماره موبایل بدون صفر" formControlName="phone">
+          <nz-select nzShowSearch nzMode="default" nzAllowClear nzPlaceHolder="شماره موبایل بدون صفر" formControlName="phone">
             @for (customer of customers; track customer.id) {
               <nz-option id="phone"
                          type="tel"
