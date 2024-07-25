@@ -20,7 +20,7 @@ import {CustomerApi} from "@customer/api/customer.api";
 import {InventoryApi} from "@inventory/api/inventory.api";
 import {CreateUpdateInvoice} from "@sale/entity/invoice.entity";
 import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
-import {filter} from "rxjs";
+import {distinctUntilChanged, filter} from "rxjs";
 
 @Component({
   selector: 'sale-invoice',
@@ -98,7 +98,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   trackPhone() {
-    this.phoneControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
+    this.phoneControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
       .subscribe((phoneValue) => {
         const customer = this.customers?.find(c => c.phone === phoneValue);
           if (customer) {
