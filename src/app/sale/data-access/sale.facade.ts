@@ -1,53 +1,69 @@
 import {inject, Injectable} from '@angular/core';
 import {SaleInfra} from '@sale/infrastructure/sale.infra';
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {firstValueFrom, Subject} from 'rxjs';
-import {CreateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
-import {InventoryApi} from '@inventory/api/inventory.api';
+import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
+import {CreateUpdateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
+import {InventoryApi} from "@inventory/api/inventory.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleFacade {
-  private readonly saleInfra = inject(SaleInfra);
-  private readonly inventoryApi = inject(InventoryApi);
   private readonly nzMessageService = inject(NzMessageService);
-  private readonly invoiceSubject = new Subject<SaleInvoice[]>();
-  private readonly createInvoiceLoadingSubject = new Subject<boolean>();
+  private readonly inventoryApi = inject(InventoryApi);
+  private readonly saleInfra = inject(SaleInfra);
+  private readonly invoicesSubject = new Subject<SaleInvoice[]>();
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
 
-  get createInvoiceLoading$() {
-    return this.createInvoiceLoadingSubject.asObservable();
+  get loading$() {
+    return this.loadingSubject.asObservable();
   }
 
-  get availableProducts$() {
-    return this.inventoryApi.availableProducts$;
+  get invoices$(): Observable<SaleInvoice[]> {
+    return this.invoicesSubject.asObservable();
   }
 
-  get invoice$() {
-    return this.invoiceSubject.asObservable();
-  }
-
-  async fetchInvoices() {
+  async loadInvoices() {
+    this.loadingSubject.next(true);
     try {
-      const response = await firstValueFrom(this.saleInfra.getSaleInvoices());
-      this.invoiceSubject.next(response);
-    } catch (e) {
-      const err = e as Error;
-      console.error(err);
-      this.nzMessageService.error(err.message);
-    }
-  }
-
-  async createSaleInvoice(data: CreateInvoice) {
-    try {
-      await firstValueFrom(this.saleInfra.createSaleInvoice(data));
-      this.createInvoiceLoadingSubject.next(true);
+      const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices());
+      this.invoicesSubject.next(response);
     } catch (e) {
       const err = e as Error;
       console.error(err);
       this.nzMessageService.error(err.message);
     } finally {
-      this.createInvoiceLoadingSubject.next(false);
+      this.loadingSubject.next(false);
+    }
+  }
+
+  async createSaleInvoice(data: CreateUpdateInvoice) {
+    this.loadingSubject.next(true);
+    try {
+      await firstValueFrom(this.saleInfra.createSaleInvoice(data));
+      this.nzMessageService.success('سفارش فاکتور ثبت شد.');
+      this.inventoryApi.fetchAvailableProducts();
+    } catch (e) {
+      const err = e as Error;
+      console.error(err);
+      this.nzMessageService.error(err.message);
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
+
+  async updateSaleInvoice(id: number, data: CreateUpdateInvoice) {
+    this.loadingSubject.next(true);
+    try {
+      await firstValueFrom(this.saleInfra.updateSaleInvoice(id, data));
+      this.nzMessageService.success('سفارش فاکتور ویرایش شد.');
+      this.inventoryApi.fetchAvailableProducts();
+    } catch (e) {
+      const err = e as Error;
+      console.error(err);
+      this.nzMessageService.error(err.message);
+    } finally {
+      this.loadingSubject.next(false);
     }
   }
 }

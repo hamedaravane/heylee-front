@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {CustomerInfra} from '../infrastructure/customer.infra';
 import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
-import {IndexResponse, ServerError} from '@shared/entity/server-response.entity';
+import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
 import {CreateCustomer, CreateCustomerDto, Customer} from '../entity/customer.entity';
 import {toSnakeCase} from '@shared/entity/utility.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
@@ -34,9 +34,14 @@ export class CustomerFacade {
       const response = await firstValueFrom(this.customerInfra.fetchCustomers());
       this.customersIndexSubject.next(response);
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in CustomerFacade loadCustomers:', error.error.result);
-      this.nzMessageService.error(error.error.result.message)
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -51,9 +56,14 @@ export class CustomerFacade {
       await this.loadCustomers();
       this.nzMessageService.success('مشتری جدید اضافه شد.');
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in CustomerFacade createCustomer:', error.error.result);
-      this.nzMessageService.error(error.error.result.message)
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -68,9 +78,14 @@ export class CustomerFacade {
       await this.loadCustomers();
       this.nzMessageService.success('مشتری ویرایش شد');
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in CustomerFacade editCustomer:', error.error.result);
-      this.nzMessageService.error(error.error.result.message)
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -83,9 +98,14 @@ export class CustomerFacade {
       await this.loadCustomers();
       this.nzMessageService.success('مشتری حذف شد.');
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in CustomerFacade deleteCustomer:', error.error.result);
-      this.nzMessageService.error(error.error.result.message)
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }

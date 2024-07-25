@@ -17,9 +17,9 @@ import {RouterLink} from '@angular/router';
 })
 export class InvoiceListComponent implements OnInit {
   private readonly saleFacade = inject(SaleFacade);
-  invoiceData$ = this.saleFacade.invoice$;
+  invoiceData$ = this.saleFacade.invoices$;
 
   ngOnInit() {
-    this.saleFacade.fetchInvoices().then();
+    this.saleFacade.loadInvoices().then();
   }
 }

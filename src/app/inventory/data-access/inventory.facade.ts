@@ -2,8 +2,8 @@ import {inject, Injectable} from '@angular/core';
 import {InventoryInfra} from '@inventory/infrastructure/inventory.infra';
 import {BehaviorSubject, filter, firstValueFrom} from 'rxjs';
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {ServerError} from '@shared/entity/server-response.entity';
 import {StockItem} from '@inventory/entity/inventory.entity';
+import {ServerResponseError} from "@shared/entity/server-response.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +21,15 @@ export class InventoryFacade {
     try {
       const response = await firstValueFrom(this.inventoryInfra.fetchAvailableProducts());
       this.availableProductsSubject.next(response);
-    } catch (e) {
-      const error = e as ServerError;
-      console.error(error.error.result);
-      this.nzMessageService.error(error.error.result.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {NzButtonModule} from 'ng-zorro-antd/button';
-import {AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzFormModule} from 'ng-zorro-antd/form';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -9,30 +9,32 @@ import {SaleFacade} from '../../data-access/sale.facade';
 import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
-import {firstValueFrom} from 'rxjs';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {StockItem} from '@inventory/entity/inventory.entity';
-import {CreateInvoice} from '@sale/entity/invoice.entity';
-import {CustomerFacade} from '@customer/data-access/customer.facade';
 import {NzSelectModule} from 'ng-zorro-antd/select';
-import {CreateCustomer, Customer} from '@customer/entity/customer.entity';
+import {Customer} from '@customer/entity/customer.entity';
+import {CustomerApi} from "@customer/api/customer.api";
+import {InventoryApi} from "@inventory/api/inventory.api";
+import {CreateUpdateInvoice} from "@sale/entity/invoice.entity";
+import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
+import {filter} from "rxjs";
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, NzSelectModule, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent],
+  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, NzSelectModule, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
 export class SaleInvoiceComponent implements OnInit {
-  private readonly saleFacade = inject(SaleFacade);
-  private readonly customerFacade = inject(CustomerFacade);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly availableProducts$ = this.saleFacade.availableProducts$;
-  private readonly constantPostFee = 380_000;
-  createInvoiceLoading$ = this.saleFacade.createInvoiceLoading$;
+  private readonly saleFacade = inject(SaleFacade);
+  private readonly customerApi = inject(CustomerApi);
+  private readonly inventoryApi = inject(InventoryApi);
+  private readonly constantPostFee = 450_000;
+  loadingState = false;
   customers: Customer[] | null = null;
   customerId: number | null = null;
   searchText = '';
@@ -58,38 +60,34 @@ export class SaleInvoiceComponent implements OnInit {
     items: new FormControl<StockItem[]>([], Validators.minLength(1))
   });
 
-  private readonly itemsControl = this.saleInvoiceForm.get('items') as AbstractControl<StockItem[]>;
-  private readonly discountControl = this.saleInvoiceForm.get('discount') as AbstractControl<number>;
-  private readonly cityControl = this.saleInvoiceForm.get('city') as AbstractControl<string>;
+  private nameControl = this.saleInvoiceForm.controls.name;
+  private phoneControl = this.saleInvoiceForm.controls.phone;
+  private cityControl = this.saleInvoiceForm.controls.city;
+  private addressControl = this.saleInvoiceForm.controls.address;
+  private postalCodeControl = this.saleInvoiceForm.controls.postalCode;
+  private instagramControl = this.saleInvoiceForm.controls.instagram;
+  private telegramControl = this.saleInvoiceForm.controls.telegram;
 
-  private readonly nameControl = this.saleInvoiceForm.get('name') as AbstractControl<string>;
-  private readonly addressControl = this.saleInvoiceForm.get('address') as AbstractControl<string>;
-  private readonly postalCodeControl = this.saleInvoiceForm.get('postalCode') as AbstractControl<string>;
-  private readonly instagramControl = this.saleInvoiceForm.get('instagram') as AbstractControl<string>;
-  private readonly telegramControl = this.saleInvoiceForm.get('telegram') as AbstractControl<string>;
+  private descriptionControl = this.saleInvoiceForm.controls.description;
+  private refNumberControl = this.saleInvoiceForm.controls.refNumber;
+
+  private itemsControl = this.saleInvoiceForm.controls.items;
+  private discountControl = this.saleInvoiceForm.controls.discount;
 
   ngOnInit() {
-    this.customerFacade.loadCustomers().then();
-
-    this.customerFacade.customersIndex$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((index) => {
-        this.customers = index.items;
-      });
-
-    firstValueFrom(this.availableProducts$).then(products => {
-      this.availableProducts = products;
-    });
+    this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => this.availableProducts = items)
+    this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
+    this.saleFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => this.loadingState = value)
 
     this.cityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((city) => {
       this.postFee.set(city === 'مشهد' ? 0 : this.constantPostFee);
       this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
     });
-    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((discount) => {
+    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
       this.discount.set(discount);
       this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
     });
-    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
+    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
       this.totalOrderQuantity.set(items.reduce((acc, curr) => acc + curr.availableQuantity, 0));
       this.totalOrderPrice.set(items.reduce((acc, curr) => acc + curr.sellingUnitPrice * curr.availableQuantity, 0));
       this.postFee.set(this.totalOrderPrice() > 7_000_000 ? 0 : this.postFee());
@@ -97,6 +95,72 @@ export class SaleInvoiceComponent implements OnInit {
     });
 
     this.trackPhone();
+  }
+
+  trackPhone() {
+    this.phoneControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe((phoneValue) => {
+        const customer = this.customers?.find(c => c.phone === phoneValue);
+          if (customer) {
+            this.customerId = customer.id;
+            this.saleInvoiceForm.setValue({
+              name: customer.name,
+              phone: customer.phone,
+              address: customer.address,
+              postalCode: customer.postalCode,
+              city: customer.city,
+              instagram: customer.instagram,
+              telegram: customer.telegram,
+              discount: this.discountControl.value,
+              description: this.saleInvoiceForm.get('description')?.value || '',
+              refNumber: this.saleInvoiceForm.get('refNumber')?.value || '',
+              items: this.itemsControl.value
+            })
+            this.disableCustomerControls();
+          }
+      })
+  }
+
+  disableCustomerControls() {
+    this.nameControl.disable();
+    this.cityControl.disable();
+    this.addressControl.disable();
+    this.postalCodeControl.disable();
+    this.instagramControl.disable();
+    this.telegramControl.disable();
+  }
+
+  createNewCustomer() {
+  }
+
+  async submitOrderForm() {
+    const form = this.generateCreateInvoiceForm();
+    await this.saleFacade.createSaleInvoice(form);
+  }
+
+  private generateCreateInvoiceForm(): CreateUpdateInvoice {
+    if (this.customerId) {
+      return {
+        customerId: this.customerId,
+        city: this.saleInvoiceForm.get('city')?.value as string,
+        address: this.saleInvoiceForm.get('address')?.value as string,
+        description: this.saleInvoiceForm.get('description')?.value as string,
+        paymentStatus: 'paid',
+        shippingPrice: this.postFee(),
+        shippingStatus: 'ready-to-ship',
+        discount: this.discountControl.value as number,
+        items: this.itemsControl.value?.map((value) => {
+          return {
+            productId: value.product.id,
+            colorId: value.color.id,
+            sizeId: value.size.id,
+            quantity: this.selectedProducts.find((p) => p.product.id === value.product.id)?.availableQuantity || 0
+          }
+        }) ?? []
+      }
+    } else {
+      throw new Error('customerId is null');
+    }
   }
 
   moveProductToOrder(product: StockItem) {
@@ -135,74 +199,5 @@ export class SaleInvoiceComponent implements OnInit {
       }
     }
     this.itemsControl?.setValue(this.selectedProducts);
-  }
-
-  trackPhone() {
-    this.saleInvoiceForm.get('phone')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((phone) => {
-        if (phone) {
-          const customer = this.customers?.find(c => c.phone === phone);
-          if (customer) {
-            this.customerId = customer.id;
-            this.nameControl?.setValue(customer.name);
-            this.nameControl?.disable();
-            this.cityControl?.setValue(customer.city);
-            this.cityControl?.disable();
-            this.addressControl?.setValue(customer.address);
-            this.addressControl?.disable();
-            this.postalCodeControl?.setValue(customer.postalCode ?? '');
-            this.postalCodeControl?.disable();
-            this.instagramControl?.setValue(customer.instagram ?? '');
-            this.instagramControl?.disable();
-            this.telegramControl?.setValue(customer.telegram ?? '');
-            this.telegramControl?.disable();
-          }
-        }
-      });
-  }
-
-  createNewCustomer(rawValue: any) {
-    const customer: CreateCustomer = {
-      name: rawValue.name as string,
-      phone: rawValue.phone as string,
-      city: rawValue.city as string,
-      address: rawValue.address as string,
-      instagram: rawValue.instagram,
-      telegram: rawValue.telegram,
-      postalCode: rawValue.postalCode
-    };
-    this.customerFacade.createCustomer(customer).then();
-  }
-
-  submitOrderForm() {
-    if (this.saleInvoiceForm.valid) {
-      const rawValue = this.saleInvoiceForm.getRawValue();
-      if (this.customerId) {
-        const form: CreateInvoice = {
-          customerId: this.customerId,
-          city: rawValue.city as string,
-          address: rawValue.address as string,
-          description: rawValue.description as string,
-          paymentStatus: 'paid',
-          shippingPrice: this.postFee(),
-          shippingStatus: 'ready-to-ship',
-          discount: this.discount(),
-          items: rawValue.items ? rawValue.items.map(item => {
-            return {
-              productId: item.product.id,
-              colorId: item.color.id,
-              sizeId: item.size.id,
-              quantity: this.selectedProducts.find(p => p.product.id === item.product.id)?.availableQuantity ?? 0
-            };
-          }) : []
-        };
-        this.saleFacade.createSaleInvoice(form).then(() => {
-          location.reload();
-        });
-      } else {
-        this.createNewCustomer(rawValue);
-      }
-    }
   }
 }

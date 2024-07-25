@@ -5,22 +5,32 @@ export interface ServerResponse<T> {
   result: T;
 }
 
-export interface ServerError extends Error {
-  error: {
-    ok: boolean;
-    result: any;
-  }
+interface ErrorResult {
+  name: string,
+  message: string,
+  code: number,
+  status: number
 }
 
-export class ErrorServerResponse {
-  response = {};
-  status: number = 400;
-  name: string = '';
-  constructor(error: unknown) {
-    const err = error as HttpErrorResponse;
-    this.response = err.error.result;
-    this.status = err.status;
-    this.name = err.error.result.name;
+interface ValidationErrorResult {
+  field: string,
+  message: string
+}
+
+export class ServerResponseError {
+  res!: ErrorResult;
+  validationErrors!: ValidationErrorResult[];
+  status: number;
+
+  constructor(errorResponse: unknown) {
+    const res = errorResponse as HttpErrorResponse;
+    if (res.status !== 422) {
+      this.res = res.error.result as ErrorResult;
+      this.status = this.res.status;
+    } else {
+      this.validationErrors = res.error.result as ValidationErrorResult[];
+      this.status = res.status;
+    }
   }
 }
 

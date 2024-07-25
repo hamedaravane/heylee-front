@@ -8,21 +8,21 @@
       <span class="text-xs">قیمت سفارشات:</span>
       <div class="mx-2 inline-block">
         <span class="font-mono">{{ totalOrderPrice() | number }}</span>
-        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+        <currency-wrapper></currency-wrapper>
       </div>
     </div>
     <div class="col-span-2">
       <span class="text-xs">پست:</span>
       <div class="mx-2 inline-block">
         <span class="font-mono">{{ postFee() | number }}</span>
-        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+        <currency-wrapper></currency-wrapper>
       </div>
     </div>
     <div class="col-span-4">
       <span class="text-xs">تخفیف:</span>
       <div class="mx-2 inline-block">
         <span class="font-mono">{{ discount() | number }}</span>
-        <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+        <currency-wrapper></currency-wrapper>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
     <span>مقدار پرداختی نهایی</span>
     <div class="text-end">
       <strong class="text-end font-mono">{{ orderFee() | number }}</strong>
-      <span class="mx-1 opacity-50 align-middle" style="font-size: 0.6rem">ریال</span>
+      <currency-wrapper></currency-wrapper>
     </div>
   </div>
 </card-container>
@@ -52,10 +52,8 @@
             <div
                 class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
               @if (product.product.image) {
-                <img [ngSrc]="product.product.image"
+                <img [src]="product.product.image"
                      class="w-12 h-full object-cover"
-                     width="60"
-                     height="60"
                      alt="product image"/>
               } @else {
                 <i class="fa-solid fa-image fa-xl text-gray-400"></i>
@@ -75,7 +73,7 @@
               </div>
             </div>
             <div class="col-span-1 justify-self-end self-center">
-              <button class="leading-none" nz-button nzType="primary" nzSize="small"
+              <button [nzLoading]="loadingState" class="leading-none" nz-button nzType="primary" nzSize="small"
                       (click)="moveProductToOrder(product)">
                 <i class="fa-solid fa-plus fa-sm leading-tight"></i>
               </button>
@@ -197,7 +195,7 @@
         <ng-container *ngTemplateOutlet="selectedProductsTemplate"></ng-container>
       </nz-form-control>
     </nz-form-item>
-    <button [nzLoading]="createInvoiceLoading$ | async" [disabled]="saleInvoiceForm.invalid" nz-button
+    <button [nzLoading]="loadingState" [disabled]="saleInvoiceForm.invalid || loadingState" nz-button
             nzType="primary" nzBlock type="submit">ثبت فاکتور
     </button>
   </form>
@@ -237,7 +235,7 @@
           </div>
         </div>
         <div class="col-span-1 justify-self-end self-center">
-          <button class="leading-none" nz-button nzType="primary" nzDanger nzSize="small"
+          <button [nzLoading]="loadingState" class="leading-none" nz-button nzType="primary" nzDanger nzSize="small"
                   (click)="removeSelectedProduct(selectedProduct)">
             <i class="fa-solid fa-trash fa-sm leading-tight"></i>
           </button>

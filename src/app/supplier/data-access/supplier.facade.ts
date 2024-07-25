@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {SupplierInfra} from '../infrastructure/supplier.infra';
 import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
 import {CreateSupplierDto, Supplier} from '../entity/supplier.entity';
-import {IndexResponse, ServerError} from '@shared/entity/server-response.entity';
+import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
 
 @Injectable({
@@ -33,9 +33,14 @@ export class SupplierFacade {
       const response = await firstValueFrom(this.supplierInfra.fetchSuppliers());
       this.suppliersIndexSubject.next(response);
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in SupplierFacade loadSuppliers:', error.error.result);
-      this.nzMessageService.error(error.error.result.message);
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -49,9 +54,14 @@ export class SupplierFacade {
       this.nzMessageService.success('Supplier created successfully');
       await this.loadSuppliers();
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in SupplierFacade createSupplier:', error.error.result);
-      this.nzMessageService.error(error.error.result.message);
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -65,9 +75,14 @@ export class SupplierFacade {
       this.nzMessageService.success('Supplier edited successfully');
       await this.loadSuppliers();
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in SupplierFacade editSupplier:', error.error.result);
-      this.nzMessageService.error(error.error.result.message);
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -81,9 +96,14 @@ export class SupplierFacade {
       this.nzMessageService.success('Supplier deleted successfully');
       await this.loadSuppliers();
     } catch (err) {
-      const error = err as ServerError;
-      console.error('Error in SupplierFacade deleteSupplier:', error.error.result);
-      this.nzMessageService.error(error.error.result.message);
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }

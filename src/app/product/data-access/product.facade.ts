@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {ProductInfra} from '../infrastructure/product.infra';
 import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
 import {Product} from '../entity/product.entity';
-import {IndexResponse, ServerError} from '@shared/entity/server-response.entity';
+import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
 
 @Injectable({
@@ -32,10 +32,15 @@ export class ProductFacade {
     try {
       const response = await firstValueFrom(this.productInfra.fetchProducts());
       this.productsIndexSubject.next(response);
-    } catch (error) {
-      console.error('Error in ProductFacade loadProducts:', error);
-      const err = error as ServerError;
-      this.nzMessageService.error(err.error.result.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -48,10 +53,15 @@ export class ProductFacade {
       this.nzMessageService.success('محصول با موفقیت اضافه شد');
       this.productSubject.next(newProduct);
       await this.loadProducts();
-    } catch (error) {
-      console.error('Error in ProductFacade createProduct:', error);
-      const err = error as ServerError;
-      this.nzMessageService.error(err.error.result.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -64,10 +74,15 @@ export class ProductFacade {
       this.nzMessageService.success('محصول با موفقیت اصلاح شد');
       this.productSubject.next(response);
       await this.loadProducts();
-    } catch (error) {
-      console.error('Error in ProductFacade editProduct:', error);
-      const err = error as ServerError;
-      this.nzMessageService.error(err.error.result.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }
@@ -80,10 +95,15 @@ export class ProductFacade {
       this.productSubject.next(response);
       await this.loadProducts();
       this.nzMessageService.success('محصول با موفقیت حذف شد');
-    } catch (error) {
-      console.error('Error in ProductFacade deleteProduct:', error);
-      const err = error as ServerError;
-      this.nzMessageService.error(err.error.result.message);
+    } catch (err) {
+      const error = new ServerResponseError(err);
+      if (error.status !== 422) {
+        console.error(error.res);
+        this.nzMessageService.error(error.res.message);
+      } else {
+        console.error(error.validationErrors);
+        throw error.validationErrors;
+      }
     } finally {
       this.loadingSubject.next(false);
     }

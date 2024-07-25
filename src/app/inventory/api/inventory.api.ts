@@ -34,4 +34,8 @@ export class InventoryApi {
     }
     return this.inventoryFacade.availableProducts$;
   }
+
+  fetchAvailableProducts(): void {
+    this.inventoryFacade.fetchAvailableProducts().then();
+  }
 }
