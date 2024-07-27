@@ -15,16 +15,19 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {StockItem} from '@inventory/entity/inventory.entity';
 import {Customer} from '@customer/entity/customer.entity';
-import {CustomerApi} from "@customer/api/customer.api";
-import {InventoryApi} from "@inventory/api/inventory.api";
-import {CreateUpdateInvoice} from "@sale/entity/invoice.entity";
-import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
-import {distinctUntilChanged, filter} from "rxjs";
-import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
+import {CustomerApi} from '@customer/api/customer.api';
+import {InventoryApi} from '@inventory/api/inventory.api';
+import {CreateUpdateInvoice} from '@sale/entity/invoice.entity';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {distinctUntilChanged, filter} from 'rxjs';
+import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
+import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, NzAutocompleteModule, ReactiveFormsModule, NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
+  imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
+    NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
+    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
@@ -34,6 +37,9 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
   private readonly constantPostFee = 450_000;
+  loading$ = this.saleFacade.loading$;
+  paymentStatusOptions = ['paid', 'unpaid'];
+  shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship'];
   loadingState = false;
   customers: Customer[] | null = null;
   customerId: number | null = null;
@@ -47,39 +53,49 @@ export class SaleInvoiceComponent implements OnInit {
   discount = signal(0);
 
   saleInvoiceForm = new FormGroup({
-    name: new FormControl<string>('', Validators.required),
-    phone: new FormControl<string>('', Validators.required),
+    customerId: new FormControl<string>('', Validators.required),
+    customer: new FormGroup({
+      name: new FormControl<string>('', Validators.required),
+      phone: new FormControl<string>('', Validators.required),
+      postalCode: new FormControl<string | null>(null),
+      telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
+      instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
+      cityCustomer: new FormControl<string>('', Validators.required),
+      addressCustomer: new FormControl<string>('', Validators.required),
+    }),
     city: new FormControl<string>('', Validators.required),
-    postalCode: new FormControl<string | null>(null),
     address: new FormControl<string>('', Validators.required),
-    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
-    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
-    refNumber: new FormControl<string>('', Validators.required),
-    discount: new FormControl<number>(0, Validators.required),
     description: new FormControl<string>('', Validators.required),
-    items: new FormControl<StockItem[]>([], Validators.minLength(1))
+    paymentStatus: new FormControl<'paid' | 'unpaid'>({value: 'paid', disabled: true}, Validators.required),
+    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>({value:'ready-to-ship', disabled: true}, Validators.required),
+    shippingPrice: new FormControl<number>(0, Validators.required),
+    discount: new FormControl<number>(0, Validators.required),
+    refNumber: new FormControl<string>('', Validators.required),
+    items: new FormControl<StockItem[]>([], Validators.minLength(1)),
   });
 
-  private nameControl = this.saleInvoiceForm.controls.name;
-  private phoneControl = this.saleInvoiceForm.controls.phone;
+  private customerIdControl = this.saleInvoiceForm.controls.customerId;
+  private nameControl = this.saleInvoiceForm.controls.customer.controls.name;
+  private phoneControl = this.saleInvoiceForm.controls.customer.controls.phone;
+  private postalCodeControl = this.saleInvoiceForm.controls.customer.controls.postalCode;
+  private telegramControl = this.saleInvoiceForm.controls.customer.controls.telegram;
+  private instagramControl = this.saleInvoiceForm.controls.customer.controls.instagram;
+  private cityCustomerControl = this.saleInvoiceForm.controls.customer.controls.cityCustomer;
+  private addressCustomerControl = this.saleInvoiceForm.controls.customer.controls.addressCustomer;
+
   private cityControl = this.saleInvoiceForm.controls.city;
   private addressControl = this.saleInvoiceForm.controls.address;
-  private postalCodeControl = this.saleInvoiceForm.controls.postalCode;
-  private instagramControl = this.saleInvoiceForm.controls.instagram;
-  private telegramControl = this.saleInvoiceForm.controls.telegram;
-
   private descriptionControl = this.saleInvoiceForm.controls.description;
-  private refNumberControl = this.saleInvoiceForm.controls.refNumber;
-
-  private itemsControl = this.saleInvoiceForm.controls.items;
+  private paymentStatusControl = this.saleInvoiceForm.controls.paymentStatus;
+  private shippingStatusControl = this.saleInvoiceForm.controls.shippingStatus;
+  private shippingPriceControl = this.saleInvoiceForm.controls.shippingPrice;
   private discountControl = this.saleInvoiceForm.controls.discount;
+  private refNumberControl = this.saleInvoiceForm.controls.refNumber;
+  private itemsControl = this.saleInvoiceForm.controls.items;
 
   ngOnInit() {
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => this.availableProducts = items)
     this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
-    this.saleFacade.loading$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.loadingState = value)
 
     this.cityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((city) => {
       this.postFee.set(city === 'مشهد' ? 0 : this.constantPostFee);
@@ -105,18 +121,14 @@ export class SaleInvoiceComponent implements OnInit {
         const customer = this.customers?.find(c => c.phone === phoneValue);
           if (customer) {
             this.customerId = customer.id;
-            this.saleInvoiceForm.setValue({
+            this.saleInvoiceForm.controls.customer.setValue({
               name: customer.name,
               phone: customer.phone,
-              address: customer.address,
               postalCode: customer.postalCode,
-              city: customer.city,
-              instagram: customer.instagram,
               telegram: customer.telegram,
-              discount: this.discountControl.value,
-              description: this.descriptionControl.value,
-              refNumber: this.refNumberControl.value,
-              items: this.itemsControl.value
+              instagram: customer.instagram,
+              cityCustomer: customer.city,
+              addressCustomer: customer.address,
             })
             this.disableCustomerControls();
           }
