@@ -6,7 +6,7 @@ import {NzInputModule} from 'ng-zorro-antd/input';
 import {BidiModule} from '@angular/cdk/bidi';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {SaleFacade} from '../../data-access/sale.facade';
-import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {AsyncPipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
@@ -14,17 +14,17 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {StockItem} from '@inventory/entity/inventory.entity';
-import {NzSelectModule} from 'ng-zorro-antd/select';
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from "@customer/api/customer.api";
 import {InventoryApi} from "@inventory/api/inventory.api";
 import {CreateUpdateInvoice} from "@sale/entity/invoice.entity";
 import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
 import {distinctUntilChanged, filter} from "rxjs";
+import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, ReactiveFormsModule, NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, NzSelectModule, FormsModule, NgOptimizedImage, DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
+  imports: [NzButtonModule, NzAutocompleteModule, ReactiveFormsModule, NzCollapseModule, NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule, DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
@@ -144,13 +144,17 @@ export class SaleInvoiceComponent implements OnInit {
     };
     this.customerApi.createCustomer(customer).then((customer) => {
       this.customerId = customer.id;
-      this.generateCreateInvoiceForm();
+      this.submitOrderForm().then();
     });
   }
 
   async submitOrderForm() {
-    const form = this.generateCreateInvoiceForm();
-    await this.saleFacade.createSaleInvoice(form);
+    try {
+      const form = this.generateCreateInvoiceForm();
+      await this.saleFacade.createSaleInvoice(form);
+    } catch (e) {
+      this.createNewCustomer();
+    }
   }
 
   private generateCreateInvoiceForm(): CreateUpdateInvoice {

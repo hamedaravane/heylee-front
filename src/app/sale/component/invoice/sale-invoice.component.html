@@ -92,15 +92,20 @@
       <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="+98">
-          <nz-select nzShowSearch nzMode="default" nzAllowClear nzPlaceHolder="شماره موبایل بدون صفر" formControlName="phone">
+          <input nz-input
+                 required
+                 type="tel"
+                 inputmode="numeric"
+                 maxlength="10"
+                 formControlName="phone"
+                 id="phone"
+                 placeholder="بدون صفر"
+                 [nzAutocomplete]="phones"/>
+          <nz-autocomplete #phones>
             @for (customer of customers; track customer.id) {
-              <nz-option id="phone"
-                         type="tel"
-                         inputmode="numeric"
-                         [nzLabel]="customer.phone"
-                         [nzValue]="customer.phone"></nz-option>
+              <nz-auto-option dir="ltr" [nzLabel]="customer.phone" [nzValue]="customer.phone">{{customer.phone}}</nz-auto-option>
             }
-          </nz-select>
+          </nz-autocomplete>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -212,10 +217,8 @@
         <div
           class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
           @if (selectedProduct.product.image) {
-            <img [ngSrc]="selectedProduct.product.image"
+            <img [src]="selectedProduct.product.image"
                  class="w-12 h-full object-cover"
-                 width="60"
-                 height="60"
                  alt="product image"/>
           } @else {
             <i class="fa-solid fa-image fa-xl text-gray-400"></i>

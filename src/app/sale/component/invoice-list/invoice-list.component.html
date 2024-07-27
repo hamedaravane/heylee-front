@@ -122,6 +122,8 @@
                 </ng-container>
               </nz-modal>
             </div>
+            <button nz-button [nzLoading]="loadingState" (click)="editInvoiceItem(invoice)">ویرایش فاکتور</button>
+            <button disabled nz-button>ارسال فاکتور</button>
           </li>
         </card-container>
       } @empty {
