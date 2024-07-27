@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, DestroyRef, inject, Input, OnInit, signal} from '@angular/core';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -17,7 +17,7 @@ import {StockItem} from '@inventory/entity/inventory.entity';
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -32,116 +32,93 @@ import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
   templateUrl: './sale-invoice.component.html'
 })
 export class SaleInvoiceComponent implements OnInit {
+  @Input() updateInvoice: boolean = false;
   private readonly destroyRef = inject(DestroyRef);
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
-  private readonly constantPostFee = 450_000;
   loading$ = this.saleFacade.loading$;
   paymentStatusOptions = ['paid', 'unpaid'];
   shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship'];
-  loadingState = false;
   customers: Customer[] | null = null;
   customerId: number | null = null;
   searchText = '';
   availableProducts: StockItem[] = [];
-  selectedProducts: StockItem[] = [];
   totalOrderPrice = signal(0);
-  postFee = signal(0);
-  totalOrderQuantity = signal(0);
-  orderFee = signal(0);
+  totalItemsOrdered = signal(0);
+  customerPayment = signal(0);
+  shippingPrice = signal(450_000);
   discount = signal(0);
 
   saleInvoiceForm = new FormGroup({
-    customerId: new FormControl<string>('', Validators.required),
-    customer: new FormGroup({
-      name: new FormControl<string>('', Validators.required),
-      phone: new FormControl<string>('', Validators.required),
-      postalCode: new FormControl<string | null>(null),
-      telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
-      instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
-      cityCustomer: new FormControl<string>('', Validators.required),
-      addressCustomer: new FormControl<string>('', Validators.required),
-    }),
+    customerId: new FormControl<number | null>(null, Validators.required),
     city: new FormControl<string>('', Validators.required),
     address: new FormControl<string>('', Validators.required),
     description: new FormControl<string>('', Validators.required),
     paymentStatus: new FormControl<'paid' | 'unpaid'>({value: 'paid', disabled: true}, Validators.required),
-    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>({value:'ready-to-ship', disabled: true}, Validators.required),
-    shippingPrice: new FormControl<number>(0, Validators.required),
+    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>({
+      value: 'ready-to-ship',
+      disabled: true
+    }, Validators.required),
+    shippingPrice: new FormControl<number>(450_000, Validators.required),
     discount: new FormControl<number>(0, Validators.required),
     refNumber: new FormControl<string>('', Validators.required),
-    items: new FormControl<StockItem[]>([], Validators.minLength(1)),
+    items: new FormControl<InvoiceItem[]>([], Validators.minLength(1)),
   });
 
-  private customerIdControl = this.saleInvoiceForm.controls.customerId;
-  private nameControl = this.saleInvoiceForm.controls.customer.controls.name;
-  private phoneControl = this.saleInvoiceForm.controls.customer.controls.phone;
-  private postalCodeControl = this.saleInvoiceForm.controls.customer.controls.postalCode;
-  private telegramControl = this.saleInvoiceForm.controls.customer.controls.telegram;
-  private instagramControl = this.saleInvoiceForm.controls.customer.controls.instagram;
-  private cityCustomerControl = this.saleInvoiceForm.controls.customer.controls.cityCustomer;
-  private addressCustomerControl = this.saleInvoiceForm.controls.customer.controls.addressCustomer;
+  customerForm = new FormGroup({
+    name: new FormControl<string>('', Validators.required),
+    phone: new FormControl<string>('', Validators.required),
+    postalCode: new FormControl<string | null>(null),
+    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
+    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
+    cityCustomer: new FormControl<string>('', Validators.required),
+    addressCustomer: new FormControl<string>('', Validators.required),
+  });
 
+  private nameControl = this.customerForm.controls.name;
+  private phoneControl = this.customerForm.controls.phone;
+  private postalCodeControl = this.customerForm.controls.postalCode;
+  private telegramControl = this.customerForm.controls.telegram;
+  private instagramControl = this.customerForm.controls.instagram;
+  private cityCustomerControl = this.customerForm.controls.cityCustomer;
+  private addressCustomerControl = this.customerForm.controls.addressCustomer;
+
+  customerIdControl = this.saleInvoiceForm.controls.customerId;
   private cityControl = this.saleInvoiceForm.controls.city;
   private addressControl = this.saleInvoiceForm.controls.address;
   private descriptionControl = this.saleInvoiceForm.controls.description;
   private paymentStatusControl = this.saleInvoiceForm.controls.paymentStatus;
   private shippingStatusControl = this.saleInvoiceForm.controls.shippingStatus;
-  private shippingPriceControl = this.saleInvoiceForm.controls.shippingPrice;
-  private discountControl = this.saleInvoiceForm.controls.discount;
+  private shippingPriceControl = this.saleInvoiceForm.controls.shippingPrice as FormControl<number>;
+  private discountControl = this.saleInvoiceForm.controls.discount as FormControl<number>;
   private refNumberControl = this.saleInvoiceForm.controls.refNumber;
-  private itemsControl = this.saleInvoiceForm.controls.items;
+  private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
+
+  get selectedProducts() {
+    return this.itemsControl.value.map(item => {
+      return {
+        ...item,
+        detail: this.findProductById(item.productId)!
+      }
+    });
+  }
 
   ngOnInit() {
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => this.availableProducts = items)
     this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
-
-    this.cityControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((city) => {
-      this.postFee.set(city === 'مشهد' ? 0 : this.constantPostFee);
-      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
+    this.shippingPriceControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shippingPrice) => {
+      this.shippingPrice.set(shippingPrice);
     });
-    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
-      this.discount.set(discount);
-      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
-    });
-    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
-      this.totalOrderQuantity.set(items.reduce((acc, curr) => acc + curr.availableQuantity, 0));
-      this.totalOrderPrice.set(items.reduce((acc, curr) => acc + curr.sellingUnitPrice * curr.availableQuantity, 0));
-      this.postFee.set(this.totalOrderPrice() > 7_000_000 ? 0 : this.postFee());
-      this.orderFee.set(this.totalOrderPrice() + this.postFee() - this.discount());
-    });
-
     this.trackPhone();
+    this.trackItems();
+    this.trackDiscount();
   }
 
-  trackPhone() {
-    this.phoneControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
-      .subscribe((phoneValue) => {
-        const customer = this.customers?.find(c => c.phone === phoneValue);
-          if (customer) {
-            this.customerId = customer.id;
-            this.saleInvoiceForm.controls.customer.setValue({
-              name: customer.name,
-              phone: customer.phone,
-              postalCode: customer.postalCode,
-              telegram: customer.telegram,
-              instagram: customer.instagram,
-              cityCustomer: customer.city,
-              addressCustomer: customer.address,
-            })
-            this.disableCustomerControls();
-          }
-      })
-  }
-
-  disableCustomerControls() {
-    this.nameControl.disable();
-    this.cityControl.disable();
-    this.addressControl.disable();
-    this.postalCodeControl.disable();
-    this.instagramControl.disable();
-    this.telegramControl.disable();
+  submitOrderForm() {
+    if (this.saleInvoiceForm.valid) {
+      this.saleFacade.createSaleInvoice(this.saleInvoiceForm.value as CreateUpdateInvoice).then();
+    }
   }
 
   createNewCustomer() {
@@ -155,80 +132,70 @@ export class SaleInvoiceComponent implements OnInit {
       telegram: this.telegramControl.value,
     };
     this.customerApi.createCustomer(customer).then((customer) => {
-      this.customerId = customer.id;
-      this.submitOrderForm().then();
+      this.customerIdControl.setValue(customer.id);
+    }).then(() => this.submitOrderForm());
+  }
+
+  trackPhone() {
+    this.phoneControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe((phoneValue) => {
+        const customer = this.customers?.find(c => c.phone === phoneValue);
+        if (customer) {
+          this.saleInvoiceForm.controls.customerId.setValue(customer.id);
+          this.customerForm.setValue({
+            name: customer.name,
+            phone: customer.phone,
+            postalCode: customer.postalCode,
+            telegram: customer.telegram,
+            instagram: customer.instagram,
+            cityCustomer: customer.city,
+            addressCustomer: customer.address,
+          })
+          this.saleInvoiceForm.controls.city.setValue(customer.city);
+          this.saleInvoiceForm.controls.address.setValue(customer.address);
+          this.customerForm.disable();
+        }
+      })
+  }
+
+  trackItems() {
+    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
+      this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
+      this.totalOrderPrice.set(items.reduce((acc, curr) => {
+        const stockItem = this.findProductById(curr.productId);
+        if (stockItem) {
+          return acc + curr.quantity * stockItem.sellingUnitPrice
+        } else {
+          throw new Error('Product not found');
+        }
+      }, 0));
+      this.customerPayment.set(this.totalOrderPrice() + this.shippingPriceControl.value - this.discount());
     });
   }
 
-  async submitOrderForm() {
-    try {
-      const form = this.generateCreateInvoiceForm();
-      await this.saleFacade.createSaleInvoice(form);
-    } catch (e) {
-      this.createNewCustomer();
-    }
+  trackDiscount() {
+    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
+      this.discount.set(discount);
+      this.customerPayment.set(this.totalOrderPrice() + this.shippingPriceControl.value - this.discount());
+    });
   }
 
-  private generateCreateInvoiceForm(): CreateUpdateInvoice {
-    if (this.customerId) {
-      return {
-        customerId: this.customerId,
-        city: this.cityControl.value || '',
-        address: this.addressControl.value || '',
-        description: this.descriptionControl.value || '',
-        paymentStatus: 'paid',
-        shippingPrice: this.postFee(),
-        shippingStatus: 'ready-to-ship',
-        discount: this.discountControl.value || 0,
-        items: this.itemsControl.value?.map((value) => {
-          return {
-            productId: value.product.id,
-            colorId: value.color.id,
-            sizeId: value.size.id,
-            quantity: this.selectedProducts.find((p) => p.product.id === value.product.id)?.availableQuantity || 0
-          }
-        }) ?? []
-      }
-    } else {
-      throw new Error('customerId is null');
+  moveProductToOrder(stockItem: StockItem) {
+    const newItem: InvoiceItem = {
+      productId: stockItem.product.id,
+      quantity: 1,
+      sizeId: stockItem.size.id,
+      colorId: stockItem.color.id,
     }
+    const itemsControlSnapshot = this.itemsControl.value;
+    this.itemsControl.setValue([...itemsControlSnapshot, newItem])
   }
 
-  moveProductToOrder(product: StockItem) {
-    const existingProductInSelected = this.selectedProducts.find(p => p.product.id === product.product.id);
-    if (existingProductInSelected) {
-      existingProductInSelected.availableQuantity++;
-    } else {
-      this.selectedProducts.push({...product, availableQuantity: 1});
-    }
-    product.availableQuantity--;
-    if (product.availableQuantity === 0) {
-      const indexToRemove = this.availableProducts.indexOf(product);
-      if (indexToRemove > -1) {
-        this.availableProducts = [
-          ...this.availableProducts.slice(0, indexToRemove),
-          ...this.availableProducts.slice(indexToRemove + 1)
-        ];
-      }
-    }
-    this.itemsControl?.setValue(this.selectedProducts);
+  removeSelectedProduct(item: {detail: StockItem, productId: number, colorId: number, sizeId: number, quantity: number}) {
+    this.itemsControl.setValue(this.itemsControl.value.filter(i => i.productId === item.productId && i.colorId === item.colorId && i.sizeId === item.sizeId));
   }
 
-  removeSelectedProduct(product: StockItem) {
-    const selectedProduct = this.selectedProducts.find(p => p.product.id === product.product.id);
-    if (selectedProduct) {
-      selectedProduct.availableQuantity--;
-
-      if (selectedProduct.availableQuantity === 0) {
-        this.selectedProducts = this.selectedProducts.filter(p => p.product.id !== product.product.id);
-      }
-      const availableProduct = this.availableProducts.find(p => p.product.id === product.product.id);
-      if (availableProduct) {
-        availableProduct.availableQuantity++;
-      } else {
-        this.availableProducts.push({...product, availableQuantity: 1});
-      }
-    }
-    this.itemsControl?.setValue(this.selectedProducts);
+  private findProductById(id: number) {
+    return this.availableProducts.find(p => p.product.id === id);
   }
 }

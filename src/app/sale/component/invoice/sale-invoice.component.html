@@ -1,25 +1,21 @@
 @if ({ loading: loading$ | async }; as data) {
   <card-container class="backdrop-blur-xl mb-4 sticky top-0 z-50">
-    <div class="grid grid-cols-6 grid-rows-2 gap-x-2">
-      <div class="col-span-2">
-        <span class="text-xs">تعداد:</span>
-        <span class="font-mono mx-2">{{ totalOrderQuantity() }}</span>
-      </div>
-      <div class="col-span-4">
+    <div class="border-b border-solid border-gray-700">
+      <div class="flex justify-between mb-2">
         <span class="text-xs">قیمت سفارشات:</span>
         <div class="mx-2 inline-block">
           <span class="font-mono">{{ totalOrderPrice() | number }}</span>
           <currency-wrapper></currency-wrapper>
         </div>
       </div>
-      <div class="col-span-2">
+      <div class="flex justify-between mb-2">
         <span class="text-xs">پست:</span>
         <div class="mx-2 inline-block">
-          <span class="font-mono">{{ postFee() | number }}</span>
+          <span class="font-mono">{{ shippingPrice() | number }}</span>
           <currency-wrapper></currency-wrapper>
         </div>
       </div>
-      <div class="col-span-4">
+      <div class="flex justify-between mb-2">
         <span class="text-xs">تخفیف:</span>
         <div class="mx-2 inline-block">
           <span class="font-mono">{{ discount() | number }}</span>
@@ -27,11 +23,10 @@
         </div>
       </div>
     </div>
-    <nz-divider></nz-divider>
-    <div class="grid grid-cols-2">
+    <div class="flex justify-between mt-2">
       <span>مقدار پرداختی نهایی</span>
-      <div class="text-end">
-        <strong class="text-end font-mono">{{ orderFee() | number }}</strong>
+      <div>
+        <strong class="text-end font-mono">{{ customerPayment() | number }}</strong>
         <currency-wrapper></currency-wrapper>
       </div>
     </div>
@@ -90,100 +85,100 @@
   </page-container>
 
   <page-container>
-    <form nz-form (ngSubmit)="submitOrderForm()" [formGroup]="saleInvoiceForm">
-      <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="saleInvoiceForm.controls.customer">
-        <!-- customer phone -->
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
-          <nz-form-control dir="ltr">
-            <nz-input-group nzAddOnBefore="+98">
-              <input nz-input
-                     required
-                     type="tel"
-                     inputmode="numeric"
-                     maxlength="10"
-                     formControlName="phone"
-                     id="phone"
-                     placeholder="بدون صفر"
-                     [nzAutocomplete]="phones"/>
-              <nz-autocomplete #phones>
-                @for (customer of customers; track customer.id) {
-                  <nz-auto-option dir="ltr" [nzLabel]="customer.phone"
-                                  [nzValue]="customer.phone">{{ customer.phone }}
-                  </nz-auto-option>
-                }
-              </nz-autocomplete>
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- customer full name -->
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="name">نام کامل مشتری</nz-form-label>
-          <nz-form-control>
-            <input nz-input required name="name" type="text" id="name"
-                   formControlName="name"/>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- customer city -->
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="city">شهر</nz-form-label>
-          <nz-form-control>
-            <input nz-input required name="city" type="text" id="city"
-                   formControlName="city"/>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- customer address -->
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
-          <nz-form-control>
+    <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="customerForm">
+      <!-- customer phone -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
+        <nz-form-control dir="ltr">
+          <nz-input-group nzAddOnBefore="+98">
+            <input nz-input
+                   required
+                   type="tel"
+                   inputmode="numeric"
+                   maxlength="10"
+                   formControlName="phone"
+                   id="phone"
+                   placeholder="بدون صفر"
+                   [nzAutocomplete]="phones"/>
+            <nz-autocomplete #phones>
+              @for (customer of customers; track customer.id) {
+                <nz-auto-option dir="ltr" [nzLabel]="customer.phone"
+                                [nzValue]="customer.phone">{{ customer.phone }}
+                </nz-auto-option>
+              }
+            </nz-autocomplete>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- customer full name -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="name">نام کامل مشتری</nz-form-label>
+        <nz-form-control>
+          <input nz-input required name="name" type="text" id="name"
+                 formControlName="name"/>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- customer city -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="cityCustomer">شهر</nz-form-label>
+        <nz-form-control>
+          <input nz-input required name="cityCustomer" type="text" id="cityCustomer"
+                 formControlName="cityCustomer"/>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- customer address -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="addressCustomer">آدرس</nz-form-label>
+        <nz-form-control>
         <textarea
-            nz-input
-            required
-            name="address"
-            id="address"
-            formControlName="address"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+          nz-input
+          required
+          name="addressCustomer"
+          id="addressCustomer"
+          formControlName="addressCustomer"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- postal code -->
-        <nz-form-item>
-          <nz-form-label nzFor="postalCode">کد پستی</nz-form-label>
-          <nz-form-control>
-            <input nz-input required name="postalCode" type="text" inputmode="numeric" id="postalCode"
-                   formControlName="postalCode"/>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- instagram -->
-        <nz-form-item>
-          <nz-form-label nzFor="instagram">
-            <span>اینستاگرام</span>
-            <i class="fa-brands fa-instagram mx-2"></i>
-          </nz-form-label>
-          <nz-form-control dir="ltr">
-            <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
-              <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
-                     formControlName="instagram"/>
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-        <!-- telegram -->
-        <nz-form-item>
-          <nz-form-label nzFor="telegram">
-            <span>تلگرام</span>
-            <i class="fa-brands fa-telegram mx-2"></i>
-          </nz-form-label>
-          <nz-form-control dir="ltr">
-            <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
-              <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
-                     formControlName="telegram"/>
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- postal code -->
+      <nz-form-item>
+        <nz-form-label nzFor="postalCode">کد پستی</nz-form-label>
+        <nz-form-control>
+          <input nz-input required name="postalCode" type="text" inputmode="numeric" id="postalCode"
+                 formControlName="postalCode"/>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- instagram -->
+      <nz-form-item>
+        <nz-form-label nzFor="instagram">
+          <span>اینستاگرام</span>
+          <i class="fa-brands fa-instagram mx-2"></i>
+        </nz-form-label>
+        <nz-form-control dir="ltr">
+          <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
+            <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
+                   formControlName="instagram"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- telegram -->
+      <nz-form-item>
+        <nz-form-label nzFor="telegram">
+          <span>تلگرام</span>
+          <i class="fa-brands fa-telegram mx-2"></i>
+        </nz-form-label>
+        <nz-form-control dir="ltr">
+          <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
+            <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
+                   formControlName="telegram"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="saleInvoiceForm">
       <!-- city --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="city">شهر</nz-form-label>
+        <nz-form-label nzRequired nzFor="city">شهر محل ارسال</nz-form-label>
         <nz-form-control>
           <input nz-input required name="city" type="text"
                  formControlName="city"/>
@@ -191,7 +186,7 @@
       </nz-form-item>
       <!-- address --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
+        <nz-form-label nzRequired nzFor="address">آدرس محل ارسال</nz-form-label>
         <nz-form-control>
         <textarea
             nz-input
@@ -215,20 +210,20 @@
             [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <!-- payment status --->
+      <!-- payment status
       <nz-form-item>
         <nz-form-label nzRequired nzFor="paymentStatus">وضعیت پرداخت</nz-form-label>
         <nz-form-control>
           <nz-segmented [nzOptions]="paymentStatusOptions" formControlName="paymentStatus"></nz-segmented>
         </nz-form-control>
-      </nz-form-item>
-      <!-- shipping status -->
+      </nz-form-item> --->
+      <!-- shipping status
       <nz-form-item>
         <nz-form-label nzRequired nzFor="shippingStatus">وضعیت حمل و نقل</nz-form-label>
         <nz-form-control>
           <nz-segmented [nzOptions]="shippingStatusOptions" formControlName="shippingStatus"></nz-segmented>
         </nz-form-control>
-      </nz-form-item>
+      </nz-form-item> -->
       <!-- shipping price -->
       <nz-form-item>
         <nz-form-label nzFor="shippingPrice">هزینه حمل و نقل</nz-form-label>
@@ -265,9 +260,13 @@
         </nz-form-control>
       </nz-form-item>
       <!-- submit -->
-      <button [nzLoading]="data.loading" [disabled]="saleInvoiceForm.invalid || data.loading" nz-button
-              nzType="primary" nzBlock type="submit">ثبت فاکتور
-      </button>
+      @if (customerIdControl.valueChanges | async) {
+        <button [nzLoading]="data.loading" [disabled]="saleInvoiceForm.invalid || data.loading" nz-button
+                nzType="primary" nzBlock type="submit">ثبت فاکتور
+        </button>
+      } @else {
+        <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading" (click)="createNewCustomer()" nz-button nzType="primary" nzBlock type="button">افزودن مشتری جدید و ثبت فاکتور</button>
+      }
     </form>
   </page-container>
 
@@ -282,8 +281,8 @@
         <div class="grid grid-cols-12 gap-4">
           <div
               class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-            @if (selectedProduct.product.image) {
-              <img [src]="selectedProduct.product.image"
+            @if (selectedProduct.detail.product.image) {
+              <img [src]="selectedProduct.detail.product.image"
                    class="w-12 h-full object-cover"
                    alt="product image"/>
             } @else {
@@ -292,15 +291,15 @@
           </div>
           <div class="col-span-8">
             <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
-              <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
-              <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
+              <span class="line-clamp-1">{{ selectedProduct.detail.product.name }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.detail.product.code }}</span>
+              <span class="line-clamp-1">{{ selectedProduct.detail.color.label }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.detail.size.label }}</span>
               <div class="line-clamp-1 col-span-1">
-                <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
+                <span class="font-mono">{{ selectedProduct.detail.sellingUnitPrice | number }}</span>
                 <currency-wrapper></currency-wrapper>
               </div>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.availableQuantity }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.quantity }}</span>
             </div>
           </div>
           <div class="col-span-1 justify-self-end self-center">

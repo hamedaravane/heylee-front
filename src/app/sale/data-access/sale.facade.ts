@@ -13,16 +13,22 @@ export class SaleFacade {
   private readonly nzMessageService = inject(NzMessageService);
   private readonly inventoryApi = inject(InventoryApi);
   private readonly saleInfra = inject(SaleInfra);
-  private readonly invoicesSubject = new Subject<SaleInvoice[]>();
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-
-  get loading$() {
-    return this.loadingSubject.asObservable();
-  }
+  private readonly invoicesSubject = new Subject<SaleInvoice[]>();
+  private readonly invoiceTotalCountSubject = new BehaviorSubject<number>(0);
+  private readonly invoiceTotalItemsPriceSubject = new BehaviorSubject<number>(0);
+  private readonly invoicePriceSubject = new BehaviorSubject<number>(0);
+  private readonly invoicePostFeeSubject = new BehaviorSubject<number>(450_000);
 
   get invoices$(): Observable<SaleInvoice[]> {
     return this.invoicesSubject.asObservable();
   }
+
+  loading$ = this.loadingSubject.asObservable();
+  invoiceTotalCount$ = this.invoiceTotalCountSubject.asObservable();
+  invoiceTotalItemsPrice$ = this.invoiceTotalItemsPriceSubject.asObservable();
+  invoicePrice$ = this.invoicePriceSubject.asObservable();
+  invoicePostFee$ = this.invoicePostFeeSubject.asObservable();
 
   async loadInvoices() {
     this.loadingSubject.next(true);
