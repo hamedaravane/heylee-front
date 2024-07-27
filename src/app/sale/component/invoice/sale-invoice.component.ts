@@ -55,11 +55,11 @@ export class SaleInvoiceComponent implements OnInit {
     city: new FormControl<string>('', Validators.required),
     address: new FormControl<string>('', Validators.required),
     description: new FormControl<string>('', Validators.required),
-    paymentStatus: new FormControl<'paid' | 'unpaid'>({value: 'paid', disabled: true}, Validators.required),
+    paymentStatus: new FormControl<'paid' | 'unpaid'>({value: 'paid', disabled: true}),
     shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>({
       value: 'ready-to-ship',
       disabled: true
-    }, Validators.required),
+    }),
     shippingPrice: new FormControl<number>(450_000, Validators.required),
     discount: new FormControl<number>(0, Validators.required),
     refNumber: new FormControl<string>('', Validators.required),
@@ -117,7 +117,7 @@ export class SaleInvoiceComponent implements OnInit {
 
   submitOrderForm() {
     if (this.saleInvoiceForm.valid) {
-      this.saleFacade.createSaleInvoice(this.saleInvoiceForm.value as CreateUpdateInvoice).then();
+      this.saleFacade.createSaleInvoice(this.saleInvoiceForm.getRawValue() as CreateUpdateInvoice).then();
     }
   }
 
@@ -125,8 +125,8 @@ export class SaleInvoiceComponent implements OnInit {
     const customer = {
       name: this.nameControl.value as string,
       phone: this.phoneControl.value as string,
-      address: this.addressControl.value as string,
-      city: this.cityControl.value as string,
+      address: this.addressControl.value || this.addressCustomerControl.value as string,
+      city: this.cityControl.value || this.cityCustomerControl.value as string,
       postalCode: this.postalCodeControl.value,
       instagram: this.instagramControl.value,
       telegram: this.telegramControl.value,
@@ -191,7 +191,13 @@ export class SaleInvoiceComponent implements OnInit {
     this.itemsControl.setValue([...itemsControlSnapshot, newItem])
   }
 
-  removeSelectedProduct(item: {detail: StockItem, productId: number, colorId: number, sizeId: number, quantity: number}) {
+  removeSelectedProduct(item: {
+    detail: StockItem,
+    productId: number,
+    colorId: number,
+    sizeId: number,
+    quantity: number
+  }) {
     this.itemsControl.setValue(this.itemsControl.value.filter(i => i.productId === item.productId && i.colorId === item.colorId && i.sizeId === item.sizeId));
   }
 
