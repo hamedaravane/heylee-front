@@ -5,25 +5,27 @@ import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
 import {FormsModule} from '@angular/forms';
 import {NzPaginationModule} from 'ng-zorro-antd/pagination';
-import {PageContainerComponent} from "@shared/component/page-container/page-container.component";
-import {CardContainerComponent} from "@shared/component/card-container/card-container.component";
-import {PersianDatePipe} from "@sale/pipe/persian-date.pipe";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {SaleInvoice} from "@sale/entity/invoice.entity";
-import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
-import {NzButtonModule} from "ng-zorro-antd/button";
-import {NzModalModule} from "ng-zorro-antd/modal";
-import {InventoryApi} from "@inventory/api/inventory.api";
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {PersianDatePipe} from '@sale/pipe/persian-date.pipe';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SaleInvoice} from '@sale/entity/invoice.entity';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzModalModule} from 'ng-zorro-antd/modal';
+import {InventoryApi} from '@inventory/api/inventory.api';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'invoice-list',
   standalone: true,
-  imports: [NzModalModule, NzButtonModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf],
+  imports: [NzModalModule, NzButtonModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf, RouterLink],
   templateUrl: './invoice-list.component.html',
 })
 export class InvoiceListComponent implements OnInit {
   private readonly saleFacade = inject(SaleFacade);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
   private readonly inventoryApi = inject(InventoryApi);
   invoiceData: SaleInvoice[] = [];
   loadingState = false;
@@ -38,5 +40,9 @@ export class InvoiceListComponent implements OnInit {
       .subscribe(loading => {
         this.loadingState = loading;
       });
+  }
+
+  navigateToEdit(invoice: SaleInvoice) {
+    this.router.navigate(['/sale'], { state: { invoice } });
   }
 }

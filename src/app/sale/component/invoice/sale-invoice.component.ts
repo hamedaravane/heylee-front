@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, Input, OnInit, signal} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -16,12 +16,13 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice, InvoiceItem} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem, SaleInvoice} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {selectedProductToInvoiceItem, StockItemSelection} from '@inventory/entity/inventory.entity';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'sale-invoice',
@@ -32,16 +33,16 @@ import {selectedProductToInvoiceItem, StockItemSelection} from '@inventory/entit
   templateUrl: './sale-invoice.component.html'
 })
 export class SaleInvoiceComponent implements OnInit {
-  @Input() updateInvoice: boolean = false;
   private readonly destroyRef = inject(DestroyRef);
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
+  private readonly router = inject(Router);
+  invoiceToUpdate: SaleInvoice | null = null;
   loading$ = this.saleFacade.loading$;
   paymentStatusOptions = ['paid', 'unpaid'];
   shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship'];
   customers: Customer[] | null = null;
-  customerId: number | null = null;
   searchText = '';
   availableProducts: StockItemSelection[] = [];
   selectedProducts: StockItemSelection[] = [];
@@ -254,6 +255,13 @@ export class SaleInvoiceComponent implements OnInit {
         availableQuantity: quantity,
       };
       targetArray.push(newItem);
+    }
+  }
+
+  private checkUpdateMode() {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.invoiceToUpdate = navigation.extras.state['invoice'] as SaleInvoice;
     }
   }
 

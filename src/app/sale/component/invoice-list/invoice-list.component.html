@@ -11,7 +11,7 @@
     } @else {
       @for (invoice of invoiceData; track $index) {
         <card-container class="mb-2 last:mb-0">
-          <li class="grid grid-cols-2 gap-y-2 text-xs">
+          <li class="grid grid-cols-2 gap-2 text-xs">
             <div>
               <span class="inline-block opacity-70">شماره فاکتور</span>
               <span class="mx-2">{{ invoice.id }}</span>
@@ -122,7 +122,7 @@
                 </ng-container>
               </nz-modal>
             </div>
-            <button nz-button [nzLoading]="loadingState" disabled>ویرایش فاکتور</button>
+            <button nz-button [nzLoading]="loadingState" (click)="navigateToEdit(invoice)">ویرایش فاکتور</button>
             <button disabled nz-button>ارسال فاکتور</button>
           </li>
         </card-container>
