@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -43,6 +43,11 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
   private readonly router = inject(Router);
+
+  constructor() {
+    this.checkUpdateMode();
+  }
+
   invoiceToUpdate: SaleInvoice | null = null;
   loading$ = this.saleFacade.loading$;
   paymentStatusOptions = ['paid', 'unpaid'];
@@ -53,8 +58,8 @@ export class SaleInvoiceComponent implements OnInit {
   selectedProducts: StockItemSelection[] = [];
   totalOrderPrice = signal(0);
   totalItemsOrdered = signal(0);
-  customerPayment = signal(0);
-  shippingPrice = signal(450_000);
+  customerPayment = computed(() => this.totalOrderPrice() + this.shippingPrice() - this.discount())
+  shippingPrice = signal(0);
   discount = signal(0);
 
   saleInvoiceForm = new FormGroup({
@@ -64,7 +69,7 @@ export class SaleInvoiceComponent implements OnInit {
     description: new FormControl<string>('', Validators.required),
     paymentStatus: new FormControl<'paid' | 'unpaid'>('paid'),
     shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>('ready-to-ship'),
-    shippingPrice: new FormControl<number>(450_000, Validators.required),
+    shippingPrice: new FormControl<number>(0, Validators.required),
     discount: new FormControl<number>(0, Validators.required),
     refNumber: new FormControl<string>('', Validators.required),
     items: new FormControl<InvoiceItem[]>([], Validators.minLength(1)),
@@ -95,22 +100,19 @@ export class SaleInvoiceComponent implements OnInit {
   private discountControl = this.saleInvoiceForm.controls.discount as FormControl<number>;
   private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
 
-  constructor() {
-    this.checkUpdateMode();
-  }
-
   ngOnInit() {
+    this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
+      this.fillFormsToUpdate();
       this.availableProducts = items.map((item) => {
         return {
           ...item,
           selectedQuantity: 0
         }
       });
-      this.fillFormsToUpdate();
     })
-    this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
     this.setupFormListeners();
+    this.fillFormsToUpdate();
   }
 
   addItem(item: StockItemSelection, quantity: number = 1): void {
@@ -302,26 +304,31 @@ export class SaleInvoiceComponent implements OnInit {
         }
       })
   }
+
   private trackItems() {
-    this.itemsControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
-      this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
-      this.totalOrderPrice.set(items.reduce((acc, curr) => {
-        const stockItem = this.selectedProducts.find(s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId);
-        if (stockItem) {
-          return acc + curr.quantity * stockItem.sellingUnitPrice
-        } else {
-          throw new Error('Product not found');
-        }
-      }, 0));
-      this.customerPayment.set(this.totalOrderPrice() + this.shippingPrice() - this.discount());
-    });
+    this.itemsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe((items) => {
+        this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
+        // TODO: it seems that this is not working as expected
+        const totalOrdersPrice = items.reduce((acc, curr) => {
+          const stockItem = this.selectedProducts.find(s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId);
+          if (stockItem) {
+            return acc + curr.quantity * stockItem.sellingUnitPrice
+          } else {
+            throw new Error('Product not found');
+          }
+        }, 0);
+        this.totalOrderPrice.set(totalOrdersPrice);
+      });
   }
+
   private trackDiscount() {
     this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
       this.discount.set(discount);
-      this.customerPayment.set(this.totalOrderPrice() + this.shippingPrice() - this.discount());
     });
   }
+
   private trackShippingPrice() {
     this.shippingPriceControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shippingPrice) => {
       this.shippingPrice.set(shippingPrice);
