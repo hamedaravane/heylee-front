@@ -1,6 +1,7 @@
 import {Customer, CustomerDto} from "@customer/entity/customer.entity";
 import {Product, ProductDto} from "@product/entity/product.entity";
 import {IdLabel} from "@shared/entity/common.entity";
+import {StockItemSelection} from "@inventory/entity/inventory.entity";
 
 export interface SalesItemDTO {
   id: number;
@@ -114,4 +115,15 @@ export interface CreateUpdateInvoice {
   shippingPrice: number;
   discount: number;
   items: InvoiceItem[];
+}
+
+export function salesItemToStockItemSelection(item: SalesItem): StockItemSelection {
+  return {
+    product: item.product,
+    color: item.color,
+    size: item.size,
+    availableQuantity: 0,
+    sellingUnitPrice: item.unitPrice,
+    selectedQuantity: item.quantity
+  }
 }

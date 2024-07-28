@@ -6,7 +6,7 @@ import {NzInputModule} from 'ng-zorro-antd/input';
 import {BidiModule} from '@angular/cdk/bidi';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {SaleFacade} from '../../data-access/sale.facade';
-import {AsyncPipe, DecimalPipe, JsonPipe, NgTemplateOutlet} from '@angular/common';
+import {AsyncPipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
@@ -16,7 +16,12 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, SalesItem} from '@sale/entity/invoice.entity';
+import {
+  CreateUpdateInvoice,
+  InvoiceItem,
+  SaleInvoice,
+  salesItemToStockItemSelection
+} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -28,7 +33,7 @@ import {Router} from '@angular/router';
   selector: 'sale-invoice',
   imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
     NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
-    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent, JsonPipe],
+    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
@@ -86,12 +91,8 @@ export class SaleInvoiceComponent implements OnInit {
   customerIdControl = this.saleInvoiceForm.controls.customerId;
   private cityControl = this.saleInvoiceForm.controls.city;
   private addressControl = this.saleInvoiceForm.controls.address;
-  private descriptionControl = this.saleInvoiceForm.controls.description;
-  private paymentStatusControl = this.saleInvoiceForm.controls.paymentStatus;
-  private shippingStatusControl = this.saleInvoiceForm.controls.shippingStatus;
   private shippingPriceControl = this.saleInvoiceForm.controls.shippingPrice as FormControl<number>;
   private discountControl = this.saleInvoiceForm.controls.discount as FormControl<number>;
-  private refNumberControl = this.saleInvoiceForm.controls.refNumber;
   private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
 
   constructor() {
@@ -261,7 +262,7 @@ export class SaleInvoiceComponent implements OnInit {
         refNumber: this.invoiceToUpdate.refNumber,
         items: this.invoiceToUpdate.salesItem,
       });
-      this.selectedProducts = this.invoiceToUpdate.salesItem.map(this.salesItemToStockItemSelection);
+      this.selectedProducts = this.invoiceToUpdate.salesItem.map(salesItemToStockItemSelection);
       this.updateItemsControl();
     }
   }
@@ -271,25 +272,13 @@ export class SaleInvoiceComponent implements OnInit {
     if (navigation?.extras.state) {
       this.invoiceToUpdate = navigation.extras.state['invoice'] as SaleInvoice;
     }
-    console.log('invoice update is: ', this.invoiceToUpdate);
-  }
-
-  private salesItemToStockItemSelection(item: SalesItem): StockItemSelection {
-    return {
-      product: item.product,
-      color: item.color,
-      size: item.size,
-      availableQuantity: 0,
-      sellingUnitPrice: item.unitPrice,
-      selectedQuantity: item.quantity
-    }
   }
 
   private setupFormListeners(): void {
     this.trackPhone();
-    this.trackItems();
-    this.trackDiscount();
     this.trackShippingPrice();
+    this.trackDiscount();
+    this.trackItems();
   }
 
   private trackPhone() {
@@ -314,7 +303,7 @@ export class SaleInvoiceComponent implements OnInit {
       })
   }
   private trackItems() {
-    this.itemsControl?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
+    this.itemsControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((items) => {
       this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
       this.totalOrderPrice.set(items.reduce((acc, curr) => {
         const stockItem = this.selectedProducts.find(s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId);
@@ -324,13 +313,13 @@ export class SaleInvoiceComponent implements OnInit {
           throw new Error('Product not found');
         }
       }, 0));
-      this.customerPayment.set(this.totalOrderPrice() + this.shippingPriceControl.value - this.discount());
+      this.customerPayment.set(this.totalOrderPrice() + this.shippingPrice() - this.discount());
     });
   }
   private trackDiscount() {
     this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
       this.discount.set(discount);
-      this.customerPayment.set(this.totalOrderPrice() + this.shippingPriceControl.value - this.discount());
+      this.customerPayment.set(this.totalOrderPrice() + this.shippingPrice() - this.discount());
     });
   }
   private trackShippingPrice() {
