@@ -43,6 +43,6 @@ export class InvoiceListComponent implements OnInit {
   }
 
   navigateToEdit(invoice: SaleInvoice) {
-    this.router.navigate(['/sale'], { state: { invoice } });
+    this.router.navigate(['/sale'], { state: { invoice: invoice } });
   }
 }

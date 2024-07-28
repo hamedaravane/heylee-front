@@ -1,4 +1,4 @@
-@if ({ loading: loading$ | async }; as data) {
+@if ({ loading: loading$ | async, invoiceToUpdate }; as data) {
   <card-container class="backdrop-blur-xl mb-4 sticky top-0 z-50">
     <div class="border-b border-solid border-gray-700">
       <div class="flex justify-between mb-2">
@@ -210,20 +210,22 @@
             [nzAutosize]="{ minRows: 2, maxRows: 4 }"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <!-- payment status
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="paymentStatus">وضعیت پرداخت</nz-form-label>
-        <nz-form-control>
-          <nz-segmented [nzOptions]="paymentStatusOptions" formControlName="paymentStatus"></nz-segmented>
-        </nz-form-control>
-      </nz-form-item> --->
-      <!-- shipping status
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="shippingStatus">وضعیت حمل و نقل</nz-form-label>
-        <nz-form-control>
-          <nz-segmented [nzOptions]="shippingStatusOptions" formControlName="shippingStatus"></nz-segmented>
-        </nz-form-control>
-      </nz-form-item> -->
+      @if (invoiceToUpdate) {
+        <!-- payment status --->
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="paymentStatus">وضعیت پرداخت</nz-form-label>
+          <nz-form-control>
+            <nz-segmented [nzOptions]="paymentStatusOptions" formControlName="paymentStatus"></nz-segmented>
+          </nz-form-control>
+        </nz-form-item>
+        <!-- shipping status -->
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="shippingStatus">وضعیت حمل و نقل</nz-form-label>
+          <nz-form-control>
+            <nz-segmented [nzOptions]="shippingStatusOptions" formControlName="shippingStatus"></nz-segmented>
+          </nz-form-control>
+        </nz-form-item>
+      }
       <!-- shipping price -->
       <nz-form-item>
         <nz-form-label nzFor="shippingPrice">هزینه حمل و نقل</nz-form-label>
@@ -260,12 +262,15 @@
         </nz-form-control>
       </nz-form-item>
       <!-- submit -->
-      @if (customerIdControl.valueChanges | async) {
+      @if (invoiceToUpdate) {
+      <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading"
+              (click)="updateInvoice()" nz-button nzType="primary" nzBlock type="button">ویرایش فاکتور</button>
+      } @else if (customerIdControl.valueChanges | async) {
         <button [nzLoading]="data.loading" [disabled]="saleInvoiceForm.invalid || data.loading" nz-button
-                nzType="primary" nzBlock type="submit">ثبت فاکتور
-        </button>
+                nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
       } @else {
-        <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading" (click)="createNewCustomer()" nz-button nzType="primary" nzBlock type="button">افزودن مشتری جدید و ثبت فاکتور</button>
+        <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading"
+                (click)="createNewCustomer()" nz-button nzType="primary" nzBlock type="button">افزودن مشتری جدید و ثبت فاکتور</button>
       }
     </form>
   </page-container>

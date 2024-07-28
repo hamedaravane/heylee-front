@@ -22,7 +22,7 @@ export interface StockItemDto {
   selling_unit_price: number;
 }
 
-export interface StockItemSelection extends StockItem {
+export interface StockItemSelection extends Omit<StockItem, 'totalSold' | 'totalPurchased'> {
   selectedQuantity: number;
 }
 

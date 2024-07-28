@@ -41,7 +41,7 @@ export class SaleInfra {
 
   updateSaleInvoice(id: number, invoice: CreateUpdateInvoice): Observable<SaleInvoice> {
     const dto = toSnakeCase<CreateUpdateInvoice, CreateUpdateInvoiceDTO>(invoice);
-    return this.http.post<ServerResponse<SaleInvoiceDTO>>(`${environment.apiUrl}/sales-invoice/update/${id}`, {dto}).pipe(
+    return this.http.post<ServerResponse<SaleInvoiceDTO>>(`${environment.apiUrl}/sales-invoice/update/${id}`, dto).pipe(
       map(res => {
         if (res.ok) {
           return dtoConvertor(res.result, toCamelCase<SaleInvoiceDTO, SaleInvoice>);
