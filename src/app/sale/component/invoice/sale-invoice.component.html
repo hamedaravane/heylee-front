@@ -71,7 +71,7 @@
               </div>
               <div class="col-span-1 justify-self-end self-center">
                 <button [nzLoading]="data.loading" class="leading-none" type="button" nz-button nzType="primary" nzSize="small"
-                        (click)="moveProductToOrder(product)">
+                        (click)="addItem(product)">
                   <i class="fa-solid fa-plus fa-sm leading-tight"></i>
                 </button>
               </div>
@@ -281,8 +281,8 @@
         <div class="grid grid-cols-12 gap-4">
           <div
               class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-            @if (selectedProduct.detail.product.image) {
-              <img [src]="selectedProduct.detail.product.image"
+            @if (selectedProduct.product.image) {
+              <img [src]="selectedProduct.product.image"
                    class="w-12 h-full object-cover"
                    alt="product image"/>
             } @else {
@@ -291,20 +291,20 @@
           </div>
           <div class="col-span-8">
             <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
-              <span class="line-clamp-1">{{ selectedProduct.detail.product.name }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.detail.product.code }}</span>
-              <span class="line-clamp-1">{{ selectedProduct.detail.color.label }}</span>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.detail.size.label }}</span>
+              <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
+              <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
               <div class="line-clamp-1 col-span-1">
-                <span class="font-mono">{{ selectedProduct.detail.sellingUnitPrice | number }}</span>
+                <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
                 <currency-wrapper></currency-wrapper>
               </div>
-              <span class="line-clamp-1 font-mono">{{ selectedProduct.quantity }}</span>
+              <span class="line-clamp-1 font-mono">{{ selectedProduct.selectedQuantity }}</span>
             </div>
           </div>
           <div class="col-span-1 justify-self-end self-center">
             <button [nzLoading]="data.loading" class="leading-none" nz-button nzType="primary" type="button" nzDanger nzSize="small"
-                    (click)="removeSelectedProduct(selectedProduct)">
+                    (click)="removeItem(selectedProduct)">
               <i class="fa-solid fa-trash fa-sm leading-tight"></i>
             </button>
           </div>
