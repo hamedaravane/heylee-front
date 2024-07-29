@@ -1,1 +1,5 @@
 <router-outlet></router-outlet>
+
+<ng-template #updateBtnRef let-notification>
+  <button nz-button nzType="primary" nzBlock (click)="notification.close()">به روز رسانی</button>
+</ng-template>
