@@ -4,7 +4,13 @@
 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
 'Noto Color Emoji';
 
-@base-primary: @indigo-6;
+@primary-1: @indigo-8;
+@primary-2: @indigo-4;
+@primary-5: @indigo-5;
+@primary-6: @indigo-6;
+@primary-7: @indigo-8;
+
+@base-primary: @indigo-7;
 @primary-color: @base-primary;
 
 @body-background: @gray-8;
@@ -13,9 +19,10 @@
 @background-color-base: fade(@gray-10, 16%);
 @border-color-base: @gray-7;
 @border-color-split: @gray-6;
+@item-hover-bg: @gray-7;
 
 @text-color: fade(@gray-0, 85%);
-@text-color-secondary: fade(@gray-0, 45%);
+@text-color-secondary: fade(@gray-9, 45%);
 @text-color-inverse: @gray-10;
 @icon-color-hover: fade(@gray-0, 75%);
 @heading-color: fade(@gray-0, 85%);
@@ -24,7 +31,7 @@
 @disabled-color: fade(@gray-0, 25%);
 @disabled-active-bg: tint(@gray-0, 90%);
 @disabled-color-dark: fade(@gray-10, 35%);
-@item-hover-bg: fade(@gray-10, 8%);
+@item-active-bg: @gray-7;
 
 // Shadow
 @shadow-color: rgba(0, 0, 0, 0.45);
@@ -49,3 +56,5 @@
 
 @drawer-footer-padding-vertical: 10px 24px;
 @drawer-footer-padding-horizontal: 22px 24px;
+
+@select-item-active-bg: @item-hover-bg;
