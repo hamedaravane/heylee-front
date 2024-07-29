@@ -301,6 +301,7 @@ export class SaleInvoiceComponent implements OnInit {
           this.saleInvoiceForm.controls.city.setValue(customer.city);
           this.saleInvoiceForm.controls.address.setValue(customer.address);
           this.customerForm.disable();
+          this.phoneControl.enable();
         }
       })
   }

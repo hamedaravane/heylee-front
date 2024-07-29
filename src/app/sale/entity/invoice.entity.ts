@@ -95,6 +95,8 @@ export interface CreateUpdateInvoiceDTO {
   shipping_status: string;
   shipping_price: number;
   discount: number;
+  ref_number: string | null;
+  postal_code: string | null;
   items: InvoiceItemDTO[];
 }
 
@@ -114,6 +116,8 @@ export interface CreateUpdateInvoice {
   shippingStatus: string;
   shippingPrice: number;
   discount: number;
+  refNumber: string | null;
+  postalCode: string | null;
   items: InvoiceItem[];
 }
 
