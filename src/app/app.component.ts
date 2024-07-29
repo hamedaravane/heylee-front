@@ -19,20 +19,24 @@ export class AppComponent implements OnInit {
   title = 'Hey Lee';
 
   ngOnInit() {
-    this.updateService.checkForUpdates().then(() => {
-      this.nzNotificationService.blank(
-        'نسخه جدید',
-        'یک نسخه جدید از اپلیکیشن موجود شده.',
-        {
-          nzPlacement: 'bottom',
-          nzKey: 'UPDATE',
-          nzDuration: 0,
-          nzAnimate: true,
-          nzButton: this.updateBtnRef
-        }
-      ).onClick.subscribe(() => {
-        this.updateService.updateApplication();
-      });
+    this.updateService.checkForUpdates().then((u) => {
+      if (u) {
+        this.nzNotificationService.blank(
+          'نسخه جدید',
+          'یک نسخه جدید از اپلیکیشن موجود شده.',
+          {
+            nzPlacement: 'bottom',
+            nzKey: 'UPDATE',
+            nzDuration: 0,
+            nzAnimate: true,
+            nzButton: this.updateBtnRef,
+          }
+        ).onClick.subscribe(() => this.updateApplication());
+      }
     });
+  }
+
+  updateApplication() {
+    this.updateService.updateApplication();
   }
 }
