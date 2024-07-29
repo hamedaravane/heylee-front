@@ -21,10 +21,10 @@ export class AppComponent implements OnInit {
       this.nzNotificationService.blank(
         'نسخه جدید',
         'یک نسخه جدید از اپلیکیشن موجود شده.',
-        {nzPlacement: 'bottom', nzKey: 'UPDATE', nzClass: 'kosssssss', nzDuration: 0, nzAnimate: true, nzButton: this.updateBtnRef})
-        .onClick.subscribe(() => {
+        {nzPlacement: 'bottom', nzKey: 'UPDATE', nzDuration: 0, nzAnimate: true, nzButton: this.updateBtnRef}
+      ).onClick.subscribe(() => {
         this.updateService.updateApplication();
-      });
-    });
+      })}
+    );
   }
 }
