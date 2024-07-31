@@ -47,13 +47,13 @@ export class CustomersComponent implements OnInit {
   selectedCustomerId: number | null = null;
 
   createCustomerForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-    address: new FormControl('', Validators.required),
-    phone: new FormControl('', Validators.required),
-    instagram: new FormControl('', [Validators.minLength(1), Validators.maxLength(30)]),
-    telegram: new FormControl('', [Validators.minLength(5), Validators.maxLength(32)]),
-    city: new FormControl('', Validators.required),
-    postalCode: new FormControl('', Validators.required),
+    name: new FormControl<string | null>(null, Validators.required),
+    address: new FormControl<string | null>(null, Validators.required),
+    phone: new FormControl<string | null>(null, Validators.required),
+    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
+    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
+    city: new FormControl<string | null>(null, Validators.required),
+    postalCode: new FormControl<string | null>(null),
   })
 
   ngOnInit() {
@@ -80,7 +80,6 @@ export class CustomersComponent implements OnInit {
     if (this.selectedCustomerId) {
       this.customerFacade.editCustomer(this.selectedCustomerId, form).then(() => {
         this.closeAddCustomer();
-        this.createCustomerForm.reset();
       });
     }
   }
@@ -89,19 +88,18 @@ export class CustomersComponent implements OnInit {
     const form = this.createCustomerForm.getRawValue() as CreateCustomer;
     this.customerFacade.createCustomer(form).then(() => {
       this.closeAddCustomer();
-      this.createCustomerForm.reset();
     });
   }
 
   deleteCustomer(id: number) {
     this.customerFacade.deleteCustomer(id).then(() => {
       this.closeAddCustomer();
-      this.createCustomerForm.reset();
     });
   }
 
   closeAddCustomer() {
     this.isAddCustomerVisible = false;
     this.isEditCustomerVisible = false;
+    this.createCustomerForm.reset();
   }
 }
