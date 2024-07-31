@@ -160,7 +160,10 @@ export class SaleInvoiceComponent implements OnInit {
 
   submitOrderForm() {
     if (this.saleInvoiceForm.valid) {
-      this.saleFacade.createSaleInvoice(this.extractDataFromInvoiceForm()).then();
+      this.saleFacade.createSaleInvoice(this.extractDataFromInvoiceForm()).then(() => {
+        this.saleInvoiceForm.reset();
+        this.customerForm.reset();
+      });
     }
   }
 

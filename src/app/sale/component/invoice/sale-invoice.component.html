@@ -269,7 +269,7 @@
         <button [nzLoading]="data.loading" [disabled]="saleInvoiceForm.invalid || data.loading" nz-button
                 nzType="primary" nzBlock type="submit">ثبت فاکتور</button>
       } @else {
-        <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading"
+        <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || data.loading"
                 (click)="createNewCustomer()" nz-button nzType="primary" nzBlock type="button">افزودن مشتری جدید و ثبت فاکتور</button>
       }
     </form>
