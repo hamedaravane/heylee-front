@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
@@ -37,8 +37,9 @@ export class ProductInfra {
       )
   }
 
-  fetchProducts(): Observable<IndexResponse<Product>> {
-    return this.http.get<ServerResponse<IndexResponse<ProductDto>>>(`${environment.apiUrl}/product/index`)
+  fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
+    const params = new HttpParams().set('page', pageIndex).append('per-page', 20);
+    return this.http.get<ServerResponse<IndexResponse<ProductDto>>>(`${environment.apiUrl}/product/index`, {params: params})
       .pipe(
         map((res) => {
           if (res.ok) {

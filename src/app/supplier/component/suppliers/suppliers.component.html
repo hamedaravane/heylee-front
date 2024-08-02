@@ -18,7 +18,7 @@
             <span class="col-span-7">{{ supplier.address }}</span>
             <div class="col-span-1 text-start"><i class="fa-solid fa-phone"></i></div>
             <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500 col-span-7 font-mono"
-               dir="ltr">+98{{ supplier.phone }}</a>
+               dir="ltr">{{ supplier.phone | phoneFormat }}</a>
             @if (supplier.telegram) {
               <div class="col-span-1 text-start"><i class="fa-brands fa-telegram"></i></div>
               <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500 col-span-3 font-mono"

@@ -25,7 +25,9 @@
               <div class="w-full text-xs">
                 <div class="font-mono font-bold">{{ product.code }}</div>
                 <div>{{ product.name }}</div>
-                <div>{{ product.description }}</div>
+                @if (product.description && product.description !== 'null') {
+                  <div>{{ product.description }}</div>
+                }
               </div>
             </div>
             <div class="col-span-1 justify-self-end self-center">
@@ -42,6 +44,12 @@
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
     </ul>
+    <div class="mt-4">
+      <nz-pagination [nzTotal]="products._meta.totalCount"
+                     [nzPageIndex]="products._meta.currentPage"
+                     (nzPageIndexChange)="pageIndexChange($event)"
+                     [nzPageSize]="products._meta.perPage"></nz-pagination>
+    </div>
   } @else if (loadingState) {
     <ul>
       @for (_ of [].constructor(3); track $index) {

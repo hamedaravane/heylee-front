@@ -17,6 +17,7 @@ import {NzIconModule} from 'ng-zorro-antd/icon';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {NzPaginationModule} from "ng-zorro-antd/pagination";
 
 @Component({
   standalone: true,
@@ -34,6 +35,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     NzSkeletonModule,
     NzEmptyModule,
     NzButtonModule,
+    NzPaginationModule,
     RouterLink,
     ReactiveFormsModule,
     NgOptimizedImage,
@@ -65,6 +67,10 @@ export class ProductsComponent implements OnInit {
     this.productFacade.loadProducts().then();
     this.productFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((loading) => this.loadingState = loading)
+  }
+
+  pageIndexChange(pageIndex: number): void {
+    this.productFacade.loadProducts(pageIndex).then();
   }
 
   selectProductId(id: number, product: { name: string, code: string, description: string}) {

@@ -102,6 +102,17 @@ export class SaleInvoiceComponent implements OnInit {
 
   ngOnInit() {
     this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
+    this.customers?.push({
+      name: '',
+      phone: '',
+      postalCode: null,
+      telegram: null,
+      instagram: null,
+      city: '',
+      address: '',
+      createdAt: '',
+      id: 999
+    })
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
       this.fillFormsToUpdate();
       this.availableProducts = items.map((item) => {
@@ -307,6 +318,11 @@ export class SaleInvoiceComponent implements OnInit {
           this.phoneControl.enable();
         }
       })
+  }
+
+  onPhoneInput(e: Event): void {
+    const value = e.target as HTMLInputElement;
+    this.customers ? this.customers[0].phone = value.value : null;
   }
 
   private trackItems() {

@@ -99,6 +99,7 @@
                    formControlName="phone"
                    id="phone"
                    placeholder="بدون صفر"
+                   (input)="onPhoneInput($event)"
                    [nzAutocomplete]="phones"/>
             <nz-autocomplete #phones>
               @for (customer of customers; track customer.id) {

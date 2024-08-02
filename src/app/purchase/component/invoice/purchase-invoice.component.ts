@@ -98,9 +98,17 @@ export class PurchaseInvoiceComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
     this.purchaseFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => this.loadingState = value);
+    this.addItem();
   }
 
-  addItem() {
+  addItem(itemIndex?: number) {
+    if (itemIndex !== undefined) {
+      const prevItem = this.items.at(itemIndex) as FormGroup;
+      console.log(prevItem.value);
+      this.items.push(prevItem);
+      this.subscribeToItemChanges(prevItem);
+      return;
+    }
     const item = this.formBuilder.group({
       productId: [null, Validators.required],
       colorId: [null, Validators.required],
@@ -128,6 +136,7 @@ export class PurchaseInvoiceComponent implements OnInit {
   }
 
   private subscribeToItemChanges(item?: FormGroup) {
+    this.updateTotalPrice();
     (item ? [item] : this.items.controls).forEach(control => {
       const priceChangeSubscription = control.get('purchaseUnitPrice')?.valueChanges.subscribe(() => {
         this.updateTotalPrice();

@@ -27,10 +27,10 @@ export class ProductFacade {
     return this.productsIndexSubject.asObservable().pipe(filter(Boolean))
   }
 
-  async loadProducts() {
+  async loadProducts(pageIndex: number = 1) {
     this.loadingSubject.next(true)
     try {
-      const response = await firstValueFrom(this.productInfra.fetchProducts());
+      const response = await firstValueFrom(this.productInfra.fetchProducts(pageIndex));
       this.productsIndexSubject.next(response);
     } catch (err) {
       const error = new ServerResponseError(err);

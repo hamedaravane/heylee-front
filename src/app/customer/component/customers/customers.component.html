@@ -8,33 +8,45 @@
     <ul>
       @for (customer of customers.items; track $index) {
         <card-container class="mb-3 last:mb-0">
-          <li class="grid grid-cols-8 gap-y-1">
+          <li>
             <!-- name -->
-            <div class="col-span-1"><i class="fa-solid fa-user mx-2"></i></div>
-            <span class="col-span-3">{{ customer.name}}</span>
+            <div>
+              <i class="fa-solid fa-user mx-2"></i>
+              <span>{{ customer.name}}</span>
+            </div>
             <!-- phone -->
-            <div class="col-span-1"><i class="fa-solid fa-phone mx-2"></i></div>
-            <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">+98{{ customer.phone}}</a>
+            <div>
+              <i class="fa-solid fa-phone mx-2"></i>
+              <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.phone | phoneFormat}}</a>
+            </div>
             <!-- city -->
-            <div class="col-span-1"><i class="fa-solid fa-city mx-2"></i></div>
-            <span class="col-span-3">{{ customer.city}}</span>
+            <div>
+              <i class="fa-solid fa-city mx-2"></i>
+              <span>{{ customer.city}}</span>
+            </div>
             <!-- address -->
-            <div class="col-span-1"><i class="fa-solid fa-location-dot mx-2"></i></div>
-            <span class="col-span-7">{{ customer.address}}</span>
+            <div class="col-span-8">
+              <i class="fa-solid fa-location-dot mx-2"></i>
+              <span>{{ customer.address}}</span>
+            </div>
             <!-- postal code -->
             @if (customer.postalCode) {
-              <div class="col-span-1"><i class="fa-solid fa-map-location-dot mx-2"></i></div>
-              <span class="col-span-3">{{ customer.postalCode}}</span>
+              <i class="fa-solid fa-map-location-dot mx-2"></i>
+              <span>{{ customer.postalCode}}</span>
             }
             <!-- telegram username -->
             @if (customer.telegram) {
-              <div class="col-span-1"><i class="fa-brands fa-telegram mx-2"></i></div>
-              <a [href]="'https://t.me/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram}}</a>
+              <div>
+                <i class="fa-brands fa-telegram mx-2"></i>
+                <a [href]="'https://t.me/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram}}</a>
+              </div>
             }
             <!-- instagram username -->
             @if (customer.instagram) {
-              <div class="col-span-1"><i class="fa-brands fa-instagram mx-2"></i></div>
-              <a [href]="'https://instagram.com/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram}}</a>
+              <div>
+                <i class="fa-brands fa-instagram mx-2"></i>
+                <a [href]="'https://instagram.com/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram}}</a>
+              </div>
             }
             <div class="col-span-8 mt-4">
               <div class="flex gap-2">
