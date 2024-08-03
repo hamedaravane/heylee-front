@@ -16,24 +16,23 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {
-  CreateUpdateInvoice,
-  InvoiceItem,
-  SaleInvoice,
-  salesItemToStockItemSelection
-} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {selectedProductToInvoiceItem, StockItemSelection} from '@inventory/entity/inventory.entity';
 import {Router} from '@angular/router';
+import {NzAlertModule} from 'ng-zorro-antd/alert';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {NzRadioModule} from 'ng-zorro-antd/radio';
 
 @Component({
   selector: 'sale-invoice',
   imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
     NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
-    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, CardContainerComponent, PageContainerComponent, CurrencyComponent],
+    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule,
+    CardContainerComponent, PageContainerComponent, CurrencyComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
@@ -101,6 +100,7 @@ export class SaleInvoiceComponent implements OnInit {
   private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
 
   ngOnInit() {
+    this.customerApi.loadCustomers().then();
     this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
     this.customers?.push({
       name: '',
@@ -191,21 +191,6 @@ export class SaleInvoiceComponent implements OnInit {
       discount: rawValues.discount,
       items: rawValues.items,
     } as CreateUpdateInvoice;
-  }
-
-  createNewCustomer() {
-    const customer = {
-      name: this.nameControl.value as string,
-      phone: this.phoneControl.value as string,
-      address: this.addressControl.value || this.addressCustomerControl.value as string,
-      city: this.cityControl.value || this.cityCustomerControl.value as string,
-      postalCode: this.postalCodeControl.value,
-      instagram: this.instagramControl.value,
-      telegram: this.telegramControl.value,
-    };
-    this.customerApi.createCustomer(customer).then((customer) => {
-      this.customerIdControl.setValue(customer.id);
-    }).then(() => this.submitOrderForm());
   }
 
   private findItemIndex(
