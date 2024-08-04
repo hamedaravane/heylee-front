@@ -16,7 +16,12 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
+import {
+  CreateUpdateInvoice,
+  InvoiceItem,
+  SaleInvoice,
+  salesItemToStockItemSelection
+} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';

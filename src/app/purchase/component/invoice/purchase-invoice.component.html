@@ -128,14 +128,14 @@
                   </div>
                   <div id="color" class="col-span-3">
                     <nz-select formControlName="colorId">
-                      @for (color of colorLabels; track $index) {
+                      @for (color of colors$ | async; track $index) {
                         <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
                       }
                     </nz-select>
                   </div>
                   <div id="size" class="col-span-3">
                     <nz-select formControlName="sizeId">
-                      @for (size of sizeLabels; track $index) {
+                      @for (size of sizes$ | async; track $index) {
                         <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
                       }
                     </nz-select>

@@ -1,15 +1,24 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.entity';
-import {map, Observable} from 'rxjs';
+import {firstValueFrom, map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 import {environment} from '@environment';
+import {IdLabel} from "@shared/entity/common.entity";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductInfra {
   private readonly http = inject(HttpClient);
+
+  get sizes$(): Promise<IdLabel[]> {
+    return firstValueFrom(this.http.get<IdLabel[]>('/json/size.json'));
+  }
+
+  get colors$(): Promise<IdLabel[]> {
+    return firstValueFrom(this.http.get<IdLabel[]>('/json/color.json'));
+  }
 
   createProduct(formData: FormData): Observable<Product> {
     return this.http.post<ServerResponse<ProductDto>>(`${environment.apiUrl}/product/create`, formData)
@@ -38,7 +47,7 @@ export class ProductInfra {
   }
 
   fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
-    const params = new HttpParams().set('page', pageIndex).append('per-page', 20);
+    const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
     return this.http.get<ServerResponse<IndexResponse<ProductDto>>>(`${environment.apiUrl}/product/index`, {params: params})
       .pipe(
         map((res) => {

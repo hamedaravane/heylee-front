@@ -3,6 +3,7 @@ import {ProductFacade} from '@product/data-access/product.facade';
 import {Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {Product} from '@product/entity/product.entity';
+import {IdLabel} from "@shared/entity/common.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,13 @@ export class ProductApi {
       })
     }
     return this.productFacade.productsIndex$;
+  }
+
+  get sizes$(): Promise<IdLabel[]> {
+    return this.productFacade.sizes$;
+  }
+
+  get colors$(): Promise<IdLabel[]> {
+    return this.productFacade.colors$;
   }
 }

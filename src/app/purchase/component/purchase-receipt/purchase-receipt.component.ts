@@ -40,8 +40,8 @@ export class PurchaseReceiptComponent implements OnInit {
 
   reducePurchaseItems(items: (PurchaseItem & { color: IdLabel } & { size: IdLabel } & { product: Product })[]) {
     return items.reduce((acc, cur) => {
-      const key = cur.product.code;
-      let existingItem = acc.find(item => item.product.code === key);
+      const key = cur.productId;
+      let existingItem = acc.find(item => item.productId === key);
       if (!existingItem) {
         acc.push({
           ...cur,
