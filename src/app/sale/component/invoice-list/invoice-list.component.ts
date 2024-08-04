@@ -16,6 +16,7 @@ import {NzModalModule} from 'ng-zorro-antd/modal';
 import {InventoryApi} from '@inventory/api/inventory.api';
 import {Router, RouterLink} from '@angular/router';
 import * as htmlToImage from 'html-to-image';
+import {ShareImageService} from '@shared/data-access/share-image.service';
 
 @Component({
   selector: 'invoice-list',
@@ -28,6 +29,7 @@ export class InvoiceListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly inventoryApi = inject(InventoryApi);
+  private readonly shareImageService = inject(ShareImageService);
   invoiceData: SaleInvoice[] = [];
   loadingState = false;
   loadingButtons = false;
@@ -50,12 +52,8 @@ export class InvoiceListComponent implements OnInit {
     try {
       this.loadingButtons = true;
       await new Promise(resolve => setTimeout(resolve, 100));
-      if (window.innerWidth > 768) {
-        const dataUrl = await htmlToImage.toPng(document.getElementById('receipt') as HTMLElement, { quality: 1, style: { visibility: 'visible' } });
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `sale-receipt-${invoice.customer.phone}.png`;
-        link.click();
+      if (this.shareImageService.isDesktop()) {
+        this.shareImageService.downloadImage(document.getElementById('receipt') as HTMLElement, 'receipt');
       } else {
         const blob = await htmlToImage.toBlob(document.getElementById('receipt') as HTMLElement);
         if (!blob) {
