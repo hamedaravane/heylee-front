@@ -1,8 +1,14 @@
 import {inject, Injectable} from '@angular/core';
-import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
-import {mapPurchaseToDTO, Purchase, PurchaseDTO} from '@purchase/entity/purchase.entity';
+import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
+import {
+  CreatePurchaseInvoice,
+  CreatePurchaseInvoiceDTO,
+  mapCreatePurchaseInvoiceToDTO,
+  PurchaseInvoice
+} from '@purchase/entity/purchase.entity';
 import {PurchaseInfra} from '@purchase/infrastructure/purchase.infra';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {IndexResponse} from "@shared/entity/server-response.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +17,32 @@ export class PurchaseFacade {
   private readonly purchaseInfra = inject(PurchaseInfra);
   private readonly nzMessageService = inject(NzMessageService);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  private readonly purchaseInvoicesSubject = new Subject<IndexResponse<PurchaseInvoice>>();
+
+  get purchaseInvoices$(): Observable<IndexResponse<PurchaseInvoice>> {
+    return this.purchaseInvoicesSubject.asObservable();
+  }
 
   get loading$(): Observable<boolean> {
     return this.loadingSubject.asObservable();
   }
 
-  async createPurchase(purchase: Purchase): Promise<void> {
-    const purchaseDTO: PurchaseDTO = mapPurchaseToDTO(purchase);
+  async fetchPurchaseInvoices() {
+    this.loadingSubject.next(true);
+    try {
+      const response = await firstValueFrom(this.purchaseInfra.fetchPurchaseInvoices());
+      this.purchaseInvoicesSubject.next(response);
+    } catch (e) {
+      const err = e as Error;
+      console.error('Purchase creation failed:', err.message);
+      this.nzMessageService.error(err.message);
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
+
+  async createPurchase(purchase: CreatePurchaseInvoice): Promise<void> {
+    const purchaseDTO: CreatePurchaseInvoiceDTO = mapCreatePurchaseInvoiceToDTO(purchase);
     this.loadingSubject.next(true);
     try {
       await firstValueFrom(this.purchaseInfra.createPurchase(purchaseDTO));

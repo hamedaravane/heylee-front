@@ -27,13 +27,6 @@ export const mainRoutes: Routes = [
         path: 'invoices',
         loadComponent: () => import('../sale/component/invoice-list/invoice-list.component').then(c => c.InvoiceListComponent),
         canActivate: [AuthGuard],
-        /*children: [
-          {
-            path: ':id',
-            loadComponent: () => import('../sale/component/invoice-item/invoice-item.component').then(c => c.InvoiceItemComponent),
-            canActivate: [AuthGuard],
-          }
-        ]*/
       },
       {
         path: 'purchase',
@@ -58,6 +51,11 @@ export const mainRoutes: Routes = [
       {
         path: 'product',
         loadComponent: () => import('../product/component/products/products.component').then(c => c.ProductsComponent),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'purchase-receipt',
+        loadComponent: () => import('../purchase/component/purchase-receipt/purchase-receipt.component').then(c => c.PurchaseReceiptComponent),
         canActivate: [AuthGuard]
       },
       {

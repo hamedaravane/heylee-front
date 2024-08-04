@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import {Purchase} from '@purchase/entity/purchase.entity';
+import {CreatePurchaseInvoice} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
 import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
@@ -155,7 +155,7 @@ export class PurchaseInvoiceComponent implements OnInit {
 
   async submitPurchaseForm(): Promise<void> {
     try {
-      const formValue = this.purchaseForm.getRawValue() as Purchase;
+      const formValue = this.purchaseForm.getRawValue() as CreatePurchaseInvoice;
       await this.purchaseFacade.createPurchase(formValue);
     } catch (e) {
       console.error(e);
