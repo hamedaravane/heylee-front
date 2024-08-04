@@ -2,40 +2,80 @@
   @if (purchaseInvoices$ | async; as list) {
     @for (invoice of list.items; track invoice.id) {
       <card-container class="mb-2 last:mb-0">
-        <li class="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <span class="inline-block opacity-70">شماره فاکتور</span>
-            <span class="mx-2">{{ invoice.id }}</span>
+        <li class="flex flex-col gap-2 text-xs">
+          <div class="flex justify-between">
+            <div>
+              <span class="inline-block opacity-70">شماره فاکتور</span>
+              <span class="mx-2">{{ invoice.id }}</span>
+            </div>
+            <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
           </div>
-          <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
+          <div class="grid gap-y-2 grid-cols-2 mb-2">
+            <div>
+              <span>{{invoice.supplier.name}}</span>
+            </div>
+            <div>
+              <span class="me-2 opacity-80">قیمت کل:</span>
+              <span>{{invoice.totalPrice | number}}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
+            <div>
+              <span class="me-2 opacity-80">تخفیف:</span>
+              <span>{{invoice.discount | number}}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
+            <div>
+              <span class="me-2 opacity-80">پرداختی:</span>
+              <span>{{invoice.paidPrice | number}}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
+          </div>
           @for (item of reducePurchaseItems(invoice.purchasesItem); track item.id) {
             <card-container class="col-span-2 mb-2">
-              <div class="grid grid-cols-12 gap-4">
-                <div
-                  class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-                  @if (item.product.image) {
-                    <img [src]="item.product.image"
-                         class="w-12 h-full object-cover"
-                         alt="product image"/>
-                  } @else {
-                    <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-                  }
-                </div>
-                <div class="col-span-9">
-                  <div class="grid grid-cols-3 grid-rows-3 text-start w-full text-xs">
-                    <span class="col-span-3 line-clamp-1">{{ item.product.name }}</span>
-                    <span class="line-clamp-1 font-mono">{{ item.product.code }}</span>
+              <div>
+                <div class="flex gap-x-4 mb-2">
+                  <div
+                      class="h-12 w-12 inline-block overflow-clip border border-solid border-gray-600">
+                    @if (item.product.image) {
+                      <img [src]="item.product.image"
+                           class="w-12 h-full object-cover"
+                           alt="product image"/>
+                    } @else {
+                      <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+                    }
+                  </div>
+                  <div>
+                    <div class="text-xs">
+                      <span class="col-span-3 mb-2 line-clamp-1">{{ item.product.name }}</span>
+                      <span class="line-clamp-1 font-mono">{{ item.product.code }}</span>
+                    </div>
                   </div>
                 </div>
-                <div class="col-span-12">
+                <div class="flex w-full mb-2">
+                  <span class="me-2 opacity-80">رنگ ها:</span>
                   @for (item of item.colors; track item.id) {
-                    <span class="mx-2">{{ item.label }}</span>
+                    <span class="me-2 inline-block">{{ item.label }}</span>
                   }
                 </div>
-                <div class="col-span-12">
+                <div class="flex w-full mb-2">
+                  <span class="me-2 opacity-80">سایز ها:</span>
                   @for (item of item.sizes; track item.id) {
-                    <span class="mx-2">{{ item.label }}</span>
+                    <span class="me-2 inline-block">{{ item.label }}</span>
                   }
+                </div>
+                <!--<div class="flex w-full">
+                  <span class="me-2 opacity-80">تعداد:</span>
+                  <span class="me-2 inline-block">{{ item.quantity }}</span>
+                </div>-->
+                <div class="flex w-full mb-2">
+                  <span class="me-2 opacity-80">قیمت خرید:</span>
+                  <span class="me-2 inline-block">{{ item.sellingUnitPrice | number }}</span>
+                  <currency-wrapper></currency-wrapper>
+                </div>
+                <div class="flex w-full">
+                  <span class="me-2 opacity-80">قیمت فروش:</span>
+                  <span class="me-2 inline-block">{{ item.purchaseUnitPrice | number }}</span>
+                  <currency-wrapper></currency-wrapper>
                 </div>
               </div>
             </card-container>

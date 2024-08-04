@@ -19,5 +19,6 @@ export class WelcomeComponent {
     {text: 'ثبت فاکتور خرید', link: 'purchase', icon: 'fa-wallet', disabled: false},
     {text: 'تامین کننده‌ها', link: 'supplier', icon: 'fa-handshake', disabled: false},
     {text: 'مشتریان', link: 'customer', icon: 'fa-person-booth', disabled: false},
+    {text: 'فاکتورهای خرید', link: 'purchase-receipt', icon: 'fa-receipt', disabled: false},
   ];
 }

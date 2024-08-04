@@ -3,13 +3,14 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, DecimalPipe} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PersianDatePipe} from '@sale/pipe/persian-date.pipe';
 import {Product} from '@product/entity/product.entity';
 import {PurchaseItem} from '@purchase/entity/purchase.entity';
 import {IdLabel} from '@shared/entity/common.entity';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 
 @Component({
   selector: 'purchase-receipt',
@@ -20,7 +21,9 @@ import {IdLabel} from '@shared/entity/common.entity';
     AsyncPipe,
     NzEmptyModule,
     CardContainerComponent,
-    PersianDatePipe
+    PersianDatePipe,
+    DecimalPipe,
+    CurrencyComponent
   ],
   standalone: true
 })
@@ -36,20 +39,24 @@ export class PurchaseReceiptComponent implements OnInit {
   }
 
   reducePurchaseItems(items: (PurchaseItem & { color: IdLabel } & { size: IdLabel } & { product: Product })[]) {
-    return items.reduce((acc, cur, index) => {
+    return items.reduce((acc, cur) => {
       const key = cur.product.code;
-      if (!acc.find(item => item.product.code === key)) {
+      let existingItem = acc.find(item => item.product.code === key);
+      if (!existingItem) {
         acc.push({
           ...cur,
-          colors: acc[index].colors,
-          sizes: acc[index].sizes,
-          product: cur.product
-        })
+          colors: [cur.color],
+          sizes: [cur.size],
+        });
       } else {
-        acc[index].colors.push(cur.color);
-        acc[index].sizes.push(cur.size);
+        if (!existingItem.colors.some(color => color.id === cur.color.id)) {
+          existingItem.colors.push(cur.color);
+        }
+        if (!existingItem.sizes.some(size => size.id === cur.size.id)) {
+          existingItem.sizes.push(cur.size);
+        }
       }
       return acc;
-    }, new Array<PurchaseItem & { product: Product } & { colors: IdLabel[] } & { sizes: IdLabel[] }>())
+    }, new Array<PurchaseItem & { product: Product } & { colors: IdLabel[] } & { sizes: IdLabel[] }>());
   }
 }
