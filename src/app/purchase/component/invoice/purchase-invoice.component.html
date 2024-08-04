@@ -91,7 +91,7 @@
               <label for="sellingPrice" class="col-span-4">قیمت فروش</label>
               <div></div>
             </div>
-            @for (item of items.controls; track i; let i = $index) {
+            @for (item of items.controls; let i = $index; track i) {
               <div [formGroupName]="i">
                 <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-4">
                   <div>
