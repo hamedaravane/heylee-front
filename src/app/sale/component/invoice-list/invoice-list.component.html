@@ -11,17 +11,19 @@
     } @else {
       @for (invoice of invoiceData; track $index) {
         <card-container class="mb-2 last:mb-0">
-          <li class="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span class="inline-block opacity-70">شماره فاکتور</span>
-              <span class="mx-2">{{ invoice.id }}</span>
+          <li class="flex flex-col gap-2 text-xs">
+            <div class="flex justify-between">
+              <div>
+                <span class="inline-block opacity-70">شماره فاکتور</span>
+                <span class="mx-2">{{ invoice.id }}</span>
+              </div>
+              <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
             </div>
-            <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
             @for (item of invoice.salesItem; track $index) {
-              <card-container class="col-span-2 mb-2">
-                <div class="grid grid-cols-12 gap-4">
+              <card-container class="mb-2">
+                <div class="flex gap-4">
                   <div
-                    class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+                      class="h-12 w-12 rounded-sm inline-block overflow-clip border border-solid border-gray-600">
                     @if (item.product.image) {
                       <img [src]="item.product.image"
                            class="w-12 h-full object-cover"
@@ -30,10 +32,10 @@
                       <i class="fa-solid fa-image fa-xl text-gray-400"></i>
                     }
                   </div>
-                  <div class="col-span-9">
-                    <div class="grid grid-cols-3 grid-rows-3 text-start w-full text-xs">
-                      <span class="col-span-3 line-clamp-1">{{ item.product.name }}</span>
-                      <span class="line-clamp-1 font-mono">{{ item.product.code }}</span>
+                  <div>
+                    <div class="col-span-3 line-clamp-1">{{ item.product.name }}</div>
+                    <div class="line-clamp-1 font-mono">{{ item.product.code }}</div>
+                    <div class="flex gap-x-4">
                       <span class="line-clamp-1">{{ item.color.label }}</span>
                       <span class="line-clamp-1 font-mono">{{ item.size.label }}</span>
                     </div>
@@ -52,7 +54,8 @@
                   <ng-container *nzModalContent>
                     <div class="mb-2">
                       <i class="fa-solid fa-phone"></i>
-                      <a [href]="'tel:+98' + invoice.customer.phone" dir="ltr" class="mx-2">+98{{ invoice.customer.phone }}</a>
+                      <a [href]="'tel:+98' + invoice.customer.phone" dir="ltr"
+                         class="mx-2">+98{{ invoice.customer.phone }}</a>
                     </div>
                     <div class="mb-2">
                       <i class="fa-solid fa-location-dot"></i>
@@ -69,13 +72,15 @@
                     @if (invoice.customer.telegram) {
                       <div class="mb-2">
                         <i class="fa-brands fa-telegram"></i>
-                        <a [href]="'https://t.me/' + invoice.customer.telegram" dir="ltr" class="mx-2">{{ invoice.customer.telegram }}</a>
+                        <a [href]="'https://t.me/' + invoice.customer.telegram" dir="ltr"
+                           class="mx-2">{{ invoice.customer.telegram }}</a>
                       </div>
                     }
                     @if (invoice.customer.instagram) {
                       <div>
                         <i class="fa-brands fa-instagram"></i>
-                        <a [href]="'https://instagram.com/' + invoice.customer.instagram" dir="ltr" class="mx-2">{{ invoice.customer.instagram }}</a>
+                        <a [href]="'https://instagram.com/' + invoice.customer.instagram" dir="ltr"
+                           class="mx-2">{{ invoice.customer.instagram }}</a>
                       </div>
                     }
                   </ng-container>
@@ -122,8 +127,16 @@
                 </ng-container>
               </nz-modal>
             </div>
-            <button nz-button [nzLoading]="loadingState" (click)="navigateToEdit(invoice)">ویرایش فاکتور</button>
-            <button disabled nz-button>ارسال فاکتور</button>
+            <div class="flex gap-x-4">
+              <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="loadingButtons || loadingState" (click)="navigateToEdit(invoice)">
+                <i class="fa-solid fa-pen-to-square fa-sm me-2"></i>
+                <span>ویرایش فاکتور</span>
+              </button>
+              <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="loadingButtons || loadingState" (click)="generateReceipt(invoice)">
+                <i class="fa-solid fa-paper-plane fa-sm me-2"></i>
+                <span>ارسال فاکتور</span>
+              </button>
+            </div>
           </li>
         </card-container>
       } @empty {
@@ -132,3 +145,68 @@
     }
   </ul>
 </page-container>
+
+@if (selectedInvoice(); as invoice) {
+  <div id="receipt" class="w-96 bg-gray-900 p-4">
+    <div class="flex justify-between mb-2">
+      <div>
+        <span class="opacity-70">فاکتور:</span>
+        <span class="ms-2">{{ invoice.number }}</span>
+      </div>
+      <div class="text-end">{{ invoice.createdAt ?? '' | persianDate }}</div>
+    </div>
+    <div class="mb-2">
+      <span class="opacity-70">نام مشتری:</span>
+      <span class="ms-2">{{ invoice.customer.name }}</span>
+    </div>
+    <div class="mb-2">
+      @for (item of invoice.salesItem; track $index) {
+        <card-container class="mb-2 last:mb-0">
+          <div class="flex gap-2">
+            <div
+                class="h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600 rounded-sm">
+              @if (item.product.image) {
+                <img [src]="item.product.image"
+                     class="w-12 h-full object-cover"
+                     alt="product image"/>
+              } @else {
+                <i class="fa-solid fa-image fa-xl text-gray-400"></i>
+              }
+            </div>
+            <div class="text-xs">
+              <span class="col-span-3 line-clamp-1">{{ item.product.name }}</span>
+              <span class="line-clamp-1 font-mono opacity-80">{{ item.product.code }}</span>
+              <div class="flex gap-x-4">
+                <span class="line-clamp-1">{{ item.color.label }}</span>
+                <span class="line-clamp-1 font-mono">{{ item.size.label }}</span>
+              </div>
+            </div>
+          </div>
+        </card-container>
+      }
+    </div>
+    <div>
+      <div class="text-xs">
+        <span class="opacity-70">مبلغ کل سفارشات مشتری:</span>
+        <span class="ms-2">{{ invoice.totalPrice |number }}</span>
+        <currency-wrapper></currency-wrapper>
+      </div>
+      <div class="text-xs">
+        <span class="opacity-70">هزینه حمل و نقل:</span>
+        <span class="ms-2">{{ invoice.shippingPrice |number }}</span>
+        <currency-wrapper></currency-wrapper>
+      </div>
+      <div class="text-xs">
+        <span class="opacity-70">تخفیف:</span>
+        <span class="ms-2">{{ invoice.discount |number }}</span>
+        <currency-wrapper></currency-wrapper>
+      </div>
+      <div class="border-b border-solid border-gray-600 my-2"></div>
+      <div>
+        <span class="opacity-70">پرداختی مشتری:</span>
+        <span class="ms-2">{{ invoice.paidPrice |number }}</span>
+        <currency-wrapper></currency-wrapper>
+      </div>
+    </div>
+  </div>
+}
