@@ -77,37 +77,39 @@
     <!-- items -->
     <nz-form-item>
       <nz-divider></nz-divider>
-      <card-container>
-        <nz-form-label nzRequired nzFor="items">سفارشات</nz-form-label>
-        <nz-form-control>
-          <div formArrayName="items">
-            <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-2">
-              <div></div>
-              <label for="code" class="col-span-5">کد محصول</label>
-              <label for="color" class="col-span-3">رنگ</label>
-              <label for="size" class="col-span-3">سایز</label>
-              <label for="quantity" class="col-span-3">تعداد</label>
-              <label for="unitPrice" class="col-span-4">قیمت واحد</label>
-              <label for="sellingPrice" class="col-span-4">قیمت فروش</label>
-              <div></div>
-            </div>
-            @for (item of items.controls; let i = $index; track i) {
-              <div [formGroupName]="i">
-                <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-4">
-                  <div>
-                    <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
-                            type="button" (click)="addItem(i)">
-                      <i class="fa-solid fa-plus"></i>
-                    </button>
-                  </div>
-                  <div id="code" class="col-span-5">
+      <nz-alert class="mb-4" nzType="info" nzShowIcon nzMessage="به دلیل حساسیت بالا این قسمت فقط در دسکتاپ قابل ویرایش است"></nz-alert>
+      @if (isDesktop) {
+        <card-container>
+          <nz-form-label nzRequired nzFor="items">سفارشات</nz-form-label>
+          <nz-form-control>
+            <div formArrayName="items">
+              <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-2">
+                <div></div>
+                <label for="code" class="col-span-5">کد محصول</label>
+                <label for="color" class="col-span-3">رنگ</label>
+                <label for="size" class="col-span-3">سایز</label>
+                <label for="quantity" class="col-span-3">تعداد</label>
+                <label for="unitPrice" class="col-span-4">قیمت واحد</label>
+                <label for="sellingPrice" class="col-span-4">قیمت فروش</label>
+                <div></div>
+              </div>
+              @for (item of items.controls; let i = $index; track i) {
+                <div [formGroupName]="i">
+                  <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-4">
+                    <div>
+                      <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
+                              type="button" (click)="addItem(i)">
+                        <i class="fa-solid fa-plus"></i>
+                      </button>
+                    </div>
+                    <div id="code" class="col-span-5">
                       <nz-select formControlName="productId" [nzOptionHeightPx]="58">
                         @if (products$ | async; as products) {
                           @for (product of products.items; track $index) {
                             <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
                               <div class="grid grid-cols-12 grid-rows-1 gap-2">
                                 <div
-                                  class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
+                                    class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
                                   @if (product.image) {
                                     <img [src]="product.image"
                                          class="w-12 h-full object-cover"
@@ -125,58 +127,59 @@
                           }
                         }
                       </nz-select>
-                  </div>
-                  <div id="color" class="col-span-3">
-                    <nz-select formControlName="colorId">
-                      @for (color of colors$ | async; track $index) {
-                        <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
-                      }
-                    </nz-select>
-                  </div>
-                  <div id="size" class="col-span-3">
-                    <nz-select formControlName="sizeId">
-                      @for (size of sizes$ | async; track $index) {
-                        <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
-                      }
-                    </nz-select>
-                  </div>
-                  <div id="quantity" class="col-span-3">
-                    <nz-input-number class="w-full" nzInputMode="number" [nzStep]="1" [nzMin]="1"
-                                     formControlName="quantity"></nz-input-number>
-                  </div>
-                  <div id="unitPrice" class="col-span-4">
-                    <nz-input-group nzAddOnBefore="ریال">
-                      <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
-                             formControlName="purchaseUnitPrice"/>
-                    </nz-input-group>
-                  </div>
-                  <div id="sellingPrice" class="col-span-4">
-                    <nz-input-group nzAddOnBefore="ریال">
-                      <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"
-                             formControlName="sellingUnitPrice" [nzAutocomplete]="suggestionSellPrices"/>
-                      <nz-autocomplete #suggestionSellPrices>
-                        @for (suggestion of suggestionSellPricesByPercentage; track $index) {
-                          <nz-auto-option [nzValue]="item.value.purchaseUnitPrice * ((100 + suggestion) / 100)">
-                            {{ item.value.purchaseUnitPrice * ((100 + suggestion) / 100) }}
-                          </nz-auto-option>
+                    </div>
+                    <div id="color" class="col-span-3">
+                      <nz-select formControlName="colorId">
+                        @for (color of colors$ | async; track $index) {
+                          <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
                         }
-                      </nz-autocomplete>
-                    </nz-input-group>
-                  </div>
-                  <div>
-                    <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="default" nzDanger
-                            type="button" (click)="removeItem(i)">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
+                      </nz-select>
+                    </div>
+                    <div id="size" class="col-span-3">
+                      <nz-select formControlName="sizeId">
+                        @for (size of sizes$ | async; track $index) {
+                          <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
+                        }
+                      </nz-select>
+                    </div>
+                    <div id="quantity" class="col-span-3">
+                      <nz-input-number class="w-full" nzInputMode="number" [nzStep]="1" [nzMin]="1"
+                                       formControlName="quantity"></nz-input-number>
+                    </div>
+                    <div id="unitPrice" class="col-span-4">
+                      <nz-input-group nzAddOnBefore="ریال">
+                        <input class="font-mono" nz-input name="purchaseUnitPrice" type="number" inputmode="numeric"
+                               formControlName="purchaseUnitPrice"/>
+                      </nz-input-group>
+                    </div>
+                    <div id="sellingPrice" class="col-span-4">
+                      <nz-input-group nzAddOnBefore="ریال">
+                        <input class="font-mono" nz-input name="sellingUnitPrice" type="number" inputmode="numeric"
+                               formControlName="sellingUnitPrice" [nzAutocomplete]="suggestionSellPrices"/>
+                        <nz-autocomplete #suggestionSellPrices>
+                          @for (suggestion of suggestionSellPricesByPercentage; track $index) {
+                            <nz-auto-option [nzValue]="item.value.purchaseUnitPrice * ((100 + suggestion) / 100)">
+                              {{ item.value.purchaseUnitPrice * ((100 + suggestion) / 100) }}
+                            </nz-auto-option>
+                          }
+                        </nz-autocomplete>
+                      </nz-input-group>
+                    </div>
+                    <div>
+                      <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="default" nzDanger
+                              type="button" (click)="removeItem(i)">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            } @empty {
-              <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
-            }
-          </div>
-        </nz-form-control>
-      </card-container>
+              } @empty {
+                <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
+              }
+            </div>
+          </nz-form-control>
+        </card-container>
+      }
     </nz-form-item>
     <!-- submit -->
     <nz-form-item>

@@ -17,7 +17,8 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
-import {ProductApi} from "@product/api/product.api";
+import {ProductApi} from '@product/api/product.api';
+import {NzAlertModule} from 'ng-zorro-antd/alert';
 
 @Component({
   selector: 'purchase-invoice',
@@ -31,6 +32,7 @@ import {ProductApi} from "@product/api/product.api";
     NzEmptyModule,
     NzSelectModule,
     NzAutocompleteModule,
+    NzAlertModule,
     BidiModule,
     NgTemplateOutlet,
     ReactiveFormsModule,
@@ -71,6 +73,10 @@ export class PurchaseInvoiceComponent implements OnInit {
 
   get items(): FormArray {
     return this.purchaseForm.get('items') as FormArray;
+  }
+
+  get isDesktop() {
+    return window.innerWidth > 768;
   }
 
   ngOnInit() {

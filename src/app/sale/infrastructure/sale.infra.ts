@@ -3,8 +3,8 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {environment} from '@environment';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
-import {CreateUpdateInvoice, CreateUpdateInvoiceDTO, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
-import {toCamelCase, toSnakeCase} from '@shared/entity/utility.entity';
+import {convertCreateUpdateInvoiceToDto, CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
+import {toCamelCase} from '@shared/entity/utility.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class SaleInfra {
   }
 
   createSaleInvoice(createInvoice: CreateUpdateInvoice): Observable<SaleInvoice> {
-    const dto = toSnakeCase<CreateUpdateInvoice, CreateUpdateInvoiceDTO>(createInvoice);
+    const dto = convertCreateUpdateInvoiceToDto(createInvoice);
     return this.http.post<ServerResponse<SaleInvoiceDTO>>(`${environment.apiUrl}/sales-invoice/create`, dto).pipe(
       map(res => {
         if (res.ok) {
@@ -40,7 +40,7 @@ export class SaleInfra {
   }
 
   updateSaleInvoice(id: number, invoice: CreateUpdateInvoice): Observable<SaleInvoice> {
-    const dto = toSnakeCase<CreateUpdateInvoice, CreateUpdateInvoiceDTO>(invoice);
+    const dto = convertCreateUpdateInvoiceToDto(invoice);
     return this.http.post<ServerResponse<SaleInvoiceDTO>>(`${environment.apiUrl}/sales-invoice/update/${id}`, dto).pipe(
       map(res => {
         if (res.ok) {

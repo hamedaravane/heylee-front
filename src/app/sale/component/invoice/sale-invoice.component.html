@@ -90,7 +90,7 @@
       <nz-alert class="mb-4" nzType="info" nzMessage="قبل از ثبت این فاکتور، مشتری باید ثبت شده باشه!" nzShowIcon/>
       <!-- customer phone -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="phone">شماره تماس</nz-form-label>
+        <nz-form-label [nzRequired]="customerForm.controls.phone.hasValidator(Validators.required)" nzFor="phone">شماره تماس</nz-form-label>
         <nz-form-control dir="ltr">
           <nz-select formControlName="phone"
                      required
@@ -107,7 +107,7 @@
       </nz-form-item>
       <!-- customer full name -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="name">نام کامل مشتری</nz-form-label>
+        <nz-form-label [nzRequired]="customerForm.controls.name.hasValidator(Validators.required)" nzFor="name">نام کامل مشتری</nz-form-label>
         <nz-form-control>
           <input nz-input required name="name" type="text" id="name"
                  formControlName="name"/>
@@ -115,7 +115,7 @@
       </nz-form-item>
       <!-- customer city -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="cityCustomer">شهر</nz-form-label>
+        <nz-form-label [nzRequired]="customerForm.controls.cityCustomer.hasValidator(Validators.required)" nzFor="cityCustomer">شهر</nz-form-label>
         <nz-form-control>
           <input nz-input required name="cityCustomer" type="text" id="cityCustomer"
                  formControlName="cityCustomer"/>
@@ -123,7 +123,7 @@
       </nz-form-item>
       <!-- customer address -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="addressCustomer">آدرس</nz-form-label>
+        <nz-form-label [nzRequired]="customerForm.controls.addressCustomer.hasValidator(Validators.required)" nzFor="addressCustomer">آدرس</nz-form-label>
         <nz-form-control>
         <textarea
             nz-input
@@ -137,7 +137,7 @@
       </nz-form-item>
       <!-- postal code -->
       <nz-form-item>
-        <nz-form-label nzFor="postalCode">کد پستی</nz-form-label>
+        <nz-form-label [nzRequired]="customerForm.controls.postalCode.hasValidator(Validators.required)" nzFor="postalCode">کد پستی</nz-form-label>
         <nz-form-control>
           <input nz-input required name="postalCode" type="text" inputmode="numeric" id="postalCode"
                  formControlName="postalCode"/>
@@ -145,7 +145,7 @@
       </nz-form-item>
       <!-- instagram -->
       <nz-form-item>
-        <nz-form-label nzFor="instagram">
+        <nz-form-label [nzRequired]="customerForm.controls.instagram.hasValidator(Validators.required)" nzFor="instagram">
           <span>اینستاگرام</span>
           <i class="fa-brands fa-instagram mx-2"></i>
         </nz-form-label>
@@ -158,7 +158,7 @@
       </nz-form-item>
       <!-- telegram -->
       <nz-form-item>
-        <nz-form-label nzFor="telegram">
+        <nz-form-label [nzRequired]="customerForm.controls.telegram.hasValidator(Validators.required)" nzFor="telegram">
           <span>تلگرام</span>
           <i class="fa-brands fa-telegram mx-2"></i>
         </nz-form-label>
@@ -173,7 +173,7 @@
     <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="saleInvoiceForm">
       <!-- city --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="city">شهر محل ارسال</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.city.hasValidator(Validators.required)" nzFor="city">شهر محل ارسال</nz-form-label>
         <nz-form-control>
           <input nz-input required name="city" type="text"
                  formControlName="city"/>
@@ -181,7 +181,7 @@
       </nz-form-item>
       <!-- address --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="address">آدرس محل ارسال</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.address.hasValidator(Validators.required)" nzFor="address">آدرس محل ارسال</nz-form-label>
         <nz-form-control>
         <textarea
             nz-input
@@ -194,7 +194,7 @@
       </nz-form-item>
       <!-- description --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="description">توضیحات</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.description.hasValidator(Validators.required)" nzFor="description">توضیحات</nz-form-label>
         <nz-form-control>
         <textarea
             nz-input
@@ -207,7 +207,7 @@
       </nz-form-item>
       <!-- payment status --->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="paymentStatus">وضعیت پرداخت</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.paymentStatus.hasValidator(Validators.required)" nzFor="paymentStatus">وضعیت پرداخت</nz-form-label>
         <nz-form-control>
           <nz-radio-group formControlName="paymentStatus">
             @for (paymentStatus of paymentStatusOptions; track $index) {
@@ -218,7 +218,7 @@
       </nz-form-item>
       <!-- shipping status -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="shippingStatus">وضعیت حمل و نقل</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.shippingStatus.hasValidator(Validators.required)" nzFor="shippingStatus">وضعیت حمل و نقل</nz-form-label>
         <nz-form-control>
           <nz-radio-group formControlName="shippingStatus">
             @for (shippingStatus of shippingStatusOptions; track $index) {
@@ -229,7 +229,7 @@
       </nz-form-item>
       <!-- shipping price -->
       <nz-form-item>
-        <nz-form-label nzFor="shippingPrice">هزینه حمل و نقل</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.shippingPrice.hasValidator(Validators.required)" nzFor="shippingPrice">هزینه حمل و نقل</nz-form-label>
         <nz-form-control dir="ltr">
           <nz-input-group nzAddOnBefore="ریال">
             <input class="font-mono" nz-input name="shippingPrice" type="number" id="shippingPrice"
@@ -239,7 +239,7 @@
       </nz-form-item>
       <!-- discount -->
       <nz-form-item>
-        <nz-form-label nzFor="discount">تخفیف</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.discount.hasValidator(Validators.required)" nzFor="discount">تخفیف</nz-form-label>
         <nz-form-control dir="ltr">
           <nz-input-group nzAddOnBefore="ریال">
             <input class="font-mono" nz-input name="discount" type="number" id="discount"
@@ -249,7 +249,7 @@
       </nz-form-item>
       <!-- ref number -->
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="refNumber">شماره پیگیری</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.refNumber.hasValidator(Validators.required)" nzFor="refNumber">شماره پیگیری</nz-form-label>
         <nz-form-control dir="ltr">
           <input class="font-mono" nz-input required name="refNumber" type="text" id="refNumber"
                  formControlName="refNumber"/>
@@ -257,7 +257,7 @@
       </nz-form-item>
       <!-- items -->
       <nz-form-item>
-        <nz-form-label nzFor="items">سفارشات</nz-form-label>
+        <nz-form-label [nzRequired]="saleInvoiceForm.controls.items.hasValidator(Validators.required)" nzFor="items">سفارشات</nz-form-label>
         <nz-form-control>
           <ng-container *ngTemplateOutlet="selectedProductsTemplate"></ng-container>
         </nz-form-control>
@@ -267,7 +267,7 @@
         <button [nzLoading]="data.loading" [disabled]="customerForm.invalid || saleInvoiceForm.invalid || data.loading"
                 (click)="updateInvoice()" nz-button nzType="primary" nzBlock type="button">ویرایش فاکتور
         </button>
-      } @else if (customerIdControl.valueChanges | async) {
+      } @else {
         <button [nzLoading]="data.loading" [disabled]="saleInvoiceForm.invalid || data.loading" nz-button
                 nzType="primary" nzBlock type="submit">ثبت فاکتور
         </button>

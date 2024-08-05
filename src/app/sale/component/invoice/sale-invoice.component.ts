@@ -16,12 +16,7 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {
-  CreateUpdateInvoice,
-  InvoiceItem,
-  SaleInvoice,
-  salesItemToStockItemSelection
-} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {distinctUntilChanged, filter} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -54,39 +49,57 @@ export class SaleInvoiceComponent implements OnInit {
 
   invoiceToUpdate: SaleInvoice | null = null;
   loading$ = this.saleFacade.loading$;
-  paymentStatusOptions = ['paid', 'unpaid'];
-  shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship'];
+  paymentStatusOptions = ['paid', 'unpaid', 'partially-paid'];
+  shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship', 'on-hold'];
   customers: Customer[] | null = null;
   searchText = '';
   availableProducts: StockItemSelection[] = [];
   selectedProducts: StockItemSelection[] = [];
   totalOrderPrice = signal(0);
   totalItemsOrdered = signal(0);
-  customerPayment = computed(() => this.totalOrderPrice() + this.shippingPrice() - this.discount())
+  customerPayment = computed(() => this.totalOrderPrice() + this.shippingPrice() - this.discount());
   shippingPrice = signal(0);
   discount = signal(0);
 
-  saleInvoiceForm = new FormGroup({
-    customerId: new FormControl<number | null>(null, Validators.required),
-    city: new FormControl<string>('', Validators.required),
-    address: new FormControl<string>('', Validators.required),
-    description: new FormControl<string>('', Validators.required),
-    paymentStatus: new FormControl<'paid' | 'unpaid'>('paid'),
-    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship'>('ready-to-ship'),
-    shippingPrice: new FormControl<number>(0, Validators.required),
-    discount: new FormControl<number>(0, Validators.required),
-    refNumber: new FormControl<string>('', Validators.required),
-    items: new FormControl<InvoiceItem[]>([], Validators.minLength(1)),
+  saleInvoiceForm = new FormGroup<{
+    customerId: FormControl<number | null>;
+    city: FormControl<string | null>;
+    address: FormControl<string | null>;
+    description: FormControl<string | null>;
+    paymentStatus: FormControl<'paid' | 'unpaid' | 'partially-paid' | null>;
+    shippingStatus: FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold' | null>;
+    shippingPrice: FormControl<number | null>;
+    discount: FormControl<number | null>;
+    refNumber: FormControl<string | null>;
+    items: FormControl<InvoiceItem[] | null>;
+  }>({
+    customerId: new FormControl(null, Validators.required),
+    city: new FormControl('', Validators.required),
+    address: new FormControl('', Validators.required),
+    description: new FormControl('', Validators.required),
+    paymentStatus: new FormControl('paid'),
+    shippingStatus: new FormControl('ready-to-ship'),
+    shippingPrice: new FormControl(null, Validators.required),
+    discount: new FormControl(null, Validators.required),
+    refNumber: new FormControl(null),
+    items: new FormControl([], Validators.minLength(1))
   });
-
-  customerForm = new FormGroup({
-    name: new FormControl<string>('', Validators.required),
-    phone: new FormControl<string>('', Validators.required),
-    postalCode: new FormControl<string | null>(null),
-    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
-    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
-    cityCustomer: new FormControl<string>('', Validators.required),
-    addressCustomer: new FormControl<string>('', Validators.required),
+  customerForm = new FormGroup<{
+    name: FormControl<string | null>;
+    phone: FormControl<string | null>;
+    postalCode: FormControl<string | null>;
+    telegram: FormControl<string | null>;
+    instagram: FormControl<string | null>;
+    cityCustomer: FormControl<string | null>;
+    addressCustomer: FormControl<string | null>;
+  }>({
+    name: new FormControl(null, Validators.required),
+    phone: new FormControl(null, Validators.required),
+    postalCode: new FormControl(null),
+    telegram: new FormControl(null, [Validators.minLength(5), Validators.maxLength(32)]),
+    instagram: new FormControl(null, [Validators.minLength(1), Validators.maxLength(30)]),
+    cityCustomer: new FormControl(null, Validators.required),
+    addressCustomer: new FormControl(null, Validators.required)
   });
 
   private nameControl = this.customerForm.controls.name;
@@ -105,30 +118,25 @@ export class SaleInvoiceComponent implements OnInit {
   private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
 
   ngOnInit() {
-    this.customerApi.loadCustomers().then();
-    this.customerApi.customers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((customers) => this.customers = customers.items);
-    this.customers?.push({
-      name: '',
-      phone: '',
-      postalCode: null,
-      telegram: null,
-      instagram: null,
-      city: '',
-      address: '',
-      createdAt: '',
-      id: 999
-    })
+    this.loadCustomers().then();
     this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
       this.fillFormsToUpdate();
       this.availableProducts = items.map((item) => {
         return {
           ...item,
           selectedQuantity: 0
-        }
+        };
       });
-    })
+    });
     this.setupFormListeners();
     this.fillFormsToUpdate();
+  }
+
+  private async loadCustomers() {
+    await this.customerApi.loadCustomers();
+    this.customerApi.customers$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((customers) => this.customers = customers.items);
   }
 
   addItem(item: StockItemSelection, quantity: number = 1): void {
@@ -194,7 +202,8 @@ export class SaleInvoiceComponent implements OnInit {
       shippingStatus: rawValues.shippingStatus,
       shippingPrice: rawValues.shippingPrice,
       discount: rawValues.discount,
-      items: rawValues.items,
+      refNumber: rawValues.refNumber,
+      items: rawValues.items
     } as CreateUpdateInvoice;
   }
 
@@ -211,7 +220,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private updateItemsControl(): void {
-    this.itemsControl.setValue(this.selectedProducts.map((item) => selectedProductToInvoiceItem(item)))
+    this.itemsControl.setValue(this.selectedProducts.map((item) => selectedProductToInvoiceItem(item)));
   }
 
   private updateArrays(
@@ -238,7 +247,7 @@ export class SaleInvoiceComponent implements OnInit {
     } else {
       const newItem: StockItemSelection = {
         ...item,
-        availableQuantity: quantity,
+        availableQuantity: quantity
       };
       targetArray.push(newItem);
     }
@@ -253,7 +262,7 @@ export class SaleInvoiceComponent implements OnInit {
         telegram: this.invoiceToUpdate.customer.telegram,
         instagram: this.invoiceToUpdate.customer.instagram,
         cityCustomer: this.invoiceToUpdate.customer.city,
-        addressCustomer: this.invoiceToUpdate.customer.address,
+        addressCustomer: this.invoiceToUpdate.customer.address
       });
       this.customerForm.disable();
       this.saleInvoiceForm.setValue({
@@ -261,12 +270,12 @@ export class SaleInvoiceComponent implements OnInit {
         city: this.invoiceToUpdate.city,
         address: this.invoiceToUpdate.address,
         description: this.invoiceToUpdate.description,
-        paymentStatus: this.invoiceToUpdate.paymentStatus as 'paid' | 'unpaid',
-        shippingStatus: this.invoiceToUpdate.shippingStatus as 'shipped' | 'canceled' | 'ready-to-ship',
+        paymentStatus: this.invoiceToUpdate.paymentStatus as 'paid' | 'unpaid' | 'partially-paid',
+        shippingStatus: this.invoiceToUpdate.shippingStatus as 'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold',
         shippingPrice: this.invoiceToUpdate.shippingPrice,
         discount: this.invoiceToUpdate.discount,
         refNumber: this.invoiceToUpdate.refNumber,
-        items: this.invoiceToUpdate.salesItem,
+        items: this.invoiceToUpdate.salesItem
       });
       this.selectedProducts = this.invoiceToUpdate.salesItem.map(salesItemToStockItemSelection);
       this.updateItemsControl();
@@ -276,18 +285,19 @@ export class SaleInvoiceComponent implements OnInit {
   private checkUpdateMode() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      this.invoiceToUpdate = navigation.extras.state['invoice'] as SaleInvoice;
+      this.invoiceToUpdate = navigation.extras.state['invoice'];
     }
   }
 
   private setupFormListeners(): void {
-    this.trackPhone();
-    this.trackShippingPrice();
-    this.trackDiscount();
-    this.trackItems();
+    this.onPhoneControlChange();
+    this.onShippingPriceChange();
+    this.onDiscountControlChange();
+    this.onItemsControlChange();
+    // this.onPaymentStatusChange();
   }
 
-  private trackPhone() {
+  private onPhoneControlChange() {
     this.phoneControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
       .subscribe((phoneValue) => {
         const customer = this.customers?.find(c => c.phone === phoneValue);
@@ -300,31 +310,25 @@ export class SaleInvoiceComponent implements OnInit {
             telegram: customer.telegram,
             instagram: customer.instagram,
             cityCustomer: customer.city,
-            addressCustomer: customer.address,
-          })
+            addressCustomer: customer.address
+          });
           this.saleInvoiceForm.controls.city.setValue(customer.city);
           this.saleInvoiceForm.controls.address.setValue(customer.address);
           this.customerForm.disable();
           this.phoneControl.enable();
         }
-      })
+      });
   }
 
-  onPhoneInput(e: Event): void {
-    const value = e.target as HTMLInputElement;
-    this.customers ? this.customers[0].phone = value.value : null;
-  }
-
-  private trackItems() {
+  private onItemsControlChange() {
     this.itemsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
       .subscribe((items) => {
         this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
-        // TODO: it seems that this is not working as expected
         const totalOrdersPrice = items.reduce((acc, curr) => {
           const stockItem = this.selectedProducts.find(s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId);
           if (stockItem) {
-            return acc + curr.quantity * stockItem.sellingUnitPrice
+            return acc + curr.quantity * stockItem.sellingUnitPrice;
           } else {
             throw new Error('Product not found');
           }
@@ -333,15 +337,38 @@ export class SaleInvoiceComponent implements OnInit {
       });
   }
 
-  private trackDiscount() {
+  private onDiscountControlChange() {
     this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
       this.discount.set(discount);
     });
   }
 
-  private trackShippingPrice() {
+  private onShippingPriceChange() {
     this.shippingPriceControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shippingPrice) => {
       this.shippingPrice.set(shippingPrice);
     });
   }
+
+  private onPaymentStatusChange() {
+    this.saleInvoiceForm.controls.paymentStatus.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((paymentStatus) => {
+        switch (paymentStatus) {
+          case 'paid':
+            this.saleInvoiceForm.controls.refNumber.addValidators(Validators.required);
+            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            break;
+          case 'partially-paid':
+            this.saleInvoiceForm.controls.refNumber.addValidators(Validators.required);
+            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            break;
+          case 'unpaid':
+            this.saleInvoiceForm.controls.refNumber.clearValidators();
+            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            break;
+        }
+      });
+  }
+
+  protected readonly Validators = Validators;
 }

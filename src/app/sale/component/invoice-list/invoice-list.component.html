@@ -132,7 +132,7 @@
                 <i class="fa-solid fa-pen-to-square fa-sm me-2"></i>
                 <span>ویرایش فاکتور</span>
               </button>
-              <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="loadingButtons || loadingState" (click)="generateReceipt(invoice)">
+              <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="true" (click)="generateReceipt(invoice)">
                 <i class="fa-solid fa-paper-plane fa-sm me-2"></i>
                 <span>ارسال فاکتور</span>
               </button>

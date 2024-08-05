@@ -1,7 +1,7 @@
-import {Customer, CustomerDto} from "@customer/entity/customer.entity";
-import {Product, ProductDto} from "@product/entity/product.entity";
-import {IdLabel} from "@shared/entity/common.entity";
-import {StockItemSelection} from "@inventory/entity/inventory.entity";
+import {Customer, CustomerDto} from '@customer/entity/customer.entity';
+import {Product, ProductDto} from '@product/entity/product.entity';
+import {IdLabel} from '@shared/entity/common.entity';
+import {StockItemSelection} from '@inventory/entity/inventory.entity';
 
 export interface SalesItemDTO {
   id: number;
@@ -119,6 +119,48 @@ export interface CreateUpdateInvoice {
   refNumber: string | null;
   postalCode: string | null;
   items: InvoiceItem[];
+}
+
+export function convertCreateUpdateInvoiceToDto(invoice: CreateUpdateInvoice): CreateUpdateInvoiceDTO {
+  return {
+    customer_id: invoice.customerId,
+    city: invoice.city,
+    address: invoice.address,
+    description: invoice.description,
+    payment_status: invoice.paymentStatus,
+    shipping_status: invoice.shippingStatus,
+    shipping_price: invoice.shippingPrice,
+    discount: invoice.discount,
+    ref_number: invoice.refNumber,
+    postal_code: invoice.postalCode,
+    items: invoice.items.map(item => ({
+      product_id: item.productId,
+      color_id: item.colorId,
+      size_id: item.sizeId,
+      quantity: item.quantity
+    }))
+  };
+}
+
+export function convertCreateUpdateInvoiceDtoToEntity(dto: CreateUpdateInvoiceDTO): CreateUpdateInvoice {
+  return {
+    customerId: dto.customer_id,
+    city: dto.city,
+    address: dto.address,
+    description: dto.description,
+    paymentStatus: dto.payment_status,
+    shippingStatus: dto.shipping_status,
+    shippingPrice: dto.shipping_price,
+    discount: dto.discount,
+    refNumber: dto.ref_number,
+    postalCode: dto.postal_code,
+    items: dto.items.map(item => ({
+      productId: item.product_id,
+      colorId: item.color_id,
+      sizeId: item.size_id,
+      quantity: item.quantity
+    }))
+  };
 }
 
 export function salesItemToStockItemSelection(item: SalesItem): StockItemSelection {
