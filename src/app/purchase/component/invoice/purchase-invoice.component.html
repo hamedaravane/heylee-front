@@ -77,7 +77,6 @@
     <!-- items -->
     <nz-form-item>
       <nz-divider></nz-divider>
-      <nz-alert class="mb-4" nzType="info" nzShowIcon nzMessage="به دلیل حساسیت بالا این قسمت فقط در دسکتاپ قابل ویرایش است"></nz-alert>
       @if (isDesktop) {
         <card-container>
           <nz-form-label nzRequired nzFor="items">سفارشات</nz-form-label>
@@ -179,6 +178,8 @@
             </div>
           </nz-form-control>
         </card-container>
+      } @else {
+        <nz-alert class="mb-4" nzType="info" nzShowIcon nzMessage="به دلیل حساسیت بالا این قسمت فقط در دسکتاپ قابل ویرایش است"></nz-alert>
       }
     </nz-form-item>
     <!-- submit -->

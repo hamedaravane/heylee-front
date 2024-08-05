@@ -1,5 +1,5 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AfterViewInit, ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CreatePurchaseInvoice} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -44,12 +44,13 @@ import {NzAlertModule} from 'ng-zorro-antd/alert';
   ],
   standalone: true
 })
-export class PurchaseInvoiceComponent implements OnInit {
+export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly supplierApi = inject(SupplierApi);
   private readonly productApi = inject(ProductApi);
+  private readonly cd = inject(ChangeDetectorRef);
   suppliers$ = this.supplierApi.suppliers$;
   products$ = this.productApi.productsIndex$;
   sizes$ = this.productApi.sizes$;
@@ -57,14 +58,36 @@ export class PurchaseInvoiceComponent implements OnInit {
   loadingState = false;
   suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
 
-  purchaseForm = new FormGroup({
-    number: new FormControl<string>('', Validators.required),
-    supplierId: new FormControl<number>(0, Validators.required),
-    description: new FormControl<string>('', Validators.required),
-    totalPrice: new FormControl<number>({value: 0, disabled: true}, Validators.required),
-    discount: new FormControl<number>(0, Validators.required),
-    paidPrice: new FormControl<number>({value: 0, disabled: true}, Validators.required),
-    items: this.formBuilder.array([])
+  purchaseForm = new FormGroup<{
+    number: FormControl<string | null>;
+    supplierId: FormControl<number | null>;
+    description: FormControl<string | null>;
+    totalPrice: FormControl<number | null>;
+    discount: FormControl<number | null>;
+    paidPrice: FormControl<number | null>;
+    items: FormArray<FormGroup<{
+      productId: FormControl<number | null>;
+      colorId: FormControl<number | null>;
+      sizeId: FormControl<number | null>;
+      quantity: FormControl<number | null>;
+      purchaseUnitPrice: FormControl<number | null>;
+      sellingUnitPrice: FormControl<number | null>;
+    } | null>>;
+  }>({
+    number: new FormControl<string | null>(null, Validators.required),
+    supplierId: new FormControl<number | null>(null, Validators.required),
+    description: new FormControl<string | null>(null, Validators.required),
+    totalPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required),
+    discount: new FormControl<number | null>(null, Validators.required),
+    paidPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required),
+    items: this.formBuilder.array<FormGroup<{
+      productId: FormControl<number | null>;
+      colorId: FormControl<number | null>;
+      sizeId: FormControl<number | null>;
+      quantity: FormControl<number | null>;
+      purchaseUnitPrice: FormControl<number | null>;
+      sellingUnitPrice: FormControl<number | null>;
+    } | null>>([])
   });
 
   totalPriceControl = this.purchaseForm.controls.totalPrice as FormControl<number>;
@@ -81,20 +104,13 @@ export class PurchaseInvoiceComponent implements OnInit {
 
   ngOnInit() {
     this.subscribeToItemChanges();
-    this.totalPriceControl.valueChanges.pipe(
-      startWith(this.totalPriceControl.value),
-      combineLatestWith(
-        this.discountControl.valueChanges.pipe(
-          startWith(this.discountControl.value)
-        )
-      ),
-      map(([totalPrice, discount]) => {
-        const paidPrice = (totalPrice || 0) - (discount || 0);
-        this.paidPriceControl.setValue(paidPrice, { emitEvent: false });
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe();
-    this.purchaseFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => this.loadingState = value);
+    this.totalPriceControlChange();
+    this.purchaseFacade.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.loadingState = value);
+  }
+
+  ngAfterViewInit() {
     this.addItem();
   }
 
@@ -110,8 +126,8 @@ export class PurchaseInvoiceComponent implements OnInit {
       colorId: [null, Validators.required],
       sizeId: [null, Validators.required],
       quantity: [1, Validators.required],
-      purchaseUnitPrice: [0, Validators.required],
-      sellingUnitPrice: [0, Validators.required]
+      purchaseUnitPrice: [null, Validators.required],
+      sellingUnitPrice: [null, Validators.required]
     });
 
     this.items.push(item);
@@ -144,9 +160,29 @@ export class PurchaseInvoiceComponent implements OnInit {
     this.updateTotalPrice();
   }
 
+  private totalPriceControlChange() {
+    this.totalPriceControl.valueChanges.pipe(
+      startWith(this.totalPriceControl.value),
+      combineLatestWith(
+        this.discountControl.valueChanges.pipe(
+          startWith(this.discountControl.value)
+        )
+      ),
+      map(([totalPrice, discount]) => {
+        const paidPrice = (totalPrice || 0) - (discount || 0);
+        this.paidPriceControl.setValue(paidPrice, { emitEvent: false });
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
+  }
+
   removeItem(index: number): void {
+    console.log(this.items.at(index).value);
     this.items.removeAt(index);
+    this.cd.markForCheck();
+    console.log(index);
     this.updateTotalPrice();
+    this.items.controls.map((value) => value.updateValueAndValidity())
   }
 
   async submitPurchaseForm(): Promise<void> {
@@ -154,10 +190,44 @@ export class PurchaseInvoiceComponent implements OnInit {
       return;
     }
     try {
-      const formValue = this.purchaseForm.getRawValue() as CreatePurchaseInvoice;
+      const formValue = this.extractDataFromPurchaseForm(this.purchaseForm.getRawValue());
       await this.purchaseFacade.createPurchase(formValue);
     } catch (e) {
       console.error(e);
+    }
+  }
+
+  private extractDataFromPurchaseForm(value: any): CreatePurchaseInvoice {
+    let expectedRawValue: {
+      number: number;
+      supplierId: number;
+      description: number;
+      totalPrice: number;
+      discount: number;
+      paidPrice: number;
+      items: {
+        productId: number;
+        colorId: number;
+        sizeId: number;
+        quantity: number;
+        purchaseUnitPrice: number;
+        sellingUnitPrice: number;
+      }[];
+    };
+
+    try {
+      expectedRawValue = value;
+      return {
+        number: value.number,
+        supplierId: value.supplierId,
+        description: value.description,
+        totalPrice: value.totalPrice,
+        discount: value.discount,
+        paidPrice: value.paidPrice,
+        items: value.items,
+      }
+    } catch (e) {
+      throw e;
     }
   }
 }
