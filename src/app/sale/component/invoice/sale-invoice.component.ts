@@ -80,7 +80,7 @@ export class SaleInvoiceComponent implements OnInit {
     paymentStatus: new FormControl('paid'),
     shippingStatus: new FormControl('ready-to-ship'),
     shippingPrice: new FormControl(null, Validators.required),
-    discount: new FormControl(null, Validators.required),
+    discount: new FormControl(0, [Validators.min(0)]),
     refNumber: new FormControl(null),
     items: new FormControl([], Validators.minLength(1))
   });

@@ -242,7 +242,7 @@
         <nz-form-label [nzRequired]="saleInvoiceForm.controls.discount.hasValidator(Validators.required)" nzFor="discount">تخفیف</nz-form-label>
         <nz-form-control dir="ltr">
           <nz-input-group nzAddOnBefore="ریال">
-            <input class="font-mono" nz-input name="discount" type="number" id="discount"
+            <input class="font-mono" nz-input name="discount" min="0" type="number" id="discount"
                    formControlName="discount"/>
           </nz-input-group>
         </nz-form-control>
