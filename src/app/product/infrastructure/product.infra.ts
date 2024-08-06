@@ -4,7 +4,7 @@ import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.ent
 import {firstValueFrom, map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 import {environment} from '@environment';
-import {IdLabel} from "@shared/entity/common.entity";
+import {IdLabel} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root',

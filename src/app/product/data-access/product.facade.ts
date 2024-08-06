@@ -4,7 +4,7 @@ import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
 import {Product} from '../entity/product.entity';
 import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {IdLabel} from "@shared/entity/common.entity";
+import {IdLabel} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'

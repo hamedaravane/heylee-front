@@ -3,7 +3,7 @@ import {ProductFacade} from '@product/data-access/product.facade';
 import {Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {Product} from '@product/entity/product.entity';
-import {IdLabel} from "@shared/entity/common.entity";
+import {IdLabel} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'

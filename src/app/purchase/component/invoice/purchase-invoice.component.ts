@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CreatePurchaseInvoice} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -115,13 +115,21 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
   }
 
   addItem(itemIndex?: number) {
+    const uniqueId = crypto.randomUUID();
+
     if (itemIndex !== undefined) {
       const prevItem = this.items.at(itemIndex) as FormGroup;
-      this.items.push(this.formBuilder.group(prevItem.value));
+      const newItem = this.formBuilder.group({
+        ...prevItem.value,
+        uniqueId: [uniqueId]
+      });
+      this.items.push(newItem);
       this.subscribeToItemChanges(this.items.at(this.items.length - 1) as FormGroup);
       return;
     }
+
     const item = this.formBuilder.group({
+      uniqueId: [uniqueId],
       productId: [null, Validators.required],
       colorId: [null, Validators.required],
       sizeId: [null, Validators.required],
@@ -182,7 +190,7 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
     this.cd.markForCheck();
     console.log(index);
     this.updateTotalPrice();
-    this.items.controls.map((value) => value.updateValueAndValidity())
+    this.items.updateValueAndValidity()
   }
 
   async submitPurchaseForm(): Promise<void> {

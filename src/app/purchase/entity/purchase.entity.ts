@@ -1,6 +1,6 @@
-import {SupplierDto} from "@supplier/entity/supplier.entity";
-import {IdLabel} from "@shared/entity/common.entity";
-import {Product, ProductDto} from "@product/entity/product.entity";
+import {SupplierDto} from '@supplier/entity/supplier.entity';
+import {IdLabel} from '@shared/entity/common.entity';
+import {Product, ProductDto} from '@product/entity/product.entity';
 
 export type CreatePurchaseItemDTO = Omit<PurchaseItemDto, 'id' | 'created_at' | 'purchase_id'>;
 

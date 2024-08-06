@@ -3,8 +3,8 @@ import {SaleInfra} from '@sale/infrastructure/sale.infra';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
 import {CreateUpdateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
-import {InventoryApi} from "@inventory/api/inventory.api";
-import {ServerResponseError} from "@shared/entity/server-response.entity";
+import {InventoryApi} from '@inventory/api/inventory.api';
+import {ServerResponseError} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'

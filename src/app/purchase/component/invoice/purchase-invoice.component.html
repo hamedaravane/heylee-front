@@ -29,12 +29,12 @@
       <nz-form-label nzRequired nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
-          nz-input
-          name="description"
-          type="text"
-          id="description"
-          formControlName="description"
-          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+            nz-input
+            name="description"
+            type="text"
+            id="description"
+            formControlName="description"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -92,7 +92,7 @@
                 <label for="sellingPrice" class="col-span-4">قیمت فروش</label>
                 <div></div>
               </div>
-              @for (item of items.controls; let i = $index; track i) {
+              @for (item of items.controls; let i = $index; track item.value['uniqueId']) {
                 <div [formGroupName]="i">
                   <div style="grid-template-columns: repeat(24, minmax(0, 1fr))" class="grid gap-x-2 mb-4">
                     <div>
@@ -173,13 +173,17 @@
                   </div>
                 </div>
               } @empty {
-                <nz-empty nzNotFoundContent="محصولی نیست"></nz-empty>
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
+                        type="button" (click)="addItem()">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
               }
             </div>
           </nz-form-control>
         </card-container>
       } @else {
-        <nz-alert class="mb-4" nzType="info" nzShowIcon nzMessage="به دلیل حساسیت بالا این قسمت فقط در دسکتاپ قابل ویرایش است"></nz-alert>
+        <nz-alert class="mb-4" nzType="info" nzShowIcon
+                  nzMessage="به دلیل حساسیت بالا این قسمت فقط در دسکتاپ قابل ویرایش است"></nz-alert>
       }
     </nz-form-item>
     <!-- submit -->

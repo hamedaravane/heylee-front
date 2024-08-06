@@ -17,7 +17,7 @@ import {NzIconModule} from 'ng-zorro-antd/icon';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {NzPaginationModule} from "ng-zorro-antd/pagination";
+import {NzPaginationModule} from 'ng-zorro-antd/pagination';
 
 @Component({
   standalone: true,

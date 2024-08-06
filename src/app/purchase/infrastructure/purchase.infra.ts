@@ -1,14 +1,9 @@
 import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {
-  CreatePurchaseInvoiceDTO,
-  mapPurchaseInvoiceDtoToDomain,
-  PurchaseInvoice,
-  PurchaseInvoiceDto
-} from '@purchase/entity/purchase.entity';
+import {CreatePurchaseInvoiceDTO, mapPurchaseInvoiceDtoToDomain, PurchaseInvoice, PurchaseInvoiceDto} from '@purchase/entity/purchase.entity';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
-import {IndexResponse, ServerResponse} from "@shared/entity/server-response.entity";
+import {IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'

@@ -15,7 +15,7 @@ import {NzInputModule} from 'ng-zorro-antd/input';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PhoneFormatPipe} from "@shared/pipe/phone-format.pipe";
+import {PhoneFormatPipe} from '@shared/pipe/phone-format.pipe';
 
 @Component({
   standalone: true,
