@@ -76,5 +76,11 @@
     } @empty {
       <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
     }
+    <div class="mt-4">
+      <nz-pagination [nzTotal]="list._meta.totalCount"
+                     [nzPageIndex]="list._meta.currentPage"
+                     (nzPageIndexChange)="pageIndexChange($event)"
+                     [nzPageSize]="list._meta.perPage"></nz-pagination>
+    </div>
   }
 </page-container>

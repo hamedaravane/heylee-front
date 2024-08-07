@@ -4,7 +4,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
 import {CreateUpdateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {ServerResponseError} from '@shared/entity/server-response.entity';
+import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +14,19 @@ export class SaleFacade {
   private readonly inventoryApi = inject(InventoryApi);
   private readonly saleInfra = inject(SaleInfra);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  private readonly invoicesSubject = new Subject<SaleInvoice[]>();
+  private readonly invoiceIndexSubject = new Subject<IndexResponse<SaleInvoice>>();
 
-  get invoices$(): Observable<SaleInvoice[]> {
-    return this.invoicesSubject.asObservable();
+  get invoiceIndex$(): Observable<IndexResponse<SaleInvoice>> {
+    return this.invoiceIndexSubject.asObservable();
   }
 
   loading$ = this.loadingSubject.asObservable();
 
-  async loadInvoices() {
+  async loadInvoices(pageIndex: number = 1) {
     this.loadingSubject.next(true);
     try {
-      const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices());
-      this.invoicesSubject.next(response);
+      const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices(pageIndex));
+      this.invoiceIndexSubject.next(response);
     } catch (err) {
       const error = new ServerResponseError(err);
       if (error.status !== 422) {

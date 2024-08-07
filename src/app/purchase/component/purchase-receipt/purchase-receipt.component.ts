@@ -11,7 +11,10 @@ import {Product} from '@product/entity/product.entity';
 import {PurchaseItem} from '@purchase/entity/purchase.entity';
 import {IdLabel} from '@shared/entity/common.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
+import {NzPaginationModule} from "ng-zorro-antd/pagination";
 
 @Component({
   selector: 'purchase-receipt',
@@ -21,6 +24,7 @@ import {ProductImageContainerComponent} from '@shared/component/product-image-co
     NzSkeletonModule,
     AsyncPipe,
     NzEmptyModule,
+    NzPaginationModule,
     CardContainerComponent,
     PersianDatePipe,
     DecimalPipe,
@@ -38,6 +42,10 @@ export class PurchaseReceiptComponent implements OnInit {
   ngOnInit() {
     this.purchaseFacade.fetchPurchaseInvoices().then();
     this.purchaseFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(v => this.loadingState = v)
+  }
+
+  pageIndexChange(pageIndex: number): void {
+    this.purchaseFacade.fetchPurchaseInvoices(pageIndex).then();
   }
 
   reducePurchaseItems(items: (PurchaseItem & { color: IdLabel } & { size: IdLabel } & { product: Product })[]) {

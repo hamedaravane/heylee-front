@@ -1,15 +1,7 @@
 <page-container>
   <ul>
-    @if (loadingState) {
-      <ul>
-        @for (_ of [].constructor(5); track $index) {
-          <li class="mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
-            <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
-          </li>
-        }
-      </ul>
-    } @else {
-      @for (invoice of invoiceData; track $index) {
+    @if (invoiceIndex$ | async; as invoiceItems) {
+      @for (invoice of invoiceItems.items; track $index) {
         <card-container class="mb-2 last:mb-0">
           <li class="flex flex-col gap-2 text-xs">
             <div class="font-bold">{{ invoice.createdAt | persianDate }}</div>
@@ -113,7 +105,7 @@
               </div>
               <div>
                 <span class="opacity-70 me-2">شماره پیگیری</span>
-                <span>{{invoice.refNumber}}</span>
+                <span>{{ invoice.refNumber }}</span>
               </div>
             </div>
             <div class="flex gap-x-4">
@@ -133,6 +125,20 @@
       } @empty {
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
       }
+      <div class="mt-4">
+        <nz-pagination [nzTotal]="invoiceItems._meta.totalCount"
+                       [nzPageIndex]="invoiceItems._meta.currentPage"
+                       (nzPageIndexChange)="pageIndexChange($event)"
+                       [nzPageSize]="invoiceItems._meta.perPage"></nz-pagination>
+      </div>
+    } @else if (loadingState) {
+      <ul>
+        @for (_ of [].constructor(5); track $index) {
+          <li class="mb-2 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
+            <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
+          </li>
+        }
+      </ul>
     }
   </ul>
 </page-container>
@@ -155,7 +161,7 @@
         <card-container class="mb-2 last:mb-0">
           <div class="flex gap-2">
             <div
-                class="h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600 rounded-sm">
+              class="h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600 rounded-sm">
               @if (item.product.image) {
                 <img [src]="item.product.image"
                      class="w-12 h-full object-cover"

@@ -1,9 +1,15 @@
 import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {CreatePurchaseInvoiceDTO, mapPurchaseInvoiceDtoToDomain, PurchaseInvoice, PurchaseInvoiceDto} from '@purchase/entity/purchase.entity';
+import {
+  CreatePurchaseInvoiceDTO,
+  mapPurchaseInvoiceDtoToDomain,
+  PurchaseInvoice,
+  PurchaseInvoiceDto
+} from '@purchase/entity/purchase.entity';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
 import {IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
+import {FilterIndex} from "@shared/entity/common.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +21,12 @@ export class PurchaseInfra {
     return this.http.post<void>(`${environment.apiUrl}/purchases-invoice/create`, purchase);
   }
 
-  fetchPurchaseInvoices(): Observable<IndexResponse<PurchaseInvoice>> {
-    const params = new HttpParams().set('expand', 'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size');
+  fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoice>): Observable<IndexResponse<PurchaseInvoice>> {
+    let params = new HttpParams().set('expand', 'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size');
+    params.append('page', pageIndex).append('per-page', 100);
+    if (filter) {
+      params = params.append(`filter[${filter.prop}][${filter.operator}]`, filter.value);
+    }
     return this.http.get<ServerResponse<IndexResponse<PurchaseInvoiceDto>>>(`${environment.apiUrl}/purchases-invoice/index`, {params})
       .pipe(
         map(response => {

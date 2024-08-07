@@ -17,7 +17,9 @@ import {InventoryApi} from '@inventory/api/inventory.api';
 import {Router, RouterLink} from '@angular/router';
 import * as htmlToImage from 'html-to-image';
 import {ShareImageService} from '@shared/data-access/share-image.service';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'invoice-list',
@@ -31,21 +33,21 @@ export class InvoiceListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly inventoryApi = inject(InventoryApi);
   private readonly shareImageService = inject(ShareImageService);
-  invoiceData: SaleInvoice[] = [];
+  invoiceIndex$ = this.saleFacade.invoiceIndex$;
   loadingState = false;
   loadingButtons = false;
   selectedInvoice = signal<SaleInvoice | null>(null);
 
   ngOnInit() {
     this.saleFacade.loadInvoices().then();
-    this.saleFacade.invoices$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(invoices => {
-        this.invoiceData = invoices;
-      });
     this.saleFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(loading => {
         this.loadingState = loading;
       });
+  }
+
+  pageIndexChange(pageIndex: number) {
+    this.saleFacade.loadInvoices(pageIndex).then();
   }
 
   async generateReceipt(invoice: SaleInvoice) {
