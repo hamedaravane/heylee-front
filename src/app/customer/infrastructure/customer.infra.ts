@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
 import {CreateCustomerDto, Customer, CustomerDto, mapCustomerDtoToCustomer} from '../entity/customer.entity';
 import {map, Observable} from 'rxjs';
@@ -37,8 +37,9 @@ export class CustomerInfra {
       )
   }
 
-  fetchCustomers(): Observable<IndexResponse<Customer>> {
-    return this.http.get<ServerResponse<IndexResponse<CustomerDto>>>(`${environment.apiUrl}/customer/index`)
+  fetchCustomers(pageIndex: number = 1): Observable<IndexResponse<Customer>> {
+    const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
+    return this.http.get<ServerResponse<IndexResponse<CustomerDto>>>(`${environment.apiUrl}/customer/index`, {params})
       .pipe(
         map((res) => {
           if (res.ok) {

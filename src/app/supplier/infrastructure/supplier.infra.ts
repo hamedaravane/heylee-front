@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
 import {CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto} from '../entity/supplier.entity';
 import {map, Observable} from 'rxjs';
@@ -40,8 +40,9 @@ export class SupplierInfra {
       )
   }
 
-  fetchSuppliers(): Observable<IndexResponse<Supplier>> {
-    return this.http.get<ServerResponse<IndexResponse<SupplierDto>>>(`${environment.apiUrl}/supplier/index`)
+  fetchSuppliers(pageIndex: number = 1): Observable<IndexResponse<Supplier>> {
+    const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
+    return this.http.get<ServerResponse<IndexResponse<SupplierDto>>>(`${environment.apiUrl}/supplier/index`, {params})
       .pipe(
         map((res) => {
           if (res.ok) {

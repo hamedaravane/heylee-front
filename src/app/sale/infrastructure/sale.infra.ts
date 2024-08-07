@@ -12,8 +12,11 @@ import {toCamelCase} from '@shared/entity/utility.entity';
 export class SaleInfra {
   private readonly http = inject(HttpClient);
 
-  fetchSaleInvoices(): Observable<SaleInvoice[]> {
-    let params = new HttpParams().append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size');
+  fetchSaleInvoices(pageIndex: number = 1): Observable<SaleInvoice[]> {
+    let params = new HttpParams()
+      .append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size')
+      .append('page', pageIndex)
+      .append('per-page', 100)
     return this.http.get<ServerResponse<IndexResponse<SaleInvoiceDTO>>>(`${environment.apiUrl}/sales-invoice/index`, {params})
       .pipe(
         map(res => {

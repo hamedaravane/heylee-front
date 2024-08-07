@@ -48,7 +48,7 @@ export class ProductInfra {
 
   fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
     const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
-    return this.http.get<ServerResponse<IndexResponse<ProductDto>>>(`${environment.apiUrl}/product/index`, {params: params})
+    return this.http.get<ServerResponse<IndexResponse<ProductDto>>>(`${environment.apiUrl}/product/index`, {params})
       .pipe(
         map((res) => {
           if (res.ok) {
