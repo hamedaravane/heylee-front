@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {CustomerFacade} from '@customer/data-access/customer.facade';
-import {CreateCustomer} from '@customer/entity/customer.entity';
+import {CreateCustomer, Customer} from '@customer/entity/customer.entity';
 import {firstValueFrom} from 'rxjs';
+import {FilterIndex} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,8 @@ export class CustomerApi {
   private readonly customerFacade = inject(CustomerFacade);
   private isFetched = false;
 
-  async loadCustomers() {
-    await this.customerFacade.loadCustomers();
+  async loadCustomers(pageIndex: number = 1, filter?: FilterIndex<Customer>) {
+    await this.customerFacade.loadCustomers(pageIndex, filter);
   }
 
   get customers$() {

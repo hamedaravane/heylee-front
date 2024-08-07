@@ -4,6 +4,7 @@ import {environment} from '@environment';
 import {CreateCustomerDto, Customer, CustomerDto, mapCustomerDtoToCustomer} from '../entity/customer.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
+import {FilterIndex} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -37,8 +38,11 @@ export class CustomerInfra {
       )
   }
 
-  fetchCustomers(pageIndex: number = 1): Observable<IndexResponse<Customer>> {
-    const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
+  fetchCustomers(pageIndex: number = 1, filter?: FilterIndex<Customer>): Observable<IndexResponse<Customer>> {
+    let params = new HttpParams().set('page', pageIndex).append('per-page', 50);
+    if (filter) {
+      params = params.append(`filter[${filter.prop}][${filter.operator}]`, `${filter.value}`);
+    }
     return this.http.get<ServerResponse<IndexResponse<CustomerDto>>>(`${environment.apiUrl}/customer/index`, {params})
       .pipe(
         map((res) => {

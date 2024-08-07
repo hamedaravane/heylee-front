@@ -5,6 +5,7 @@ import {IndexResponse, ServerResponseError} from '@shared/entity/server-response
 import {CreateCustomer, CreateCustomerDto, Customer} from '../entity/customer.entity';
 import {toSnakeCase} from '@shared/entity/utility.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {FilterIndex} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -28,10 +29,10 @@ export class CustomerFacade {
     return this.customersIndexSubject.asObservable().pipe(filter(Boolean))
   };
 
-  async loadCustomers() {
+  async loadCustomers(pageIndex: number = 1, filter?: FilterIndex<Customer>) {
     this.loadingSubject.next(true);
     try {
-      const response = await firstValueFrom(this.customerInfra.fetchCustomers());
+      const response = await firstValueFrom(this.customerInfra.fetchCustomers(pageIndex, filter));
       this.customersIndexSubject.next(response);
     } catch (err) {
       const error = new ServerResponseError(err);
