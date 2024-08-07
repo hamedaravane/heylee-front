@@ -22,6 +22,7 @@ export class SaleInfra {
       .append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size')
       .append('page', pageIndex)
       .append('per-page', 25)
+      .append('sort', '-created_at')
     return this.http.get<ServerResponse<IndexResponse<SaleInvoiceDTO>>>(`${environment.apiUrl}/sales-invoice/index`, {params})
       .pipe(
         map(res => {
