@@ -12,26 +12,11 @@
       @for (invoice of invoiceData; track $index) {
         <card-container class="mb-2 last:mb-0">
           <li class="flex flex-col gap-2 text-xs">
-            <div class="flex justify-between">
-              <div>
-                <span class="inline-block opacity-70">شماره فاکتور</span>
-                <span class="mx-2">{{ invoice.id }}</span>
-              </div>
-              <div class="text-end">{{ invoice.createdAt | persianDate }}</div>
-            </div>
+            <div class="text-center font-bold">{{ invoice.createdAt | persianDate }}</div>
             @for (item of invoice.salesItem; track $index) {
               <card-container class="mb-2">
                 <div class="flex gap-4">
-                  <div
-                      class="h-12 w-12 rounded-sm inline-block overflow-clip border border-solid border-gray-600">
-                    @if (item.product.image) {
-                      <img [src]="item.product.image"
-                           class="w-12 h-full object-cover"
-                           alt="product image"/>
-                    } @else {
-                      <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-                    }
-                  </div>
+                  <product-image-container [imageSrc]="item.product.image"></product-image-container>
                   <div>
                     <div class="col-span-3 line-clamp-1">{{ item.product.name }}</div>
                     <div class="line-clamp-1 font-mono">{{ item.product.code }}</div>
@@ -44,9 +29,9 @@
               </card-container>
             }
             @if (invoice.customer) {
-              <div *ngIf="{show: false} as modal" (click)="modal.show = true">
+              <div *ngIf="{show: false} as modal">
                 <i class="fa-solid fa-user"></i>
-                <span class="mx-2">{{ invoice.customer.name }}</span>
+                <span class="mx-2" (click)="modal.show = true">{{ invoice.customer.name }}</span>
                 <nz-modal [nzVisible]="modal.show"
                           [nzTitle]="invoice.customer.name"
                           (nzOnCancel)="modal.show = false"

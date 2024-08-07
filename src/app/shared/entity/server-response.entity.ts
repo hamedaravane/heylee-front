@@ -6,15 +6,15 @@ export interface ServerResponse<T> {
 }
 
 interface ErrorResult {
-  name: string,
-  message: string,
-  code: number,
-  status: number
+  name: string;
+  message: string;
+  code: number;
+  status: number;
 }
 
 interface ValidationErrorResult {
-  field: string,
-  message: string
+  field: string;
+  message: string;
 }
 
 export class ServerResponseError {
@@ -25,12 +25,12 @@ export class ServerResponseError {
   constructor(errorResponse: unknown) {
     const res = errorResponse as HttpErrorResponse;
     console.error(res);
+    this.status = res.status;
+
     if (res.status !== 422) {
       this.res = res.error.result as ErrorResult;
-      this.status = this.res.status;
     } else {
       this.validationErrors = res.error.result as ValidationErrorResult[];
-      this.status = res.status;
     }
   }
 }
@@ -39,14 +39,14 @@ export function dtoConvertor<T, U>(data: T, convertor: (data: T) => U): U {
   return convertor(data);
 }
 
+interface Link {
+  href: string;
+}
+
 interface Links {
   self: Link;
   first: Link;
   last: Link;
-}
-
-interface Link {
-  href: string;
 }
 
 interface Meta {

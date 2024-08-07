@@ -21,13 +21,9 @@ export interface SupplierDto {
 export type CreateSupplierDto = Omit<SupplierDto, 'id' | 'created_at'>;
 
 export function mapSupplierDtoToSupplier(dto: SupplierDto): Supplier {
-  try {
-    return {
-      ...dto,
-      createdAt: dto.created_at,
-      id: dto.id,
-    };
-  } catch (error) {
-    throw error;
-  }
+  return {
+    ...dto,
+    createdAt: dto.created_at,
+    id: dto.id,
+  };
 }

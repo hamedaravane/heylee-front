@@ -11,6 +11,7 @@ import {Product} from '@product/entity/product.entity';
 import {PurchaseItem} from '@purchase/entity/purchase.entity';
 import {IdLabel} from '@shared/entity/common.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'purchase-receipt',
@@ -23,7 +24,8 @@ import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.com
     CardContainerComponent,
     PersianDatePipe,
     DecimalPipe,
-    CurrencyComponent
+    CurrencyComponent,
+    ProductImageContainerComponent
   ],
   standalone: true
 })

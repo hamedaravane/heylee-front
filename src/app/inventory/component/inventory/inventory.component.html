@@ -2,17 +2,8 @@
   @if (availableProducts$ | async; as stockItems) {
     @for (stockItem of stockItems; track $index) {
       <card-container class="mb-3 last:mb-0">
-        <div class="grid grid-cols-12 grid-rows-1 gap-2">
-          <div
-            class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600">
-            @if (stockItem.product.image) {
-              <img [src]="stockItem.product.image"
-                   class="w-12 h-full object-cover"
-                   alt="product image"/>
-            } @else {
-              <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-            }
-          </div>
+        <div class="flex gap-4">
+          <product-image-container [imageSrc]="stockItem.product.image"></product-image-container>
           <div class="col-span-9 grid grid-cols-9 grid-rows-2 w-full">
             <div class="col-span-5 text-xs">{{ stockItem.product.name }}</div>
             <div class="col-span-4 text-xs">سایز: {{ stockItem.size.label }}</div>

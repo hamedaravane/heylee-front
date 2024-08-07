@@ -18,6 +18,7 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzPaginationModule} from 'ng-zorro-antd/pagination';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   standalone: true,
@@ -42,7 +43,8 @@ import {NzPaginationModule} from 'ng-zorro-antd/pagination';
     DecimalPipe,
     PageContainerComponent,
     CardContainerComponent,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    ProductImageContainerComponent
   ]
 })
 export class ProductsComponent implements OnInit {

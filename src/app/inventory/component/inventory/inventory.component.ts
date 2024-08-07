@@ -5,6 +5,7 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'inventory-inventory',
@@ -16,7 +17,8 @@ import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
     AsyncPipe,
     NgOptimizedImage,
     NzSkeletonModule,
-    DecimalPipe
+    DecimalPipe,
+    ProductImageContainerComponent
   ],
   standalone: true
 })

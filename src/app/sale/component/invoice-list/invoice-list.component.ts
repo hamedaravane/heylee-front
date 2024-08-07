@@ -17,11 +17,12 @@ import {InventoryApi} from '@inventory/api/inventory.api';
 import {Router, RouterLink} from '@angular/router';
 import * as htmlToImage from 'html-to-image';
 import {ShareImageService} from '@shared/data-access/share-image.service';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'invoice-list',
   standalone: true,
-  imports: [NzModalModule, NzButtonModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf, RouterLink, NgTemplateOutlet],
+  imports: [NzModalModule, NzButtonModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf, RouterLink, NgTemplateOutlet, ProductImageContainerComponent],
   templateUrl: './invoice-list.component.html'
 })
 export class InvoiceListComponent implements OnInit {

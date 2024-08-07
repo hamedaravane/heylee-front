@@ -19,6 +19,7 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
 import {ProductApi} from '@product/api/product.api';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'purchase-invoice',
@@ -40,7 +41,8 @@ import {NzAlertModule} from 'ng-zorro-antd/alert';
     NgOptimizedImage,
     PageContainerComponent,
     CardContainerComponent,
-    AsyncPipe
+    AsyncPipe,
+    ProductImageContainerComponent
   ],
   standalone: true
 })

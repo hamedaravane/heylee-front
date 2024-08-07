@@ -133,11 +133,11 @@ export function convertCreateUpdateInvoiceToDto(invoice: CreateUpdateInvoice): C
     discount: invoice.discount,
     ref_number: invoice.refNumber,
     postal_code: invoice.postalCode,
-    items: invoice.items.map(item => ({
-      product_id: item.productId,
-      color_id: item.colorId,
-      size_id: item.sizeId,
-      quantity: item.quantity
+    items: invoice.items.map(({ productId, colorId, sizeId, quantity }) => ({
+      product_id: productId,
+      color_id: colorId,
+      size_id: sizeId,
+      quantity
     }))
   };
 }
@@ -154,11 +154,11 @@ export function convertCreateUpdateInvoiceDtoToEntity(dto: CreateUpdateInvoiceDT
     discount: dto.discount,
     refNumber: dto.ref_number,
     postalCode: dto.postal_code,
-    items: dto.items.map(item => ({
-      productId: item.product_id,
-      colorId: item.color_id,
-      sizeId: item.size_id,
-      quantity: item.quantity
+    items: dto.items.map(({ product_id, color_id, size_id, quantity }) => ({
+      productId: product_id,
+      colorId: color_id,
+      sizeId: size_id,
+      quantity
     }))
   };
 }
@@ -171,5 +171,5 @@ export function salesItemToStockItemSelection(item: SalesItem): StockItemSelecti
     availableQuantity: 0,
     sellingUnitPrice: item.unitPrice,
     selectedQuantity: item.quantity
-  }
+  };
 }

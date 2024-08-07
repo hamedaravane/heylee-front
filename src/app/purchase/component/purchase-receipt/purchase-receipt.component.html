@@ -34,16 +34,7 @@
             <card-container class="col-span-2 mb-2">
               <div>
                 <div class="flex gap-x-4 mb-2">
-                  <div
-                      class="h-12 w-12 inline-block overflow-clip border border-solid border-gray-600">
-                    @if (item.product.image) {
-                      <img [src]="item.product.image"
-                           class="w-12 h-full object-cover"
-                           alt="product image"/>
-                    } @else {
-                      <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-                    }
-                  </div>
+                  <product-image-container [imageSrc]="item.product.image"></product-image-container>
                   <div>
                     <div class="text-xs">
                       <span class="col-span-3 mb-2 line-clamp-1">{{ item.product.name }}</span>

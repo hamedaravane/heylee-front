@@ -26,13 +26,14 @@ import {Router} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 
 @Component({
   selector: 'sale-invoice',
   imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
     NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
     DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule,
-    CardContainerComponent, PageContainerComponent, CurrencyComponent],
+    CardContainerComponent, PageContainerComponent, CurrencyComponent, ProductImageContainerComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
