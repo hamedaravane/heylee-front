@@ -16,7 +16,12 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
+import {
+  CreateUpdateInvoice,
+  InvoiceItem,
+  SaleInvoice,
+  salesItemToStockItemSelection
+} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {delay, distinctUntilChanged, filter, of} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -26,7 +31,9 @@ import {Router} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({
@@ -44,6 +51,7 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
   private readonly router = inject(Router);
+  protected readonly Validators = Validators;
 
   constructor() {
     this.checkUpdateMode();
@@ -63,61 +71,27 @@ export class SaleInvoiceComponent implements OnInit {
   shippingPrice = signal(0);
   discount = signal(0);
 
-  saleInvoiceForm = new FormGroup<{
-    customerId: FormControl<number | null>;
-    city: FormControl<string | null>;
-    address: FormControl<string | null>;
-    description: FormControl<string | null>;
-    paymentStatus: FormControl<'paid' | 'unpaid' | 'partially-paid' | null>;
-    shippingStatus: FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold' | null>;
-    shippingPrice: FormControl<number | null>;
-    discount: FormControl<number | null>;
-    refNumber: FormControl<string | null>;
-    items: FormControl<InvoiceItem[] | null>;
-  }>({
-    customerId: new FormControl(null, Validators.required),
-    city: new FormControl('', Validators.required),
-    address: new FormControl('', Validators.required),
-    description: new FormControl('', Validators.required),
-    paymentStatus: new FormControl('paid'),
-    shippingStatus: new FormControl('ready-to-ship'),
-    shippingPrice: new FormControl(null, Validators.required),
-    discount: new FormControl(0, [Validators.min(0)]),
-    refNumber: new FormControl(null),
-    items: new FormControl([], Validators.minLength(1))
+  saleInvoiceForm = new FormGroup({
+    customerId: new FormControl<number | null>(null, Validators.required),
+    city: new FormControl<string | null>(null, Validators.required),
+    address: new FormControl<string | null>(null, Validators.required),
+    description: new FormControl<string | null>(null),
+    paymentStatus: new FormControl<'paid' | 'unpaid' | 'partially-paid'>('paid', Validators.required),
+    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>('ready-to-ship', Validators.required),
+    shippingPrice: new FormControl<number | null>(null, Validators.required),
+    discount: new FormControl<number | null>(0, [Validators.min(0)]),
+    refNumber: new FormControl<string | null>(null),
+    items: new FormControl<InvoiceItem[] | null>(null, Validators.required)
   });
-  customerForm = new FormGroup<{
-    name: FormControl<string | null>;
-    phone: FormControl<string | null>;
-    postalCode: FormControl<string | null>;
-    telegram: FormControl<string | null>;
-    instagram: FormControl<string | null>;
-    cityCustomer: FormControl<string | null>;
-    addressCustomer: FormControl<string | null>;
-  }>({
-    name: new FormControl(null, Validators.required),
-    phone: new FormControl(null, Validators.required),
-    postalCode: new FormControl(null),
-    telegram: new FormControl(null, [Validators.minLength(5), Validators.maxLength(32)]),
-    instagram: new FormControl(null, [Validators.minLength(1), Validators.maxLength(30)]),
-    cityCustomer: new FormControl(null, Validators.required),
-    addressCustomer: new FormControl(null, Validators.required)
+  customerForm = new FormGroup({
+    name: new FormControl<string | null>(null, Validators.required),
+    phone: new FormControl<string | null>(null, Validators.required),
+    postalCode: new FormControl<string | null>(null),
+    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
+    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
+    cityCustomer: new FormControl<string | null>(null, Validators.required),
+    addressCustomer: new FormControl<string | null>(null, Validators.required)
   });
-
-  private nameControl = this.customerForm.controls.name;
-  private phoneControl = this.customerForm.controls.phone;
-  private postalCodeControl = this.customerForm.controls.postalCode;
-  private telegramControl = this.customerForm.controls.telegram;
-  private instagramControl = this.customerForm.controls.instagram;
-  private cityCustomerControl = this.customerForm.controls.cityCustomer;
-  private addressCustomerControl = this.customerForm.controls.addressCustomer;
-
-  customerIdControl = this.saleInvoiceForm.controls.customerId;
-  private cityControl = this.saleInvoiceForm.controls.city;
-  private addressControl = this.saleInvoiceForm.controls.address;
-  private shippingPriceControl = this.saleInvoiceForm.controls.shippingPrice as FormControl<number>;
-  private discountControl = this.saleInvoiceForm.controls.discount as FormControl<number>;
-  private itemsControl = this.saleInvoiceForm.controls.items as FormControl<InvoiceItem[]>;
 
   ngOnInit() {
     this.loadCustomers().then();
@@ -229,7 +203,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private updateItemsControl(): void {
-    this.itemsControl.setValue(this.selectedProducts.map((item) => selectedProductToInvoiceItem(item)));
+    this.saleInvoiceForm.controls.items.setValue(this.selectedProducts.map((item) => selectedProductToInvoiceItem(item)));
   }
 
   private updateArrays(
@@ -307,7 +281,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private onPhoneControlChange() {
-    this.phoneControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
+    this.customerForm.controls.phone.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
       .subscribe((phoneValue) => {
         const customer = this.customers?.find(c => c.phone === phoneValue);
         if (customer) {
@@ -324,13 +298,13 @@ export class SaleInvoiceComponent implements OnInit {
           this.saleInvoiceForm.controls.city.setValue(customer.city);
           this.saleInvoiceForm.controls.address.setValue(customer.address);
           this.customerForm.disable();
-          this.phoneControl.enable();
+          this.customerForm.controls.phone.enable();
         }
       });
   }
 
   private onItemsControlChange() {
-    this.itemsControl.valueChanges
+    this.saleInvoiceForm.controls.items.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
       .subscribe((items) => {
         this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
@@ -347,13 +321,13 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private onDiscountControlChange() {
-    this.discountControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
+    this.saleInvoiceForm.controls.discount.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
       this.discount.set(discount);
     });
   }
 
   private onShippingPriceChange() {
-    this.shippingPriceControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shippingPrice) => {
+    this.saleInvoiceForm.controls.shippingPrice.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((shippingPrice) => {
       this.shippingPrice.set(shippingPrice);
     });
   }
@@ -378,6 +352,4 @@ export class SaleInvoiceComponent implements OnInit {
         }
       });
   }
-
-  protected readonly Validators = Validators;
 }
