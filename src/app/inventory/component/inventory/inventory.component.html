@@ -1,23 +1,29 @@
 <page-container>
   @if (availableProducts$ | async; as stockItems) {
-    @for (stockItem of stockItems; track $index) {
+    @for (stockItem of stockItems | groupItems; track $index) {
       <card-container class="mb-3 last:mb-0">
-        <div class="flex gap-4">
-          <nz-badge [nzCount]="stockItem.availableQuantity">
-            <product-image-container [imageSrc]="stockItem.product.image"></product-image-container>
+        <div class="flex gap-4 mb-3">
+          <nz-badge [nzCount]="stockItem.totalAvailableQuantity">
+            <product-image-container [imageSrc]="stockItem.image"></product-image-container>
           </nz-badge>
           <div class="text-xs">
-            <div>{{ stockItem.product.name }}</div>
-            <div class="font-mono">{{ stockItem.product.code }}</div>
-            <div>
-              <span class="me-4">{{ stockItem.size.label }}</span>
-              <span class="me-4">{{ stockItem.color.label }}</span>
-              <div class="inline-block">
-                <currency-wrapper class="me-2"></currency-wrapper>
-                <span>{{ stockItem.sellingUnitPrice | number }}</span>
-              </div>
-            </div>
+            <div>{{ stockItem.name }}</div>
+            <div class="font-mono">{{ stockItem.code }}</div>
           </div>
+        </div>
+        <div class="text-xs">
+          @for (color of stockItem.colors; track $index) {
+            <div dir="rtl" class="mb-3">
+              <span>{{ color.label }}:</span>
+              @for (size of color.sizes; track $index) {
+                <div class="inline-block mx-2">
+                  <nz-badge [nzCount]="size.quantity" [nzStyle]="{'background-color': colors.gray_7}" nzSize="small">
+                    <span class="px-2 border border-solid border-gray-600 rounded-md">{{size.label}}</span>
+                  </nz-badge>
+                </div>
+              }
+            </div>
+          }
         </div>
       </card-container>
     } @empty {

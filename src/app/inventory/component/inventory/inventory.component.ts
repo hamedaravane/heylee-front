@@ -10,6 +10,9 @@ import {
 } from '@shared/component/product-image-container/product-image-container.component';
 import {NzBadgeModule} from "ng-zorro-antd/badge";
 import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
+import {GroupStockItemsPipe} from "@inventory/pipe/group-stock-items.pipe";
+import {NzCollapseModule} from "ng-zorro-antd/collapse";
+import {colors} from "@colors";
 
 @Component({
   selector: 'inventory-inventory',
@@ -24,6 +27,8 @@ import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.com
     NzBadgeModule,
     DecimalPipe,
     ProductImageContainerComponent,
+    GroupStockItemsPipe,
+    NzCollapseModule,
     CurrencyComponent
   ],
   standalone: true
@@ -35,4 +40,6 @@ export class InventoryComponent implements OnInit {
   ngOnInit() {
     this.inventoryFacade.fetchAvailableProducts().then();
   }
+
+  protected readonly colors = colors;
 }

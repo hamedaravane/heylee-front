@@ -22,6 +22,23 @@ export interface StockItemDto {
   selling_unit_price: number;
 }
 
+export interface GroupedStockItem {
+  code: string;
+  name: string;
+  image: string | null;
+  description: string | null;
+  colors: {
+    label: string;
+    sizes: {
+      label: string;
+      quantity: number;
+    }[];
+    total_quantity: number;
+  }[];
+  sellingUnitPrice: number;
+  totalAvailableQuantity: number;
+}
+
 export interface StockItemSelection extends Omit<StockItem, 'totalSold' | 'totalPurchased'> {
   selectedQuantity: number;
 }
