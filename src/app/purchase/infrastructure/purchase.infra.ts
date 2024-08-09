@@ -23,7 +23,7 @@ export class PurchaseInfra {
 
   fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoice>): Observable<IndexResponse<PurchaseInvoice>> {
     let params = new HttpParams().set('expand', 'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size');
-    params.append('page', pageIndex).append('per-page', 100);
+    params.append('page', pageIndex).append('per-page', 100).append('sort', 'created_at');
     if (filter) {
       params = params.append(`filter[${filter.prop}][${filter.operator}]`, filter.value);
     }

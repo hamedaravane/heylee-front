@@ -3,23 +3,21 @@
     @for (stockItem of stockItems; track $index) {
       <card-container class="mb-3 last:mb-0">
         <div class="flex gap-4">
-          <product-image-container [imageSrc]="stockItem.product.image"></product-image-container>
-          <div class="col-span-9 grid grid-cols-9 grid-rows-2 w-full">
-            <div class="col-span-5 text-xs">{{ stockItem.product.name }}</div>
-            <div class="col-span-4 text-xs">سایز: {{ stockItem.size.label }}</div>
-            <div class="col-span-5 font-mono font-bold text-xs">{{ stockItem.product.code }}</div>
-            <div class="col-span-4 text-xs">رنگ: {{ stockItem.color.label }}</div>
+          <nz-badge [nzCount]="stockItem.availableQuantity">
+            <product-image-container [imageSrc]="stockItem.product.image"></product-image-container>
+          </nz-badge>
+          <div class="text-xs">
+            <div>{{ stockItem.product.name }}</div>
+            <div class="font-mono">{{ stockItem.product.code }}</div>
+            <div>
+              <span class="me-4">{{ stockItem.size.label }}</span>
+              <span class="me-4">{{ stockItem.color.label }}</span>
+              <div class="inline-block">
+                <currency-wrapper class="me-2"></currency-wrapper>
+                <span>{{ stockItem.sellingUnitPrice | number }}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="grid grid-cols-4 grid-rows-2 mt-2">
-          <div class="py-2 text-xs text-start">تعداد موجودی</div>
-          <div class="py-2 text-xs text-center">قیمت واحد</div>
-          <div class="py-2 text-xs text-center">مجموع خرید</div>
-          <div class="py-2 text-xs text-center">مجموع فروش</div>
-          <div class="py-2 text-xs text-center">{{ stockItem.availableQuantity | number }}</div>
-          <div class="py-2 text-xs text-center">{{ stockItem.sellingUnitPrice | number }}</div>
-          <div class="py-2 text-xs text-center">{{ stockItem.totalPurchased | number }}</div>
-          <div class="py-2 text-xs text-center">{{ stockItem.totalSold | number }}</div>
         </div>
       </card-container>
     } @empty {
