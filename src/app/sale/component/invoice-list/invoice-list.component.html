@@ -1,4 +1,40 @@
 <page-container>
+  <form class="my-4 grid gap-2 text-xs grid-cols-1 md:grid-cols-2">
+    <div class="flex gap-3 w-full items-center">
+      <label class="whitespace-nowrap">شهر:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center">
+      <label class="whitespace-nowrap">آدرس:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center">
+      <label class="whitespace-nowrap">شماره پیگیری:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center">
+      <label class="whitespace-nowrap">وضعیت ارسال:</label>
+      <div class="w-full">
+        <nz-radio-group nzDisabled nzSize="small">
+          <label nz-radio nzValue="shipped">ارسال شده</label>
+          <label nz-radio nzValue="ready-to-ship">آماده برای ارسال</label>
+          <label nz-radio nzValue="on-hold">رزرو</label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </form>
   <ul>
     @if (invoiceIndex$ | async; as invoiceItems) {
       @for (invoice of invoiceItems.items; track $index) {
@@ -209,3 +245,7 @@
     </div>
   </div>
 }
+
+<ng-template #suffixIconSearch>
+  <i class="fa-solid fa-search text-gray-700"></i>
+</ng-template>

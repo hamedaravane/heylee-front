@@ -2,9 +2,10 @@ import {inject, Injectable} from '@angular/core';
 import {SaleInfra} from '@sale/infrastructure/sale.infra';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
-import {CreateUpdateInvoice, SaleInvoice} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
 import {InventoryApi} from '@inventory/api/inventory.api';
 import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
+import {FilterIndex} from "@shared/entity/common.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +23,10 @@ export class SaleFacade {
 
   loading$ = this.loadingSubject.asObservable();
 
-  async loadInvoices(pageIndex: number = 1) {
+  async loadInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]) {
     this.loadingSubject.next(true);
     try {
-      const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices(pageIndex));
+      const response = await firstValueFrom(this.saleInfra.fetchSaleInvoices(pageIndex, filters));
       this.invoiceIndexSubject.next(response);
     } catch (err) {
       const error = new ServerResponseError(err);

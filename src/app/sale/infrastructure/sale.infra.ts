@@ -10,6 +10,7 @@ import {
   SaleInvoiceDTO
 } from '@sale/entity/invoice.entity';
 import {toCamelCase} from '@shared/entity/utility.entity';
+import {FilterIndex} from "@shared/entity/common.entity";
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +18,17 @@ import {toCamelCase} from '@shared/entity/utility.entity';
 export class SaleInfra {
   private readonly http = inject(HttpClient);
 
-  fetchSaleInvoices(pageIndex: number = 1): Observable<IndexResponse<SaleInvoice>> {
+  fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]): Observable<IndexResponse<SaleInvoice>> {
     let params = new HttpParams()
       .append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size')
       .append('page', pageIndex)
       .append('per-page', 25)
       .append('sort', '-created_at')
+    if (filters && filters.length > 0) {
+      for (const filter of filters) {
+        params = params.append(`filter[${filter.prop}][${filter.operator}]`, `${filter.value}`);
+      }
+    }
     return this.http.get<ServerResponse<IndexResponse<SaleInvoiceDTO>>>(`${environment.apiUrl}/sales-invoice/index`, {params})
       .pipe(
         map(res => {
