@@ -1,11 +1,11 @@
-import {Pipe} from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {StockItemSelection} from '@inventory/entity/inventory.entity';
 
 @Pipe({
   standalone: true,
   name: 'filterProductsByCode'
 })
-export class ProductFilterPipe {
+export class ProductFilterPipe implements PipeTransform {
   transform(value: StockItemSelection[], searchText: string): StockItemSelection[] {
     if (!value || !searchText) {
       return value;

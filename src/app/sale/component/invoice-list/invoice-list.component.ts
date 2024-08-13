@@ -3,13 +3,13 @@ import {SaleFacade} from '@sale/data-access/sale.facade';
 import {AsyncPipe, CurrencyPipe, DecimalPipe, NgIf, NgTemplateOutlet} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NzPaginationModule} from 'ng-zorro-antd/pagination';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PersianDatePipe} from '@sale/pipe/persian-date.pipe';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SaleInvoice} from '@sale/entity/invoice.entity';
+import {SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzModalModule} from 'ng-zorro-antd/modal';
@@ -17,17 +17,18 @@ import {InventoryApi} from '@inventory/api/inventory.api';
 import {Router, RouterLink} from '@angular/router';
 import * as htmlToImage from 'html-to-image';
 import {ShareImageService} from '@shared/data-access/share-image.service';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {NzBadgeModule} from 'ng-zorro-antd/badge';
-import {NzInputModule} from "ng-zorro-antd/input";
-import {NzRadioModule} from "ng-zorro-antd/radio";
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzRadioModule} from 'ng-zorro-antd/radio';
+import {ShippingStatusPipe} from '@sale/pipe/shipping-status.pipe';
+import {delay} from 'rxjs';
+import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({
   selector: 'invoice-list',
   standalone: true,
-  imports: [NzModalModule, NzInputModule, NzRadioModule, NzButtonModule, NzBadgeModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf, RouterLink, NgTemplateOutlet, ProductImageContainerComponent],
+  imports: [NzModalModule, NzInputModule, NzRadioModule, NzButtonModule, NzBadgeModule, NzPaginationModule, AsyncPipe, NzEmptyModule, CurrencyPipe, NzSkeletonModule, DecimalPipe, FormsModule, PageContainerComponent, CardContainerComponent, PersianDatePipe, CurrencyComponent, NgIf, RouterLink, NgTemplateOutlet, ProductImageContainerComponent, ShippingStatusPipe, ReactiveFormsModule],
   templateUrl: './invoice-list.component.html'
 })
 export class InvoiceListComponent implements OnInit {
@@ -41,12 +42,45 @@ export class InvoiceListComponent implements OnInit {
   loadingButtons = false;
   selectedInvoice = signal<SaleInvoice | null>(null);
 
+  filterSearch = new FormGroup({
+    city: new FormControl<string | null>(null),
+    address: new FormControl<string | null>(null),
+    refNumber: new FormControl<string | null>(null),
+    shippingStatus: new FormControl<string | null>(null),
+  })
+
   ngOnInit() {
     this.saleFacade.loadInvoices().then();
     this.saleFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(loading => {
         this.loadingState = loading;
       });
+
+    this.filterSearch.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), delay(2000))
+      .subscribe((value) => {
+        const filters: FilterIndex<SaleInvoiceDTO>[] = [];
+        if (value.city) {
+          filters.push({prop: 'city', operator: 'like', value: value.city})
+        } else {
+          filters.filter(p => p.prop === 'city')
+        }
+        if (value.address) {
+          filters.push({prop: 'address', operator: 'like', value: value.address})
+        } else {
+          filters.filter(p => p.prop === 'address')
+        }
+        if (value.refNumber) {
+          filters.push({prop: 'ref_number', operator: 'like', value: value.refNumber})
+        } else {
+          filters.filter(p => p.prop === 'ref_number')
+        }
+        if (value.shippingStatus) {
+          filters.push({prop: 'shipping_status', operator: 'eq', value: value.shippingStatus})
+        } else {
+          filters.filter(p => p.prop === 'shipping_status')
+        }
+        this.saleFacade.loadInvoices(1, filters).then();
+      })
   }
 
   pageIndexChange(pageIndex: number) {
@@ -84,4 +118,6 @@ export class InvoiceListComponent implements OnInit {
   navigateToEdit(invoice: SaleInvoice) {
     this.router.navigate(['/sale'], {state: {invoice: invoice}});
   }
+
+  protected readonly status = status;
 }

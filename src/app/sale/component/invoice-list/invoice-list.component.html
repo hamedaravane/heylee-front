@@ -1,36 +1,38 @@
 <page-container>
-  <form class="my-4 grid gap-2 text-xs grid-cols-1 md:grid-cols-2">
-    <div class="flex gap-3 w-full items-center">
-      <label class="whitespace-nowrap">شهر:</label>
+  <form class="my-4 grid gap-4 text-xs grid-cols-1 md:grid-cols-2">
+    <div class="flex gap-3 w-full items-center hidden">
+      <label class="whitespace-nowrap opacity-80">شهر:</label>
       <div class="w-full">
         <nz-input-group [nzSuffix]="suffixIconSearch">
-          <input type="text" nz-input />
+          <input [formControl]="filterSearch.controls.city" type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center hidden">
+      <label class="whitespace-nowrap opacity-80">آدرس:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input [formControl]="filterSearch.controls.address" type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center hidden">
+      <label class="whitespace-nowrap opacity-80">شماره پیگیری:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input [formControl]="filterSearch.controls.refNumber" type="text" nz-input />
         </nz-input-group>
       </div>
     </div>
     <div class="flex gap-3 w-full items-center">
-      <label class="whitespace-nowrap">آدرس:</label>
+      <label class="whitespace-nowrap opacity-80">وضعیت ارسال:</label>
       <div class="w-full">
-        <nz-input-group [nzSuffix]="suffixIconSearch">
-          <input type="text" nz-input />
-        </nz-input-group>
-      </div>
-    </div>
-    <div class="flex gap-3 w-full items-center">
-      <label class="whitespace-nowrap">شماره پیگیری:</label>
-      <div class="w-full">
-        <nz-input-group [nzSuffix]="suffixIconSearch">
-          <input type="text" nz-input />
-        </nz-input-group>
-      </div>
-    </div>
-    <div class="flex gap-3 w-full items-center">
-      <label class="whitespace-nowrap">وضعیت ارسال:</label>
-      <div class="w-full">
-        <nz-radio-group nzDisabled nzSize="small">
+        <nz-radio-group [formControl]="filterSearch.controls.shippingStatus" nzSize="small">
+          <label nz-radio nzValue="">همه</label>
           <label nz-radio nzValue="shipped">ارسال شده</label>
           <label nz-radio nzValue="ready-to-ship">آماده برای ارسال</label>
           <label nz-radio nzValue="on-hold">رزرو</label>
+          <label nz-radio nzValue="cancelled">لغو شده</label>
         </nz-radio-group>
       </div>
     </div>
@@ -38,7 +40,7 @@
   <ul>
     @if (invoiceIndex$ | async; as invoiceItems) {
       @for (invoice of invoiceItems.items; track $index) {
-        <nz-ribbon [nzText]="invoice.shippingStatus" nzPlacement="start" [nzColor]="invoice.shippingStatus === 'shipped' ? 'green' : ''">
+        <nz-ribbon [nzText]="(invoice.shippingStatus | shippingStatus).label" nzPlacement="start" [nzColor]="(invoice.shippingStatus | shippingStatus).color">
           <card-container class="mb-2 last:mb-0">
             <li class="flex flex-col gap-2 text-xs">
               <div class="font-bold">{{ invoice.createdAt | persianDate }}</div>
