@@ -16,14 +16,9 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {
-  CreateUpdateInvoice,
-  InvoiceItem,
-  SaleInvoice,
-  salesItemToStockItemSelection
-} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
-import {delay, distinctUntilChanged, filter, of} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, of} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {selectedProductToInvoiceItem, StockItemSelection} from '@inventory/entity/inventory.entity';
@@ -31,9 +26,7 @@ import {Router} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({
@@ -116,7 +109,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   onPhoneSearch(e: string) {
-    of(e).pipe(delay(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    of(e).pipe(debounceTime(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const filter: FilterIndex<Customer> = {prop: 'phone', operator: 'like', value: e}
       this.customerApi.loadCustomers(1, filter).then();
     })

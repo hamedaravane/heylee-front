@@ -1,6 +1,14 @@
 <page-container>
   <form class="my-4 grid gap-4 text-xs grid-cols-1 md:grid-cols-2">
-    <div class="flex gap-3 w-full items-center hidden">
+    <div class="flex gap-3 w-full items-center">
+      <label class="whitespace-nowrap opacity-80">نام مشتری:</label>
+      <div class="w-full">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input [formControl]="filterSearch.controls.customerName" type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="flex gap-3 w-full items-center">
       <label class="whitespace-nowrap opacity-80">شهر:</label>
       <div class="w-full">
         <nz-input-group [nzSuffix]="suffixIconSearch">
@@ -8,19 +16,11 @@
         </nz-input-group>
       </div>
     </div>
-    <div class="flex gap-3 w-full items-center hidden">
+    <div class="flex gap-3 w-full items-center">
       <label class="whitespace-nowrap opacity-80">آدرس:</label>
       <div class="w-full">
         <nz-input-group [nzSuffix]="suffixIconSearch">
           <input [formControl]="filterSearch.controls.address" type="text" nz-input />
-        </nz-input-group>
-      </div>
-    </div>
-    <div class="flex gap-3 w-full items-center hidden">
-      <label class="whitespace-nowrap opacity-80">شماره پیگیری:</label>
-      <div class="w-full">
-        <nz-input-group [nzSuffix]="suffixIconSearch">
-          <input [formControl]="filterSearch.controls.refNumber" type="text" nz-input />
         </nz-input-group>
       </div>
     </div>

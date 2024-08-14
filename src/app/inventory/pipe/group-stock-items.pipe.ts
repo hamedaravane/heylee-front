@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {GroupedStockItem, StockItem} from "@inventory/entity/inventory.entity";
+import {GroupedStockItem, StockItem} from '@inventory/entity/inventory.entity';
 
 @Pipe({
   name: 'groupItems',

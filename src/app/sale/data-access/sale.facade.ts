@@ -5,7 +5,7 @@ import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
 import {CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
 import {InventoryApi} from '@inventory/api/inventory.api';
 import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
-import {FilterIndex} from "@shared/entity/common.entity";
+import {FilterIndex} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'

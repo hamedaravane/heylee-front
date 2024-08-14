@@ -22,7 +22,7 @@ import {NzBadgeModule} from 'ng-zorro-antd/badge';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
 import {ShippingStatusPipe} from '@sale/pipe/shipping-status.pipe';
-import {delay} from 'rxjs';
+import {debounceTime} from 'rxjs';
 import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({
@@ -45,7 +45,7 @@ export class InvoiceListComponent implements OnInit {
   filterSearch = new FormGroup({
     city: new FormControl<string | null>(null),
     address: new FormControl<string | null>(null),
-    refNumber: new FormControl<string | null>(null),
+    customerName: new FormControl<string | null>(null),
     shippingStatus: new FormControl<string | null>(null),
   })
 
@@ -56,7 +56,7 @@ export class InvoiceListComponent implements OnInit {
         this.loadingState = loading;
       });
 
-    this.filterSearch.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), delay(2000))
+    this.filterSearch.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), debounceTime(2000))
       .subscribe((value) => {
         const filters: FilterIndex<SaleInvoiceDTO>[] = [];
         if (value.city) {
@@ -69,8 +69,8 @@ export class InvoiceListComponent implements OnInit {
         } else {
           filters.filter(p => p.prop === 'address')
         }
-        if (value.refNumber) {
-          filters.push({prop: 'ref_number', operator: 'like', value: value.refNumber})
+        if (value.customerName) {
+          filters.push({prop: 'customer.name' as any, operator: 'like', value: value.customerName})
         } else {
           filters.filter(p => p.prop === 'ref_number')
         }
