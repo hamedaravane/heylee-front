@@ -7,6 +7,7 @@ export interface Customer {
   instagram: string | null;
   city: string;
   address: string;
+  cashbackBalance: number;
   createdAt: string | null;
 }
 
@@ -19,6 +20,7 @@ export interface CustomerDto {
   instagram: string | null;
   city: string;
   address: string;
+  cashback_balance: number;
   created_at: string | null;
 }
 
@@ -35,6 +37,7 @@ export function mapCustomerDtoToCustomer(dto: CustomerDto): Customer {
     instagram: dto.instagram,
     city: dto.city,
     address: dto.address,
+    cashbackBalance: dto.cashback_balance,
     createdAt: dto.created_at
   };
 }
@@ -49,6 +52,7 @@ export function mapCustomerToDto(data: Customer): CustomerDto {
     instagram: data.instagram,
     city: data.city,
     address: data.address,
+    cashback_balance: data.cashbackBalance,
     created_at: data.createdAt
   };
 }

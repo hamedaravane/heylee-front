@@ -19,15 +19,16 @@
               <i class="fa-solid fa-phone mx-2"></i>
               <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.phone | phoneFormat}}</a>
             </div>
-            <!-- city -->
-            <div>
-              <i class="fa-solid fa-city mx-2"></i>
-              <span>{{ customer.city}}</span>
-            </div>
-            <!-- address -->
-            <div class="col-span-8">
-              <i class="fa-solid fa-location-dot mx-2"></i>
-              <span>{{ customer.address}}</span>
+            <div class="flex gap-2">
+              <div>
+                <i class="fa-solid fa-location-dot mx-2"></i>
+                <span>{{ customer.city}}</span>
+              </div>
+              <!-- address -->
+              <div class="col-span-8">
+                <span class="me-2">|</span>
+                <span>{{ customer.address}}</span>
+              </div>
             </div>
             <!-- postal code -->
             @if (customer.postalCode) {
@@ -48,13 +49,19 @@
                 <a [href]="'https://instagram.com/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram}}</a>
               </div>
             }
+            <!-- cashback balance -->
+            <div>
+              <i class="fa-solid fa-money-bill-wave mx-2"></i>
+              <span>{{ customer.cashbackBalance | number }}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
             <div class="col-span-8 mt-4">
               <div class="flex gap-2">
-                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzSize="small" nzBlock nz-button (click)="selectCustomerToEdit(customer)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nz-button (click)="selectCustomerToEdit(customer)">
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzSize="small" nzBlock nzDanger nz-button (click)="deleteCustomer(customer.id)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzDanger nz-button (click)="deleteCustomer(customer.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>

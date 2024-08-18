@@ -1,5 +1,5 @@
 import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {AsyncPipe, NgTemplateOutlet} from '@angular/common';
+import {AsyncPipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
 import {BidiModule} from '@angular/cdk/bidi';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -16,6 +16,7 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PhoneFormatPipe} from '@shared/pipe/phone-format.pipe';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 
 @Component({
   standalone: true,
@@ -36,7 +37,9 @@ import {PhoneFormatPipe} from '@shared/pipe/phone-format.pipe';
     PageContainerComponent,
     CardContainerComponent,
     NgTemplateOutlet,
-    PhoneFormatPipe
+    PhoneFormatPipe,
+    DecimalPipe,
+    CurrencyComponent
   ]
 })
 export class CustomersComponent implements OnInit {

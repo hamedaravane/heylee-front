@@ -9,34 +9,44 @@
     <ul>
       @for (supplier of suppliers.items; track $index) {
         <card-container class="mb-2 last:mb-0">
-          <li class="grid grid-cols-8 gap-y-1">
-            <div class="col-span-1 text-start"><i class="fa-solid fa-user"></i></div>
-            <span class="col-span-4">{{ supplier.name }}</span>
-            <div class="col-span-1 text-start"><i class="fa-solid fa-id-card"></i></div>
-            <span class="col-span-2">{{ supplier.id }}</span>
-            <div class="col-span-1 text-start"><i class="fa-solid fa-location-dot"></i></div>
-            <span class="col-span-7">{{ supplier.address }}</span>
-            <div class="col-span-1 text-start"><i class="fa-solid fa-phone"></i></div>
-            <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500 col-span-7 font-mono"
-               dir="ltr">{{ supplier.phone | phoneFormat }}</a>
+          <li>
+            <div>
+              <i class="fa-solid fa-user me-2"></i>
+              <span>{{ supplier.name }}</span>
+            </div>
+            <div>
+              <i class="fa-solid fa-location-dot me-2"></i>
+              <span>{{ supplier.address }}</span>
+            </div>
+            @if (supplier.phone) {
+              <div>
+                <i class="fa-solid fa-phone me-2"></i>
+                <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500  font-mono"
+                   dir="ltr">{{ supplier.phone | phoneFormat }}</a>
+              </div>
+            }
             @if (supplier.telegram) {
-              <div class="col-span-1 text-start"><i class="fa-brands fa-telegram"></i></div>
-              <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500 col-span-3 font-mono"
-                 dir="ltr">{{ supplier.telegram }}</a>
+              <div>
+                <i class="fa-brands fa-telegram me-2"></i>
+                <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500  font-mono"
+                   dir="ltr">{{ supplier.telegram }}</a>
+              </div>
             }
             @if (supplier.instagram) {
-              <div class="col-span-1 text-start"><i class="fa-brands fa-instagram"></i></div>
-              <a [href]="'https://instagram.com/' + supplier.instagram" class="text-indigo-500 col-span-3 font-mono"
-                 dir="ltr">{{ supplier.instagram }}</a>
+              <div class=" text-start">
+                <i class="fa-brands fa-instagram me-2"></i>
+                <a [href]="'https://instagram.com/' + supplier.instagram" class="text-indigo-500  font-mono"
+                   dir="ltr">{{ supplier.instagram }}</a>
+              </div>
             }
-            <div class="col-span-8 mt-4">
+            <div class="mt-4">
               <div class="flex gap-2">
                 <button [disabled]="loadingState" [nzLoading]="loadingState" (click)="selectIdToEdit(supplier.id)"
-                        nzType="default" nzSize="small" nzBlock nz-button>
+                        nzType="default" nz-button>
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="default" nzSize="small" nzBlock
+                <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="default"
                         nzDanger nz-button (click)="deleteSupplier(supplier.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
