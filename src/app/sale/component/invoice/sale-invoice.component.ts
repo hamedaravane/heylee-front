@@ -28,12 +28,15 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
 import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
+import {NzSwitchModule} from 'ng-zorro-antd/switch';
+import {DeviceService} from '@shared/data-access/device.service';
 
 @Component({
   selector: 'sale-invoice',
   imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
     NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
     DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule,
+    NzSwitchModule,
     CardContainerComponent, PageContainerComponent, CurrencyComponent, ProductImageContainerComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
@@ -43,6 +46,7 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
+  private readonly deviceService = inject(DeviceService);
   private readonly router = inject(Router);
   protected readonly Validators = Validators;
 
@@ -73,6 +77,7 @@ export class SaleInvoiceComponent implements OnInit {
     shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>('ready-to-ship', Validators.required),
     shippingPrice: new FormControl<number | null>(null, Validators.required),
     discount: new FormControl<number | null>(0, [Validators.min(0)]),
+    cashback: new FormControl<boolean>(false, [Validators.required]),
     refNumber: new FormControl<string | null>(null),
     items: new FormControl<InvoiceItem[] | null>(null, Validators.required)
   });
@@ -99,6 +104,7 @@ export class SaleInvoiceComponent implements OnInit {
     });
     this.setupFormListeners();
     this.fillFormsToUpdate();
+    this.deviceService.screenWidth$;
   }
 
   private async loadCustomers() {
@@ -250,6 +256,7 @@ export class SaleInvoiceComponent implements OnInit {
         shippingStatus: this.invoiceToUpdate.shippingStatus as 'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold',
         shippingPrice: this.invoiceToUpdate.shippingPrice,
         discount: this.invoiceToUpdate.discount,
+        cashback: this.invoiceToUpdate.cashbackUsed,
         refNumber: this.invoiceToUpdate.refNumber,
         items: this.invoiceToUpdate.salesItem
       });
