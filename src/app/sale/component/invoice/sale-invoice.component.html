@@ -267,15 +267,6 @@
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-      <!-- cashback -->
-      <nz-form-item>
-        <nz-form-label [nzRequired]="saleInvoiceForm.controls.cashback.hasValidator(Validators.required)"
-                       nzFor="cashback">از برگشت نقدی استفاده میکنید؟
-        </nz-form-label>
-        <nz-form-control>
-          <nz-switch [formControl]="saleInvoiceForm.controls.cashback"></nz-switch>
-        </nz-form-control>
-      </nz-form-item>
       <!-- ref number -->
       <nz-form-item>
         <nz-form-label [nzRequired]="saleInvoiceForm.controls.refNumber.hasValidator(Validators.required)"

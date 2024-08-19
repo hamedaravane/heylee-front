@@ -72,7 +72,6 @@ export interface SaleInvoice {
   refNumber: string | null;
   totalPrice: number;
   discount: number;
-  cashbackUsed: boolean;
   shippingPrice: number;
   paidPrice: number;
   createdAt: string;
