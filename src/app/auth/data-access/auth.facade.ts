@@ -70,4 +70,13 @@ export class AuthFacade {
     const expiresAt = localStorage.getItem('authTokenExpiresAt');
     return expiresAt ? parseInt(expiresAt, 10) : null;
   }
+
+  logout(): void {
+    localStorage.removeItem('activePages');
+    localStorage.removeItem('isOperator');
+    localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authTokenExpiresAt');
+    location.reload();
+  }
 }

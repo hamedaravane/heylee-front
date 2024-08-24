@@ -35,4 +35,8 @@ export class WelcomeComponent implements OnInit {
       });
     });
   }
+
+  logout() {
+    this.authApi.logout();
+  }
 }

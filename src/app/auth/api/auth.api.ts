@@ -18,4 +18,8 @@ export class AuthApi {
   get activePages(): Array<string> {
     return this.authFacade.activePages;
   }
+
+  logout() {
+    this.authFacade.logout();
+  }
 }
