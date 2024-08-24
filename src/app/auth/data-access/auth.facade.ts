@@ -72,11 +72,8 @@ export class AuthFacade {
   }
 
   logout(): void {
-    localStorage.removeItem('activePages');
-    localStorage.removeItem('isOperator');
-    localStorage.removeItem('username');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('authTokenExpiresAt');
+    localStorage.clear();
+    sessionStorage.clear();
     location.reload();
   }
 }
