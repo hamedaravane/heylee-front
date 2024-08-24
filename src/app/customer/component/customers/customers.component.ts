@@ -17,6 +17,7 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PhoneFormatPipe} from '@shared/pipe/phone-format.pipe';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {AuthApi} from '@auth/api/auth.api';
 
 @Component({
   standalone: true,
@@ -44,7 +45,9 @@ import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.com
 })
 export class CustomersComponent implements OnInit {
   private readonly customerFacade = inject(CustomerFacade);
+  private readonly authApi = inject(AuthApi);
   private readonly destroyRef = inject(DestroyRef);
+  operatorUser = this.authApi.operatorUser;
   customersIndex$ = this.customerFacade.customersIndex$;
   loadingState = false;
   isAddCustomerVisible = false;

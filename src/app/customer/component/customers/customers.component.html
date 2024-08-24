@@ -61,7 +61,7 @@
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nzDanger nz-button (click)="deleteCustomer(customer.id)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState || operatorUser" nzType="default" nzDanger nz-button (click)="deleteCustomer(customer.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>

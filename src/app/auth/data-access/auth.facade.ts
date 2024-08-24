@@ -26,12 +26,31 @@ export class AuthFacade {
     return this.loginLoadingSubject.asObservable();
   }
 
+  get isOperator() {
+    return Boolean(localStorage.getItem('isOperator'));
+  }
+
+  get activePages() {
+    if (localStorage.getItem('activePages') === null) {
+      return [];
+    }
+    return localStorage.getItem('activePages')!.split(',');
+  }
+
   async login(authRequest: AuthRequest): Promise<void> {
     this.loginLoadingSubject.next(true);
     try {
       const {user, authToken} = await firstValueFrom(this.authFacade.login(authRequest));
       this.userSubject.next(user);
       this.authTokenSubject.next(authToken);
+      if (user.id === 4) {
+        localStorage.setItem('activePages', 'sale,invoices,inventory,customer');
+        localStorage.setItem('isOperator', 'true');
+      } else {
+        localStorage.setItem('activePages', 'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt');
+        localStorage.setItem('isOperator', 'false');
+      }
+      localStorage.setItem('username', user.username);
       localStorage.setItem('authToken', authToken.token);
       localStorage.setItem('authTokenExpiresAt', authToken.expiresAt.toString());
     } catch (e) {
