@@ -1,19 +1,34 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {environment} from '@environment';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 import {convertCreateUpdateInvoiceToDto, CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
 import {toCamelCase} from '@shared/entity/utility.entity';
 import {FilterIndex} from '@shared/entity/common.entity';
+import {ApiService} from '@shared/service/api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleInfra {
   private readonly http = inject(HttpClient);
+  private readonly apiService = inject(ApiService);
 
   fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]): Observable<IndexResponse<SaleInvoice>> {
+    return this.apiService.fetchEntities<SaleInvoiceDTO, SaleInvoice>(
+      'sales-invoice/index',
+      toCamelCase<SaleInvoiceDTO, SaleInvoice>,
+      pageIndex,
+      'customer,sales_item,sales_item.product,sales_item.color,sales_item.size',
+      filters,
+      25,
+      '-created_at'
+    );
+  }
+
+
+  /*fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]): Observable<IndexResponse<SaleInvoice>> {
     let params = new HttpParams()
       .append('expand', 'customer,sales_item,sales_item.product,sales_item.color,sales_item.size')
       .append('page', pageIndex)
@@ -39,7 +54,7 @@ export class SaleInfra {
           }
         })
       )
-  }
+  }*/
 
   createSaleInvoice(createInvoice: CreateUpdateInvoice): Observable<SaleInvoice> {
     const dto = convertCreateUpdateInvoiceToDto(createInvoice);

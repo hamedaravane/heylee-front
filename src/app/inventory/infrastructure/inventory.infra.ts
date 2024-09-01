@@ -1,10 +1,10 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {environment} from '@environment';
-import {dtoConvertor, ServerResponse} from '@shared/entity/server-response.entity';
 import {StockItem, StockItemDto} from '@inventory/entity/inventory.entity';
-import {map} from 'rxjs';
 import {toCamelCase} from '@shared/entity/utility.entity';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {dtoConvertor, ServerResponse} from '@shared/entity/server-response.entity';
+import {environment} from '@environment';
+import {map} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

@@ -25,7 +25,7 @@ export interface TransactionDto {
 export type CreateTransactionDto = Omit<TransactionDto, 'id'>;
 export type CreateTransaction = Omit<Transaction, 'id'>;
 
-export function mapTransactionDTOtoTransaction(dto: TransactionDto): Transaction {
+export function mapTransactionDto(dto: TransactionDto): Transaction {
   return {
     id: dto.id,
     transactionDate: dto.transaction_date,
@@ -37,4 +37,18 @@ export function mapTransactionDTOtoTransaction(dto: TransactionDto): Transaction
     description: dto.description,
     paymentMethod: dto.payment_method,
   };
+}
+
+export function mapTransactionToDto(data: Transaction): TransactionDto {
+  return {
+    id: data.id,
+    transaction_date: data.transactionDate,
+    type: data.type,
+    category: data.category,
+    amount: data.amount,
+    entity_name: data.entityName,
+    reference_number: data.referenceNumber,
+    description: data.description,
+    payment_method: data.paymentMethod,
+  }
 }

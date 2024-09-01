@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import {TransactionFacade} from '../data-access/transaction.facade';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {TransactionDto} from '../entity/transaction.entity';
+import {CreateTransaction} from '../entity/transaction.entity';
 
 @Component({
   selector: 'transaction',
@@ -22,15 +22,15 @@ export class TransactionComponent {
     paymentMethod: new FormControl<string | null>(null),
   });
 
-  createTransaction(transaction: TransactionDto): void {
+  createTransaction(transaction: CreateTransaction): void {
     this.transactionFacade.createTransaction(transaction);
   }
 
-  updateTransaction(id: number, transaction: TransactionDto): void {
+  updateTransaction(id: number, transaction: CreateTransaction): void {
     this.transactionFacade.updateTransaction(id, transaction);
   }
 
   loadTransaction(id: number): void {
-    this.transactionFacade.loadTransaction(id);
+    this.transactionFacade.(id);
   }
 }

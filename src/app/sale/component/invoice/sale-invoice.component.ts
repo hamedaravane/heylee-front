@@ -13,7 +13,7 @@ import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
-import {Customer} from '@customer/entity/customer.entity';
+import {Customer, CustomerDto} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
 import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
@@ -110,7 +110,7 @@ export class SaleInvoiceComponent implements OnInit {
 
   onPhoneSearch(e: string) {
     of(e).pipe(debounceTime(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      const filter: FilterIndex<Customer> = {prop: 'phone', operator: 'like', value: e}
+      const filter: FilterIndex<CustomerDto>[] = [{prop: 'phone', operator: 'like', value: e}]
       this.customerApi.loadCustomers(1, filter).then();
     })
   }

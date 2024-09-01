@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {CustomerInfra} from '../infrastructure/customer.infra';
 import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
 import {IndexResponse, ServerResponseError} from '@shared/entity/server-response.entity';
-import {CreateCustomer, CreateCustomerDto, Customer} from '../entity/customer.entity';
+import {CreateCustomer, CreateCustomerDto, Customer, CustomerDto} from '../entity/customer.entity';
 import {toSnakeCase} from '@shared/entity/utility.entity';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {FilterIndex} from '@shared/entity/common.entity';
@@ -29,7 +29,7 @@ export class CustomerFacade {
     return this.customersIndexSubject.asObservable().pipe(filter(Boolean))
   };
 
-  async loadCustomers(pageIndex: number = 1, filter?: FilterIndex<Customer>) {
+  async loadCustomers(pageIndex: number = 1, filter?: FilterIndex<CustomerDto>[]) {
     this.loadingSubject.next(true);
     try {
       const response = await firstValueFrom(this.customerInfra.fetchCustomers(pageIndex, filter));

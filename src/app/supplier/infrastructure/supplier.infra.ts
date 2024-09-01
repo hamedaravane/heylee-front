@@ -1,15 +1,17 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {environment} from '@environment';
 import {CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto} from '../entity/supplier.entity';
 import {map, Observable} from 'rxjs';
 import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
 import {toSnakeCase} from '@shared/entity/utility.entity';
+import {ApiService} from '@shared/service/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupplierInfra {
+  private readonly apiService = inject(ApiService);
   private readonly http = inject(HttpClient);
 
   createSupplier(supplier: CreateSupplierDto): Observable<Supplier> {
@@ -41,22 +43,11 @@ export class SupplierInfra {
   }
 
   fetchSuppliers(pageIndex: number = 1): Observable<IndexResponse<Supplier>> {
-    const params = new HttpParams().set('page', pageIndex).append('per-page', 100);
-    return this.http.get<ServerResponse<IndexResponse<SupplierDto>>>(`${environment.apiUrl}/supplier/index`, {params})
-      .pipe(
-        map((res) => {
-          if (res.ok) {
-            return dtoConvertor<IndexResponse<SupplierDto>, IndexResponse<Supplier>>(res.result, (indexResponse) => {
-              return {
-                ...indexResponse,
-                items: indexResponse.items.map(mapSupplierDtoToSupplier)
-              }
-            });
-          } else {
-            throw res.result as unknown;
-          }
-        })
-      )
+    return this.apiService.fetchEntities<SupplierDto, Supplier>(
+      'supplier/index',
+      mapSupplierDtoToSupplier,
+      pageIndex
+    );
   }
 
   deleteSupplier(id: number): Observable<Supplier> {

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
-import {CreatePurchaseInvoice, CreatePurchaseInvoiceDTO, mapCreatePurchaseInvoiceToDTO, PurchaseInvoice} from '@purchase/entity/purchase.entity';
+import {CreatePurchaseInvoice, CreatePurchaseInvoiceDTO, mapCreatePurchaseInvoiceToDTO, PurchaseInvoice, PurchaseInvoiceDto} from '@purchase/entity/purchase.entity';
 import {PurchaseInfra} from '@purchase/infrastructure/purchase.infra';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {IndexResponse} from '@shared/entity/server-response.entity';
@@ -23,7 +23,7 @@ export class PurchaseFacade {
     return this.loadingSubject.asObservable();
   }
 
-  async fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoice>) {
+  async fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoiceDto>[]) {
     this.loadingSubject.next(true);
     try {
       const response = await firstValueFrom(this.purchaseInfra.fetchPurchaseInvoices(pageIndex, filter));
