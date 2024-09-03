@@ -91,8 +91,7 @@ export class SupplierFacade {
   async deleteSupplier(id: number) {
     this.loadingSubject.next(true);
     try {
-      const response = await firstValueFrom(this.supplierInfra.deleteSupplier(id));
-      this.supplierSubject.next(response);
+      await firstValueFrom(this.supplierInfra.deleteSupplier(id));
       this.nzMessageService.success('Supplier deleted successfully');
       await this.loadSuppliers();
     } catch (err) {

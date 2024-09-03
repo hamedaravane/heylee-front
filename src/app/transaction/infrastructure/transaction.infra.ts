@@ -4,11 +4,11 @@ import {Observable} from 'rxjs';
 import {environment} from '@environment';
 import {CreateTransaction, CreateTransactionDto, Transaction, TransactionDto} from '../entity/transaction.entity';
 import {IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
-import {ApiService} from '@shared/service/api.service';
+import {BaseInfra} from '@shared/service/base.infra';
 import {toCamelCase} from '@shared/entity/utility.entity';
 
 export class TransactionInfra {
-  private readonly apiService = inject(ApiService);
+  private readonly apiService = inject(BaseInfra);
   private readonly http = inject(HttpClient);
 
   createTransaction(transaction: CreateTransaction): Observable<ServerResponse<TransactionDto>> {

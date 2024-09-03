@@ -5,7 +5,9 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 import {NzBadgeModule} from 'ng-zorro-antd/badge';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {GroupStockItemsPipe} from '@inventory/pipe/group-stock-items.pipe';

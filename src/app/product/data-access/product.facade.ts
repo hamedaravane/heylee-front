@@ -92,8 +92,7 @@ export class ProductFacade {
   async deleteProduct(id: number) {
     this.loadingSubject.next(true)
     try {
-      const response = await firstValueFrom(this.productInfra.deleteProduct(id));
-      this.productSubject.next(response);
+      await firstValueFrom(this.productInfra.deleteProduct(id));
       await this.loadProducts();
       this.nzMessageService.success('محصول با موفقیت حذف شد');
     } catch (err) {
