@@ -10,10 +10,12 @@ import {BaseInfra} from '@shared/service/base.infra';
   providedIn: 'root'
 })
 export class SaleInfra extends BaseInfra {
+  private readonly endpoint = 'sales-invoice';
+
   fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]): Observable<IndexResponse<SaleInvoice>> {
     return this.fetchEntities<SaleInvoiceDTO, SaleInvoice>(
-      'sales-invoice/index',
-      toCamelCase<SaleInvoiceDTO, SaleInvoice>,
+      this.endpoint,
+      toCamelCase,
       pageIndex,
       'customer,sales_item,sales_item.product,sales_item.color,sales_item.size',
       filters,
@@ -24,7 +26,7 @@ export class SaleInfra extends BaseInfra {
 
   createSaleInvoice(createInvoice: CreateUpdateInvoice): Observable<SaleInvoice> {
     return this.createEntity<CreateUpdateInvoice, SaleInvoiceDTO, SaleInvoice>(
-      'sales-invoice/create',
+      this.endpoint,
       createInvoice,
       toCamelCase,
       toSnakeCase
@@ -33,10 +35,10 @@ export class SaleInfra extends BaseInfra {
 
   updateSaleInvoice(id: number, invoice: CreateUpdateInvoice): Observable<SaleInvoice> {
     return this.updateEntity<CreateUpdateInvoice, SaleInvoiceDTO, SaleInvoice>(
-      'sales-invoice',
+      this.endpoint,
       id,
       invoice,
-      toCamelCase<SaleInvoiceDTO, SaleInvoice>,
+      toCamelCase,
       toSnakeCase
     );
   }

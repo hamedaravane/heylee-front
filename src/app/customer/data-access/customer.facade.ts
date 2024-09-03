@@ -74,7 +74,7 @@ export class CustomerFacade {
     this.loadingSubject.next(true);
     const dto: CreateCustomerDto = toSnakeCase(customer);
     try {
-      const response = await firstValueFrom(this.customerInfra.editCustomer(id, dto));
+      const response = await firstValueFrom(this.customerInfra.updateCustomer(id, dto));
       this.customerSubject.next(response);
       await this.loadCustomers();
       this.nzMessageService.success('مشتری ویرایش شد');

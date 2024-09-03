@@ -9,6 +9,8 @@ import {BaseInfra} from '@shared/service/base.infra';
   providedIn: 'root',
 })
 export class ProductInfra extends BaseInfra {
+  private readonly endpoint = 'product';
+
   get sizes$(): Promise<IdLabel[]> {
     return firstValueFrom(this.http.get<IdLabel[]>('/json/size.json'));
   }
@@ -18,12 +20,12 @@ export class ProductInfra extends BaseInfra {
   }
 
   createProduct(formData: FormData): Observable<Product> {
-    return this.createEntity<void, ProductDto, Product>('product/create', formData, mapProductDtoToProduct)
+    return this.createEntity<void, ProductDto, Product>(this.endpoint, formData, mapProductDtoToProduct)
   }
 
-  editProduct(id: number, formData: FormData): Observable<Product> {
+  updateProduct(id: number, formData: FormData): Observable<Product> {
     return this.updateEntity<FormData, ProductDto, Product>(
-      'product',
+      this.endpoint,
       id,
       formData,
       mapProductDtoToProduct
@@ -32,7 +34,7 @@ export class ProductInfra extends BaseInfra {
 
   fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
     return this.fetchEntities<ProductDto, Product>(
-      'product/index',
+      this.endpoint,
       mapProductDtoToProduct,
       pageIndex
     );
@@ -40,7 +42,7 @@ export class ProductInfra extends BaseInfra {
 
   deleteProduct(id: number): Observable<void> {
     return this.deleteEntity<ProductDto>(
-      'product',
+      this.endpoint,
       id,
     );
   }

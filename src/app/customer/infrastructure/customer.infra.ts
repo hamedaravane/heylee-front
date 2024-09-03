@@ -15,13 +15,15 @@ import {BaseInfra} from '@shared/service/base.infra';
   providedIn: 'root'
 })
 export class CustomerInfra extends BaseInfra {
+  private readonly endpoint = 'customer';
+
   createCustomer(customer: CreateCustomerDto): Observable<Customer> {
-    return this.createEntity<CreateCustomerDto, CustomerDto, Customer>('customer/create', customer, mapCustomerDtoToCustomer, mapCustomerToDto)
+    return this.createEntity<CreateCustomerDto, CustomerDto, Customer>(this.endpoint, customer, mapCustomerDtoToCustomer, mapCustomerToDto)
   }
 
-  editCustomer(id: number, customer: CreateCustomerDto): Observable<Customer> {
+  updateCustomer(id: number, customer: CreateCustomerDto): Observable<Customer> {
     return this.updateEntity<CreateCustomerDto, CustomerDto, Customer>(
-      'customer',
+      this.endpoint,
       id,
       customer,
       mapCustomerDtoToCustomer
@@ -30,7 +32,7 @@ export class CustomerInfra extends BaseInfra {
 
   fetchCustomers(pageIndex: number = 1, filter?: FilterIndex<CustomerDto>[]): Observable<IndexResponse<Customer>> {
     return this.fetchEntities<CustomerDto, Customer>(
-      'customer/index',
+      this.endpoint,
       mapCustomerDtoToCustomer,
       pageIndex,
       '',
@@ -41,7 +43,7 @@ export class CustomerInfra extends BaseInfra {
 
   deleteCustomer(id: number): Observable<void> {
     return this.deleteEntity<CustomerDto>(
-      'customer',
+      this.endpoint,
       id,
     );
   }

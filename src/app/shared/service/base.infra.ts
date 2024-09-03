@@ -38,7 +38,7 @@ export class BaseInfra {
       }
     }
 
-    return this.http.get<ServerResponse<IndexResponse<TDto>>>(`${environment.apiUrl}/${endpoint}`, {params})
+    return this.http.get<ServerResponse<IndexResponse<TDto>>>(`${environment.apiUrl}/${endpoint}/index`, {params})
       .pipe(
         map(res => {
           if (res.ok) {
@@ -63,7 +63,7 @@ export class BaseInfra {
   ): Observable<TDomain> {
     const data = toDtoConverter ? toDtoConverter(payload as TDomain) : payload;
 
-    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}`, data)
+    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/create`, data)
       .pipe(
         map(res => {
           if (res.ok) {

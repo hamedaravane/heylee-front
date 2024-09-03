@@ -14,9 +14,11 @@ import {BaseInfra} from '@shared/service/base.infra';
   providedIn: 'root'
 })
 export class PurchaseInfra extends BaseInfra {
+  private readonly endpoint = 'purchases-invoice';
+
   createPurchase(purchase: CreatePurchaseInvoiceDTO): Observable<void> {
     return this.createEntity<CreatePurchaseInvoiceDTO, void, void>(
-      'purchases-invoice/create',
+      this.endpoint,
       purchase,
       () => {}
     );
@@ -24,7 +26,7 @@ export class PurchaseInfra extends BaseInfra {
 
   fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoiceDto>[]): Observable<IndexResponse<PurchaseInvoice>> {
     return this.fetchEntities<PurchaseInvoiceDto, PurchaseInvoice>(
-      'purchases-invoice/index',
+      this.endpoint,
       mapPurchaseInvoiceDtoToDomain,
       pageIndex,
       'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size',

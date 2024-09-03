@@ -71,7 +71,7 @@ export class ProductFacade {
   async editProduct(id: number, formData: FormData) {
     this.loadingSubject.next(true)
     try {
-      const response = await firstValueFrom(this.productInfra.editProduct(id, formData));
+      const response = await firstValueFrom(this.productInfra.updateProduct(id, formData));
       this.nzMessageService.success('محصول با موفقیت اصلاح شد');
       this.productSubject.next(response);
       await this.loadProducts();

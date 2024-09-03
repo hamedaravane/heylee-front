@@ -9,9 +9,11 @@ import {BaseInfra} from '@shared/service/base.infra';
   providedIn: 'root',
 })
 export class SupplierInfra extends BaseInfra {
+  private readonly endpoint = 'supplier';
+
   createSupplier(supplier: CreateSupplierDto): Observable<Supplier> {
     return this.createEntity<CreateSupplierDto, SupplierDto, Supplier>(
-      'supplier/create',
+      this.endpoint,
       supplier,
       mapSupplierDtoToSupplier,
       toSnakeCase
@@ -20,7 +22,7 @@ export class SupplierInfra extends BaseInfra {
 
   editSupplier(id: number, supplier: CreateSupplierDto): Observable<Supplier> {
     return this.updateEntity<CreateSupplierDto, SupplierDto, Supplier>(
-      'supplier',
+      this.endpoint,
       id,
       supplier,
       mapSupplierDtoToSupplier,
@@ -30,7 +32,7 @@ export class SupplierInfra extends BaseInfra {
 
   fetchSuppliers(pageIndex: number = 1): Observable<IndexResponse<Supplier>> {
     return this.fetchEntities<SupplierDto, Supplier>(
-      'supplier/index',
+      this.endpoint,
       mapSupplierDtoToSupplier,
       pageIndex
     );
@@ -38,7 +40,7 @@ export class SupplierInfra extends BaseInfra {
 
   deleteSupplier(id: number): Observable<void> {
     return this.deleteEntity<SupplierDto>(
-      'supplier',
+      this.endpoint,
       id,
     );
   }
