@@ -1,61 +1,24 @@
-import {HttpClient} from '@angular/common/http';
-import {inject} from '@angular/core';
 import {Observable} from 'rxjs';
-import {environment} from '@environment';
-import {CreateTransaction, CreateTransactionDto, Transaction, TransactionDto} from '../entity/transaction.entity';
-import {IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
+import {CreateTransactionDto, mapTransactionDto, Transaction, TransactionDto} from '../entity/transaction.entity';
+import {IndexResponse} from '@shared/entity/server-response.entity';
 import {BaseInfra} from '@shared/service/base.infra';
-import {toCamelCase} from '@shared/entity/utility.entity';
 
-export class TransactionInfra {
-  private readonly apiService = inject(BaseInfra);
-  private readonly http = inject(HttpClient);
+export class TransactionInfra extends BaseInfra {
+  private readonly endpoint = 'accounting-transaction';
 
-  createTransaction(transaction: CreateTransaction): Observable<ServerResponse<TransactionDto>> {
-    const dto: CreateTransactionDto = {
-      transaction_date: transaction.transactionDate,
-      type: transaction.type,
-      category: transaction.category,
-      amount: transaction.amount,
-      entity_name: transaction.entityName,
-      reference_number: transaction.referenceNumber,
-      description: transaction.description,
-      payment_method: transaction.paymentMethod,
-    }
-    return this.http.post<ServerResponse<TransactionDto>>(`${environment.apiUrl}/accounting-transaction/create`, dto);
+  createTransaction(transaction: CreateTransactionDto): Observable<Transaction> {
+    return this.createEntity<CreateTransactionDto, TransactionDto, Transaction>(this.endpoint, transaction, mapTransactionDto)
   }
 
-  updateTransaction(id: number, transaction: CreateTransaction): Observable<ServerResponse<TransactionDto>> {
-    const dto: CreateTransactionDto = {
-      transaction_date: transaction.transactionDate,
-      type: transaction.type,
-      category: transaction.category,
-      amount: transaction.amount,
-      entity_name: transaction.entityName,
-      reference_number: transaction.referenceNumber,
-      description: transaction.description,
-      payment_method: transaction.paymentMethod,
-    }
-    return this.http.post<ServerResponse<TransactionDto>>(`${environment.apiUrl}/accounting-transaction/update/${id}`, dto);
-  }
-
-  viewTransaction(id: number): Observable<ServerResponse<TransactionDto>> {
-    return this.http.get<ServerResponse<TransactionDto>>(`${environment.apiUrl}/accounting-transaction/view/${id}`);
+  updateTransaction(id: number, transaction: CreateTransactionDto): Observable<Transaction> {
+    return this.updateEntity<CreateTransactionDto, TransactionDto, Transaction>(this.endpoint, id, transaction, mapTransactionDto);
   }
 
   fetchTransactions(pageIndex: number = 1): Observable<IndexResponse<Transaction>> {
-    return this.apiService.fetchEntities<TransactionDto, Transaction>(
-      'accounting-transaction/index',
-      toCamelCase,
-      pageIndex,
-      '',
-      [],
-      100,
-      ''
-    );
+    return this.fetchEntities<TransactionDto, Transaction>(this.endpoint, mapTransactionDto, pageIndex);
   }
 
-  deleteTransaction(id: number): Observable<ServerResponse<void>> {
-    return this.http.delete<ServerResponse<void>>(`${environment.apiUrl}/accounting-transaction/delete/${id}`);
+  deleteTransaction(id: number): Observable<void> {
+    return this.deleteEntity(this.endpoint, id);
   }
 }
