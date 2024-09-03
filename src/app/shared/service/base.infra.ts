@@ -11,7 +11,7 @@ import {environment} from '@environment';
 export class BaseInfra {
   protected readonly http = inject(HttpClient);
 
-  fetchEntities<TDto, TDomain>(
+  protected fetchEntities<TDto, TDomain>(
     endpoint: string,
     dtoToDomainMapper: (dto: TDto) => TDomain,
     pageIndex: number = 1,
@@ -55,7 +55,7 @@ export class BaseInfra {
       );
   }
 
-  createEntity<TCreateDto, TDto, TDomain>(
+  protected createEntity<TCreateDto, TDto, TDomain>(
     endpoint: string,
     payload: TCreateDto | FormData,
     dtoToDomainMapper: (dto: TDto) => TDomain,
@@ -75,7 +75,7 @@ export class BaseInfra {
       );
   }
 
-  updateEntity<TUpdateDto, TDto, TDomain>(
+  protected updateEntity<TUpdateDto, TDto, TDomain>(
     endpoint: string,
     id: number,
     payload: TUpdateDto | FormData,
@@ -96,7 +96,7 @@ export class BaseInfra {
       );
   }
 
-  deleteEntity<TDto>(
+  protected deleteEntity<TDto>(
     endpoint: string,
     id: number,
   ): Observable<void> {
