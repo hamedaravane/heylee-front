@@ -1,0 +1,20 @@
+<page-container>
+  <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (report of reports; track $index) {
+      <card-container>
+        <div>
+          <i class="fa-solid me-2" [class]="report.icon"></i>
+          <span>{{ report.title }}</span>
+        </div>
+        <div class="mt-4">
+          <span>{{ report.value | number: '1.0-0' }}</span>
+          @if (report.currency) {
+            <currency-wrapper symbol="تومان"></currency-wrapper>
+          }
+        </div>
+      </card-container>
+    }
+  </div>
+  <card-container><canvas #dailySalesChart></canvas></card-container>
+  <card-container><canvas #topSellingProductChart></canvas></card-container>
+</page-container>

@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
     "@angular/service-worker": "^18.0.0",
+    "chart.js": "^4.4.4",
     "html-to-image": "^1.11.11",
     "ng-zorro-antd": "^18.0.1",
     "rxjs": "~7.8.0",

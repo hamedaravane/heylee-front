@@ -19,6 +19,7 @@ export interface SupplierDto {
 }
 
 export type CreateSupplierDto = Omit<SupplierDto, 'id' | 'created_at'>;
+export type CreateSupplier = Omit<Supplier, 'id' | 'createdAt'>;
 
 export function mapSupplierDtoToSupplier(dto: SupplierDto): Supplier {
   return {

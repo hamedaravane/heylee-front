@@ -23,6 +23,8 @@ export class WelcomeComponent implements OnInit {
     {text: 'ثبت فاکتور خرید', link: 'purchase', icon: 'fa-wallet', disabled: true},
     {text: 'تامین کننده‌ها', link: 'supplier', icon: 'fa-handshake', disabled: true},
     {text: 'مشتریان', link: 'customer', icon: 'fa-person-booth', disabled: true},
+    {text: 'تراکنش‌ها', link: 'transaction', icon: 'fa-wallet', disabled: true},
+    {text: 'آمارها', link: 'statistic', icon: 'fa-chart-column', disabled: true},
     {text: 'فاکتورهای خرید', link: 'purchase-receipt', icon: 'fa-receipt', disabled: true}
   ];
 

@@ -47,7 +47,7 @@ export class AuthFacade {
         localStorage.setItem('activePages', 'sale,invoices,inventory,customer');
         localStorage.setItem('isOperator', 'true');
       } else {
-        localStorage.setItem('activePages', 'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt');
+        localStorage.setItem('activePages', 'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt,statistic,transaction');
         localStorage.setItem('isOperator', 'false');
       }
       localStorage.setItem('username', user.username);

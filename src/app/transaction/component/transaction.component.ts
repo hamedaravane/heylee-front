@@ -23,14 +23,14 @@ export class TransactionComponent {
   });
 
   createTransaction(transaction: CreateTransaction): void {
-    this.transactionFacade.createTransaction(transaction);
+    this.transactionFacade.createTransaction(transaction).then();
   }
 
   updateTransaction(id: number, transaction: CreateTransaction): void {
-    this.transactionFacade.updateTransaction(id, transaction);
+    this.transactionFacade.updateTransaction(id, transaction).then();
   }
 
   loadTransaction(id: number): void {
-    this.transactionFacade.(id);
+    this.transactionFacade.loadTransactions().then();
   }
 }
