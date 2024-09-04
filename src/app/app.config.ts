@@ -12,6 +12,7 @@ import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {AuthenticationInterceptor} from '@auth/interceptors/auth.interceptor';
 import {provideServiceWorker} from '@angular/service-worker';
 import {NzConfig, provideNzConfig} from 'ng-zorro-antd/core/config';
+import {provideCharts, withDefaultRegisterables} from 'ng2-charts';
 
 registerLocaleData(en);
 registerLocaleData(fa);
@@ -33,6 +34,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideNzConfig(ngZorroConfig),
     provideHttpClient(withInterceptors([AuthenticationInterceptor])),
+    provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {enabled: !isDevMode()})
   ]
 };

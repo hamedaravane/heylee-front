@@ -9,12 +9,16 @@
         <div class="mt-4">
           <span>{{ report.value | number: '1.0-0' }}</span>
           @if (report.currency) {
-            <currency-wrapper symbol="تومان"></currency-wrapper>
+            <currency-wrapper></currency-wrapper>
           }
         </div>
       </card-container>
     }
   </div>
-  <card-container><canvas #dailySalesChart></canvas></card-container>
-  <card-container><canvas #topSellingProductChart></canvas></card-container>
+  <card-container class="mt-4">
+    <canvas baseChart [data]="dailySalesChartData" [options]="dailySalesChartOptions" type="bar"></canvas>
+  </card-container>
+  <card-container class="mt-4">
+    <canvas baseChart [data]="topSellingProductChartData" [options]="topSellingProductChartOptions" type="bar"></canvas>
+  </card-container>
 </page-container>
