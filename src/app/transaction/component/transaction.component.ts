@@ -21,7 +21,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import {NzRadioModule} from "ng-zorro-antd/radio";
 import {NzSelectModule} from "ng-zorro-antd/select";
-import {distinctUntilChanged} from "rxjs";
+import {distinctUntilChanged, map} from "rxjs";
 
 @Component({
   selector: 'transaction',
@@ -75,14 +75,14 @@ export class TransactionComponent implements OnInit {
   ngOnInit(): void {
     this.transactionFacade.loadTransactions().then();
     this.transactionFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(loading => this.loadingState = loading)
-    this.transactionForm.controls.transactionDate.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
-      .subscribe((value) => {
-        if (value) {
-          const formattedValue = new Date(value).toISOString().split('T')[0]
-          this.transactionForm.controls.transactionDate.setValue(formattedValue, { emitEvent: false });
-        }
+    this.transactionForm.controls.transactionDate.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      distinctUntilChanged(),
+      map(value => {
+        if (!value) return null;
+        return new Date(value).toISOString().split('T')[0];
       })
+    )
   }
 
   pageIndexChange(pageIndex: number): void {
