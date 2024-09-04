@@ -2,7 +2,7 @@ import {ApplicationConfig, importProvidersFrom, isDevMode, provideZoneChangeDete
 import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
-import {en_US, provideNzI18n} from 'ng-zorro-antd/i18n';
+import {fa_IR, provideNzI18n} from 'ng-zorro-antd/i18n';
 import {registerLocaleData} from '@angular/common';
 import en from '@angular/common/locales/en';
 import fa from '@angular/common/locales/fa';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
-    provideNzI18n(en_US),
+    provideNzI18n(fa_IR),
     provideAnimationsAsync(),
     provideNzConfig(ngZorroConfig),
     provideHttpClient(withInterceptors([AuthenticationInterceptor])),

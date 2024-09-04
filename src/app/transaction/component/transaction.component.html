@@ -1,0 +1,168 @@
+<page-container>
+  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock
+          (click)="isAddTransactionVisible = true">
+    <i class="fa-solid fa-plus mx-2"></i>
+    <span>افزودن تراکنش</span>
+  </button>
+  <nz-divider></nz-divider>
+  @if (transactionsIndex$ | async; as transactions) {
+    <ul>
+      @for (transaction of transactions.items; track $index) {
+        <card-container class="mb-3 last:mb-0">
+          <div class="flex w-full justify-between">
+            <span>{{ transaction.id }}</span>
+            <span>{{ transaction.transactionDate }}</span>
+          </div>
+          <div>
+            <span></span>
+            <span>{{ transaction.type }}</span>
+          </div>
+          <div>
+            <span>دسته‌بندی</span>
+            <span>{{ transaction.category }}</span>
+          </div>
+          <div>
+            <span>مبلغ</span>
+            <span>{{ transaction.amount }}</span>
+          </div>
+          <div>
+            <span>طرف حساب</span>
+            <span>{{ transaction.entityName }}</span>
+          </div>
+          <div>
+            <span>کد پیگیری</span>
+            <span>{{ transaction.referenceNumber }}</span>
+          </div>
+          <div>
+            <span>توضیحات</span>
+            <span>{{ transaction.description }}</span>
+          </div>
+          <div>
+            <span>روش پرداخت</span>
+            <span>{{ transaction.paymentMethod }}</span>
+          </div>
+        </card-container>
+      } @empty {
+        <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
+      }
+    </ul>
+    <div class="mt-4">
+      <nz-pagination [nzTotal]="transactions._meta.totalCount"
+                     [nzPageIndex]="transactions._meta.currentPage"
+                     (nzPageIndexChange)="pageIndexChange($event)"
+                     [nzPageSize]="transactions._meta.perPage"></nz-pagination>
+    </div>
+  } @else if (loadingState) {
+    <ul>
+      @for (_ of [].constructor(3); track $index) {
+        <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
+          <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+        </li>
+      }
+    </ul>
+  }
+</page-container>
+<nz-drawer [nzFooter]="createTransactionFooter"
+           nzClosable
+           nzHeight="75%"
+           nzPlacement="bottom"
+           nzTitle="افزودن تراکنش"
+           [nzVisible]="isAddTransactionVisible"
+           (nzOnClose)="closeTransactionFormDrawer()">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngTemplateOutlet="transactionFormTempRef"></ng-container>
+  </ng-container>
+</nz-drawer>
+<nz-drawer [nzFooter]="editTransactionFooter"
+           nzClosable
+           nzHeight="75%"
+           nzPlacement="bottom"
+           nzTitle="ویرایش تراکنش"
+           [nzVisible]="isEditTransactionVisible"
+           (nzOnClose)="closeTransactionFormDrawer()">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngTemplateOutlet="transactionFormTempRef"></ng-container>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #transactionFormTempRef>
+  <form nz-form nzLabelAlign="right"
+        nzLayout="vertical"
+        [formGroup]="transactionForm"
+        (ngSubmit)="createTransaction()">
+    <nz-form-item>
+      <nz-form-label nzFor="transactionDate">تاریخ تراکنش</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker nzId="transactionDate" nzFormat="yyyy/MM/dd" class="w-full" [formControl]="transactionForm.controls.transactionDate"></nz-date-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="amount">مبلغ</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="amount" type="number" id="amount" [formControl]="transactionForm.controls.amount"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="type">نوع</nz-form-label>
+      <nz-form-control>
+        <nz-radio-group nzName="type" nzButtonStyle="solid" [formControl]="transactionForm.controls.type">
+          <label nz-radio-button nzValue="investment">سرمایه‌گذاری</label>
+          <label nz-radio-button nzValue="expense">هزینه</label>
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="category">دسته‌بندی</nz-form-label>
+      <nz-form-control>
+        <nz-select nzId="category" [formControl]="transactionForm.controls.category">
+          <nz-option nzValue="salaries" nzLabel="حقوق کارکنان"></nz-option>
+          <nz-option nzValue="rent" nzLabel="اجاره"></nz-option>
+          <nz-option nzValue="equipment" nzLabel="تجهیزات و وسایل"></nz-option>
+          <nz-option nzValue="marketing" nzLabel="بازاریابی"></nz-option>
+          <nz-option nzValue="shipping_packaging" nzLabel="بسته‌بندی و ارسال"></nz-option>
+          <nz-option nzValue="online_platform" nzLabel="سایت و سرور"></nz-option>
+          <nz-option nzValue="inventory" nzLabel="انبارداری"></nz-option>
+          <nz-option nzValue="other" nzLabel="سایر"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="entityName">طرف حساب</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="entityName" type="text" id="entityName" [formControl]="transactionForm.controls.entityName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="description">توضیحات</nz-form-label>
+      <nz-form-control>
+        <textarea nz-input required name="description" id="description" [formControl]="transactionForm.controls.description"
+                  [nzAutosize]="{ minRows: 1, maxRows: 2 }"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="paymentMethod">روش پرداخت</nz-form-label>
+      <nz-form-control>
+        <nz-select nzId="paymentMethod" [formControl]="transactionForm.controls.paymentMethod">
+          <nz-option nzValue="cash" nzLabel="نقدی"></nz-option>
+          <nz-option nzValue="bank_transfer" nzLabel="انتقال بانکی"></nz-option>
+          <nz-option nzValue="online" nzLabel="پرداخت انترنتی"></nz-option>
+          <nz-option nzValue="pos" nzLabel="کارتی (دستگاه پز)"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<ng-template #createTransactionFooter>
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
+          [disabled]="transactionForm.invalid || loadingState" (click)="createTransaction()">
+    <i class="fa-solid fa-plus mx-2"></i>
+    <span>افزودن</span>
+  </button>
+</ng-template>
+<ng-template #editTransactionFooter>
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
+          [disabled]="transactionForm.invalid || loadingState" (click)="editTransaction()">
+    <i class="fa-solid fa-pen mx-2"></i>
+    <span>ویرایش</span>
+  </button>
+</ng-template>

@@ -1,4 +1,4 @@
-import {inject} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {CreateTransaction, CreateTransactionDto, Transaction} from '../entity/transaction.entity';
 import {TransactionInfra} from '../infrastructure/transaction.infra';
@@ -6,6 +6,9 @@ import {IndexResponse} from '@shared/entity/server-response.entity';
 import {BaseFacade} from "@shared/service/base.facade";
 import {toSnakeCase} from "@shared/entity/utility.entity";
 
+@Injectable({
+  providedIn: 'root'
+})
 export class TransactionFacade extends BaseFacade {
   private readonly transactionInfra = inject(TransactionInfra);
   private readonly transactionSubject = new BehaviorSubject<Transaction | null>(null);
@@ -37,10 +40,10 @@ export class TransactionFacade extends BaseFacade {
     )
   }
 
-  async loadTransactions(): Promise<void> {
+  async loadTransactions(pageIndex: number = 1): Promise<void> {
     await this.loadEntity(
       this.transactionsIndexSubject,
-      () => firstValueFrom(this.transactionInfra.fetchTransactions()),
+      () => firstValueFrom(this.transactionInfra.fetchTransactions(pageIndex)),
       undefined,
       true
     )
