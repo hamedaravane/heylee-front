@@ -7,7 +7,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular
 import {NzPaginationModule} from 'ng-zorro-antd/pagination';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {PersianDatePipe} from '@sale/pipe/persian-date.pipe';
+import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';

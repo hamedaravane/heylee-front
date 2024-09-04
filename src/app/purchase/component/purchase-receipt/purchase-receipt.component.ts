@@ -6,7 +6,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AsyncPipe, DecimalPipe} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {PersianDatePipe} from '@sale/pipe/persian-date.pipe';
+import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 import {Product} from '@product/entity/product.entity';
 import {PurchaseItem} from '@purchase/entity/purchase.entity';
 import {IdLabel} from '@shared/entity/common.entity';

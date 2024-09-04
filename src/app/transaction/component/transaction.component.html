@@ -9,37 +9,34 @@
     <ul>
       @for (transaction of transactions.items; track $index) {
         <card-container class="mb-3 last:mb-0">
-          <div class="flex w-full justify-between">
-            <span>{{ transaction.id }}</span>
-            <span>{{ transaction.transactionDate }}</span>
-          </div>
-          <div>
-            <span></span>
+          <div class="flex w-full justify-between mb-2">
             <span>{{ transaction.type }}</span>
+            <span>{{ transaction.transactionDate | persianDate }}</span>
           </div>
-          <div>
-            <span>دسته‌بندی</span>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">دسته‌بندی: </span>
             <span>{{ transaction.category }}</span>
           </div>
-          <div>
-            <span>مبلغ</span>
-            <span>{{ transaction.amount }}</span>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">مبلغ: </span>
+            <span>{{ transaction.amount | number }}</span>
+            <currency-wrapper></currency-wrapper>
           </div>
-          <div>
-            <span>طرف حساب</span>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">طرف حساب: </span>
             <span>{{ transaction.entityName }}</span>
           </div>
-          <div>
-            <span>کد پیگیری</span>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">روش پرداخت: </span>
+            <span>{{ transaction.paymentMethod }}</span>
+          </div>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">کد پیگیری: </span>
             <span>{{ transaction.referenceNumber }}</span>
           </div>
-          <div>
-            <span>توضیحات</span>
+          <div class="mb-1">
+            <span class="me-4 text-gray-400">توضیحات: </span>
             <span>{{ transaction.description }}</span>
-          </div>
-          <div>
-            <span>روش پرداخت</span>
-            <span>{{ transaction.paymentMethod }}</span>
           </div>
         </card-container>
       } @empty {

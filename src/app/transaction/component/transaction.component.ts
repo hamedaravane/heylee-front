@@ -22,6 +22,8 @@ import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import {NzRadioModule} from "ng-zorro-antd/radio";
 import {NzSelectModule} from "ng-zorro-antd/select";
 import {distinctUntilChanged, map} from "rxjs";
+import {PersianDatePipe} from "@shared/pipe/persian-date.pipe";
+import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
 
 @Component({
   selector: 'transaction',
@@ -51,6 +53,8 @@ import {distinctUntilChanged, map} from "rxjs";
     NzRadioModule,
     DatePipe,
     NzSelectModule,
+    PersianDatePipe,
+    CurrencyComponent,
   ]
 })
 export class TransactionComponent implements OnInit {
@@ -62,9 +66,9 @@ export class TransactionComponent implements OnInit {
   selectedIdToEdit: number | null = null;
   loadingState = false;
   transactionForm = new FormGroup({
-    transactionDate: new FormControl<string | null>(new Date().toISOString(), Validators.required),
-    type: new FormControl<string>('expense', Validators.required),
-    category: new FormControl<string>('other', Validators.required),
+    transactionDate: new FormControl<string | null>(null, Validators.required),
+    type: new FormControl<string | null>(null, Validators.required),
+    category: new FormControl<string | null>(null, Validators.required),
     amount: new FormControl<number | null>(null, Validators.required),
     entityName: new FormControl<string | null>(null, Validators.required),
     referenceNumber: new FormControl<string | null>(null, Validators.required),
