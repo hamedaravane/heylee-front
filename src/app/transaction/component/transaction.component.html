@@ -93,7 +93,7 @@
     <nz-form-item>
       <nz-form-label nzFor="transactionDate">تاریخ تراکنش</nz-form-label>
       <nz-form-control>
-        <nz-date-picker nzId="transactionDate" nzFormat="yyyy/MM/dd" class="w-full" [formControl]="transactionForm.controls.transactionDate"></nz-date-picker>
+        <nz-date-picker [formControl]="transactionForm.controls.transactionDate" nzId="transactionDate" nzFormat="yyyy/MM/dd" nzMode="date" nzSize="default" nzSeparator="/" class="w-full"></nz-date-picker>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -148,6 +148,12 @@
           <nz-option nzValue="online" nzLabel="پرداخت انترنتی"></nz-option>
           <nz-option nzValue="pos" nzLabel="کارتی (دستگاه پز)"></nz-option>
         </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="referenceNumber">کد پیگیری</nz-form-label>
+      <nz-form-control>
+        <input nz-input required name="referenceNumber" type="text" id="referenceNumber" [formControl]="transactionForm.controls.referenceNumber"/>
       </nz-form-control>
     </nz-form-item>
   </form>

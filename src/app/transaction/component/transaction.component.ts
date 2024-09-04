@@ -3,7 +3,7 @@ import {TransactionFacade} from '../data-access/transaction.facade';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PageContainerComponent} from "@shared/component/page-container/page-container.component";
 import {NzButtonModule} from "ng-zorro-antd/button";
-import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, DatePipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
 import {CardContainerComponent} from "@shared/component/card-container/card-container.component";
 import {NzDividerModule} from "ng-zorro-antd/divider";
 import {NzEmptyModule} from "ng-zorro-antd/empty";
@@ -21,6 +21,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import {NzRadioModule} from "ng-zorro-antd/radio";
 import {NzSelectModule} from "ng-zorro-antd/select";
+import {distinctUntilChanged} from "rxjs";
 
 @Component({
   selector: 'transaction',
@@ -48,7 +49,8 @@ import {NzSelectModule} from "ng-zorro-antd/select";
     NgTemplateOutlet,
     NzDatePickerModule,
     NzRadioModule,
-    NzSelectModule
+    DatePipe,
+    NzSelectModule,
   ]
 })
 export class TransactionComponent implements OnInit {
@@ -60,7 +62,7 @@ export class TransactionComponent implements OnInit {
   selectedIdToEdit: number | null = null;
   loadingState = false;
   transactionForm = new FormGroup({
-    transactionDate: new FormControl<string | null>(null, Validators.required),
+    transactionDate: new FormControl<string | null>(new Date().toISOString(), Validators.required),
     type: new FormControl<string>('expense', Validators.required),
     category: new FormControl<string>('other', Validators.required),
     amount: new FormControl<number | null>(null, Validators.required),
@@ -73,6 +75,14 @@ export class TransactionComponent implements OnInit {
   ngOnInit(): void {
     this.transactionFacade.loadTransactions().then();
     this.transactionFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(loading => this.loadingState = loading)
+    this.transactionForm.controls.transactionDate.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
+      .subscribe((value) => {
+        if (value) {
+          const formattedValue = new Date(value).toISOString().split('T')[0]
+          this.transactionForm.controls.transactionDate.setValue(formattedValue, { emitEvent: false });
+        }
+      })
   }
 
   pageIndexChange(pageIndex: number): void {
