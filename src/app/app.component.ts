@@ -23,7 +23,10 @@ export class AppComponent implements OnInit {
       if (u) {
         this.nzNotificationService.blank(
           'نسخه جدید',
-          'یک نسخه جدید از اپلیکیشن موجود شده.',
+          'تغییرات این نسخه:' +
+          '- اضاقه شدن تراکنش ها' +
+          '- اضافه شدن آمارها' +
+          '- افزودن منوی جستجو در موجودی انبار به صورت پیشرفته',
           {
             nzPlacement: 'bottom',
             nzKey: 'UPDATE',

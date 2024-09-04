@@ -1,6 +1,23 @@
 <page-container>
-  @if (availableProducts$ | async; as stockItems) {
-    @for (stockItem of stockItems | groupItems; track $index) {
+  <form [formGroup]="filterForm" nz-form nz-flex nzGap="small" nzLayout="horizontal" nzLabelAlign="right">
+    <nz-form-item>
+      <nz-form-control>
+        <nz-select [formControl]="filterForm.controls.key" nzPlaceHolder="بر اساس">
+          <nz-option nzValue="code" nzLabel="کد"></nz-option>
+          <nz-option nzValue="name" nzLabel="نام"></nz-option>
+          <nz-option nzValue="color" nzLabel="رنگ"></nz-option>
+          <nz-option nzValue="size" nzLabel="سایز"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="grow">
+      <nz-form-control>
+        <input [formControl]="filterForm.controls.value" nz-input placeholder="جستجو"/>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  @if (filteredAvailableProducts ?? availableProducts; as stockItems) {
+    @for (stockItem of stockItems | groupItems; track stockItem.code) {
       <card-container class="mb-3 last:mb-0">
         <div class="flex gap-4 mb-3">
           <nz-badge [nzCount]="stockItem.totalAvailableQuantity">
@@ -9,6 +26,10 @@
           <div class="text-xs">
             <div>{{ stockItem.name }}</div>
             <div class="font-mono">{{ stockItem.code }}</div>
+            <div>
+              <span>{{ stockItem.sellingUnitPrice | number }}</span>
+              <currency-wrapper></currency-wrapper>
+            </div>
           </div>
         </div>
         <div class="text-xs">
@@ -18,7 +39,7 @@
               @for (size of color.sizes; track $index) {
                 <div class="inline-block mx-2">
                   <nz-badge [nzCount]="size.quantity" [nzStyle]="{'background-color': colors.gray_7}" nzSize="small">
-                    <span class="px-2 border border-solid border-gray-600 rounded-md">{{size.label}}</span>
+                    <span class="px-2 border border-solid border-gray-600 rounded-md">{{ size.label }}</span>
                   </nz-badge>
                 </div>
               }
