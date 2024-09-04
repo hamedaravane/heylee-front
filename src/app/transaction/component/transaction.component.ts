@@ -74,15 +74,16 @@ export class TransactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.transactionFacade.loadTransactions().then();
-    this.transactionFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(loading => this.loadingState = loading)
+    this.transactionFacade.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => this.loadingState = loading)
     this.transactionForm.controls.transactionDate.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
       distinctUntilChanged(),
-      map(value => {
+      map((value) => {
         if (!value) return null;
         return new Date(value).toISOString().split('T')[0];
-      })
-    )
+      })).subscribe(value => this.transactionForm.controls.transactionDate.setValue(value, {emitEvent: false}))
   }
 
   pageIndexChange(pageIndex: number): void {
