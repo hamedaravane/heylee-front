@@ -38,6 +38,10 @@
             <span class="me-4 text-gray-400">توضیحات: </span>
             <span>{{ transaction.description }}</span>
           </div>
+          <div class="flex gap-4 mt-2">
+            <button nz-button nzType="primary" nzBlock (click)="handleEditTransaction(transaction)">ویرایش</button>
+            <button nz-button nzType="default" nzDanger nzBlock (click)="deleteTransaction(transaction.id)">حذف</button>
+          </div>
         </card-container>
       } @empty {
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>

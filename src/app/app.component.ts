@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
     this.updateService.checkForUpdates().then((u) => {
       if (u) {
         this.nzNotificationService.blank('new version is available.',
+          'click to update',
           {
             nzPlacement: 'bottom',
             nzKey: 'UPDATE',

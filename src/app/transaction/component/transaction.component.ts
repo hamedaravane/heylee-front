@@ -16,7 +16,7 @@ import {BidiModule} from "@angular/cdk/bidi";
 import {NzIconModule} from "ng-zorro-antd/icon";
 import {NzUploadModule} from "ng-zorro-antd/upload";
 import {RouterLink} from "@angular/router";
-import {CreateTransaction} from "../entity/transaction.entity";
+import {CreateTransaction, Transaction} from "../entity/transaction.entity";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import {NzRadioModule} from "ng-zorro-antd/radio";
@@ -94,8 +94,10 @@ export class TransactionComponent implements OnInit {
     this.transactionFacade.loadTransactions(pageIndex).then();
   }
 
-  loadTransaction(id: number): void {
-    this.transactionFacade.loadTransactions().then();
+  handleEditTransaction(transaction: Transaction) {
+    this.selectedIdToEdit = transaction.id;
+    this.isEditTransactionVisible = true;
+    this.transactionForm.patchValue(transaction);
   }
 
   editTransaction() {
