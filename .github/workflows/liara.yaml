@@ -15,6 +15,8 @@ jobs:
       - name: update-liara
         env:
           LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
+          LIARA_HEYLEE_NET_TOKEN: ${{ secrets.LIARA_HEYLEE_NET_TOKEN }}
         run: |
           npm i -g @liara/cli@6
           liara deploy --platform=angular --app="heylee-closet" --api-token="$LIARA_TOKEN" --no-app-logs --port=80
+          liara deploy --platform=angular --app="heylee-app" --api-token="$LIARA_HEYLEE_NET_TOKEN" --no-app-logs --port=80
