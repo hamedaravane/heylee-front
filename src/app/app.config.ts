@@ -21,7 +21,8 @@ const ngZorroConfig: NzConfig = {
   message: {nzDirection: 'rtl'},
   modal: {nzDirection: 'rtl'},
   drawer: {nzDirection: 'rtl'},
-  notification: {nzDirection: 'rtl'}
+  notification: {nzDirection: 'rtl'},
+  image: {nzCloseOnNavigation: true, nzDirection: 'rtl'}
   // empty: { nzDefaultEmptyContent: '' }
 };
 
