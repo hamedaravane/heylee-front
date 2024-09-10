@@ -32,11 +32,15 @@ export class ProductInfra extends BaseInfra {
     );
   }
 
-  fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
+  fetchProducts(pageIndex: number = 1, perPage: number = 100, sort: string = '-created_at'): Observable<IndexResponse<Product>> {
     return this.fetchEntities<ProductDto, Product>(
       this.endpoint,
       mapProductDtoToProduct,
-      pageIndex
+      pageIndex,
+      undefined,
+      undefined,
+      perPage,
+      sort
     );
   }
 

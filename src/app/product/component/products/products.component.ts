@@ -113,8 +113,7 @@ export class ProductsComponent implements OnInit {
     formData.append('name', form.name);
     formData.append('description', form.description);
     if (this.imageFile) {
-      const blob = new Blob([this.imageFile], { type: this.imageFile?.type });
-      formData.append('image', blob);
+      formData.append('image', this.imageFile, this.imageFile.name);
     }
     return formData;
   }
