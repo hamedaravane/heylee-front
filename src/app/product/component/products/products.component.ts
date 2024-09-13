@@ -60,7 +60,6 @@ export class ProductsComponent implements OnInit {
   isEditProductVisible = false;
   selectedIdToEdit: number | null = null;
   loadingState = false;
-  selectedImage?: string;
   imageFile: File | null = null;
 
   productForm = new FormGroup({
@@ -130,22 +129,10 @@ export class ProductsComponent implements OnInit {
   closeProductFormDrawer() {
     this.isAddProductVisible = false;
     this.isEditProductVisible = false;
-    this.selectedImage = undefined;
+    this.imageFile = null;
   }
 
-  selectImage() {
-    this.imageSelector.nativeElement.click();
-  }
-
-  onImageSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.imageFile = input.files[0];
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        this.selectedImage = e.target?.result as string;
-      }
-      reader.readAsDataURL(this.imageFile);
-    }
+  onImageSelected(event: File | null) {
+    this.imageFile = event;
   }
 }

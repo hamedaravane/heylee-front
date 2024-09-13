@@ -72,7 +72,6 @@
     <ng-container *ngTemplateOutlet="productFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
-<input #imageSelector id="imageSelector" type="file" alt="product image" accept=".jpg, .jpeg, .png" hidden (change)="onImageSelected($event)">
 
 <ng-template #productFormTempRef>
   <form nz-form nzLabelAlign="right"
@@ -105,18 +104,7 @@
         ></textarea>
       </nz-form-control>
     </nz-form-item>
-    <div class="mt-6">
-      <div class="pb-2">
-        <label>انتخاب عکس</label>
-      </div>
-      <div class="rounded-sm h-44 w-44 border border-dashed border-gray-600 mx-auto text-center content-center" (click)="selectImage()">
-        @if (selectedImage) {
-          <img [src]="selectedImage" alt="productImage" class="w-full h-full object-cover">
-        } @else {
-          <i class="fa-solid fa-image fa-4x text-gray-400"></i>
-        }
-      </div>
-    </div>
+    <image-uploader (onFileSelected)="onImageSelected($event)"></image-uploader>
   </form>
 </ng-template>
 <ng-template #createProductFooter>

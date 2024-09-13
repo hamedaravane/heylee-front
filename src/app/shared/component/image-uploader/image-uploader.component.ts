@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, Input, ViewChild} from "@angular/core";
+import {Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild} from "@angular/core";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzMessageService} from "ng-zorro-antd/message";
 
@@ -10,11 +10,12 @@ import {NzMessageService} from "ng-zorro-antd/message";
 })
 export class ImageUploaderComponent {
   @Input() acceptedFormats: string[] = ['.jpg', '.png', '.jpeg'];
+  @Output() onFileSelected = new EventEmitter<File | null>();
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   selectedFile: File | null = null;
   selectedFileUrl: string | null = null;
-  private readonly nzMessageService = inject(NzMessageService);
   uploadProgress = 0;
+  private readonly nzMessageService = inject(NzMessageService);
 
   onClick() {
     this.fileInput.nativeElement.click();
@@ -27,32 +28,24 @@ export class ImageUploaderComponent {
   onDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
-      if (this.acceptedFormats.some(format => file.name.endsWith(format))) {
-        this.startProgress();
-        this.selectedFile = file;
-        this.selectedFileUrl = URL.createObjectURL(this.selectedFile);
-      } else {
-        this.nzMessageService.error('فرمت فایل نامعتبر است');
-      }
+      this.assignFile(event.dataTransfer.files[0]);
     }
   }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.startProgress();
-      const file = input.files[0];
-      if (this.acceptedFormats.some(format => file.name.endsWith(format))) {
-        this.selectedFile = file;
-        this.selectedFileUrl = URL.createObjectURL(this.selectedFile);
-      } else {
-        this.nzMessageService.error('فرمت فایل نامعتبر است');
-      }
+      this.assignFile(input.files[0]);
     }
   }
 
-  startProgress() {
+  removeFile() {
+    this.selectedFile = null;
+    this.selectedFileUrl = null;
+    this.onFileSelected.emit(null);
+  }
+
+  private startProgress() {
     this.uploadProgress = 0;
     const interval = setInterval(() => {
       this.uploadProgress += 1;
@@ -62,8 +55,14 @@ export class ImageUploaderComponent {
     }, 20);
   }
 
-  removeFile() {
-    this.selectedFile = null;
-    this.selectedFileUrl = null;
+  private assignFile(file: File) {
+    if (this.acceptedFormats.some(format => file.name.endsWith(format))) {
+      this.startProgress();
+      this.selectedFile = file;
+      this.onFileSelected.emit(file);
+      this.selectedFileUrl = URL.createObjectURL(this.selectedFile);
+    } else {
+      this.nzMessageService.error('فرمت فایل نامعتبر است');
+    }
   }
 }
