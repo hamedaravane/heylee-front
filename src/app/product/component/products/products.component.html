@@ -78,6 +78,7 @@
         nzLayout="vertical"
         [formGroup]="productForm"
         (ngSubmit)="createProduct()">
+    <image-uploader (onFileSelected)="onImageSelected($event)"></image-uploader>
     <nz-form-item>
       <nz-form-label nzRequired nzFor="code">کد محصول</nz-form-label>
       <nz-form-control>
@@ -104,7 +105,6 @@
         ></textarea>
       </nz-form-control>
     </nz-form-item>
-    <image-uploader (onFileSelected)="onImageSelected($event)"></image-uploader>
   </form>
 </ng-template>
 <ng-template #createProductFooter>
