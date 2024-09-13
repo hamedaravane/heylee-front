@@ -31,7 +31,7 @@ export class BaseInfra {
     if (sort) {
       params = params.append('sort', sort);
     } else {
-      params = params.append('sort', 'created_at');
+      params = params.append('sort', '-created_at');
     }
 
     if (filters && filters.length > 0) {

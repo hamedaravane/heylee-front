@@ -21,6 +21,7 @@ import {NzPaginationModule} from 'ng-zorro-antd/pagination';
 import {
   ProductImageContainerComponent
 } from '@shared/component/product-image-container/product-image-container.component';
+import {ImageUploaderComponent} from "@shared/component/image-uploader/image-uploader.component";
 
 @Component({
   standalone: true,
@@ -46,7 +47,8 @@ import {
     PageContainerComponent,
     CardContainerComponent,
     NgTemplateOutlet,
-    ProductImageContainerComponent
+    ProductImageContainerComponent,
+    ImageUploaderComponent
   ]
 })
 export class ProductsComponent implements OnInit {
