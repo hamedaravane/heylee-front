@@ -1,10 +1,11 @@
 import {Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild} from "@angular/core";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {NzBytesPipe} from "ng-zorro-antd/pipes";
 
 @Component({
   selector: 'image-uploader',
-  imports: [NzButtonModule],
+  imports: [NzButtonModule, NzBytesPipe],
   standalone: true,
   templateUrl: './image-uploader.component.html',
 })

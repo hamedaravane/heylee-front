@@ -2,7 +2,7 @@
   <div
     (drop)="onDrop($event)"
     (dragover)="onDragOver($event)"
-    class="flex items-center justify-center p-8 h-64 min-h-48 transition-all delay-75 bg-gray-900 bg-opacity-20 hover:bg-opacity-30 border border-dashed border-gray-600 hover:border-gray-500 hover:border-2 rounded-md">
+    class="flex items-center justify-center p-8 h-52 min-h-52 transition-all delay-75 bg-gray-900 bg-opacity-20 hover:bg-opacity-30 border border-dashed border-gray-600 hover:border-gray-500 hover:border-2 rounded-md">
     <div class="text-center">
       <i class="fa-solid fa-file-image fa-4x mb-4"></i>
       <div class="my-3">
@@ -18,17 +18,26 @@
     </div>
   </div>
   @if (selectedFileUrl && selectedFile) {
-    <div dir="ltr" class="h-24 mt-4 p-4 relative transition-all border border-solid border-gray-400 delay-75 flex justify-between items-center gap-2 w-full rounded-md">
-      <div class="absolute opacity-60 bottom-0 left-0 h-full rounded-md bg-indigo-700 bg-opacity-10 overflow-hidden" [style.width]="uploadProgress + '%'"></div>
-      <div class="absolute opacity-60 bottom-0 left-0 h-0.5 rounded-md bg-indigo-600 overflow-hidden" [class.hidden]="uploadProgress === 100" [style.width]="uploadProgress + '%'"></div>
-      <div class="relative">
+    <div dir="ltr"
+         class="h-24 mt-4 p-2 relative transition-all border border-solid border-gray-600 delay-75 flex justify-between items-center w-full rounded-md">
+      <div class="absolute opacity-60 bottom-0 left-0 h-full rounded-md bg-gray-900 bg-opacity-20 overflow-hidden"
+           [style.width]="uploadProgress + '%'"></div>
+      <div
+        class="absolute opacity-60 bottom-0 left-0 h-0.5 rounded-md bg-indigo-600 shadow-lg shadow-current overflow-hidden"
+        [class.hidden]="uploadProgress === 100" [style.width]="uploadProgress + '%'"></div>
+      <div class="relative flex items-center gap-2">
         <img [src]="selectedFileUrl" alt="" width="80" height="80"
-             class="aspect-square h-20 w-20 overflow-hidden object-cover rounded-sm">
+             class="aspect-square h-20 w-20 overflow-hidden object-cover me-4 rounded-sm">
+        <div>
+          <div class="truncate max-w-40">{{ selectedFile.name }}</div>
+          <div>{{ selectedFile.size | nzBytes }}</div>
+        </div>
       </div>
-      <button nz-button nzDanger nzType="primary" nzShape="circle" class="relative" (click)="removeFile()">
+      <button nz-button nzDanger nzType="primary" nzShape="circle" class="relative me-4" (click)="removeFile()">
         <i class="fa-solid fa-trash"></i>
       </button>
     </div>
   }
 </div>
-<input #fileInput id="fileInput" type="file" accept=".jpg, .jpeg, .png" hidden [multiple]="false" (change)="onFileChange($event)">
+<input #fileInput id="fileInput" type="file" accept=".jpg, .jpeg, .png" hidden [multiple]="false"
+       (change)="onFileChange($event)">
