@@ -19,9 +19,11 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
 import {ProductApi} from '@product/api/product.api';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {ImageUploaderComponent} from '@shared/component/image-uploader/image-uploader.component';
+import {NzTableModule} from 'ng-zorro-antd/table';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 
 @Component({
   selector: 'purchase-invoice',
@@ -40,11 +42,15 @@ import {
     NgTemplateOutlet,
     ReactiveFormsModule,
     DecimalPipe,
+    NzTableModule,
     NgOptimizedImage,
     PageContainerComponent,
     CardContainerComponent,
     AsyncPipe,
-    ProductImageContainerComponent
+    ProductImageContainerComponent,
+    ImageUploaderComponent,
+    CurrencyComponent,
+    PersianDatePipe
   ],
   standalone: true
 })
@@ -55,6 +61,8 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
   private readonly supplierApi = inject(SupplierApi);
   private readonly productApi = inject(ProductApi);
   private readonly cd = inject(ChangeDetectorRef);
+  productSrcImages: string[] | null = null;
+  productFiles: File[] | null = null;
   suppliers$ = this.supplierApi.suppliers$;
   products$ = this.productApi.productsIndex$;
   sizes$ = this.productApi.sizes$;
@@ -195,6 +203,13 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
     console.log(index);
     this.updateTotalPrice();
     this.items.updateValueAndValidity()
+  }
+
+  handleMultipleFiles(files: File[] | null) {
+    if (files) {
+      this.productFiles = files;
+      this.productSrcImages = files.map(file => URL.createObjectURL(file))
+    }
   }
 
   async submitPurchaseForm(): Promise<void> {

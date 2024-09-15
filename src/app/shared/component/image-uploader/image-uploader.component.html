@@ -17,7 +17,7 @@
       </div>
     </div>
   </div>
-  @if (selectedFileUrl && selectedFile) {
+  @if (selectedFileUrl && selectedFile && !isMultiple) {
     <div dir="ltr"
          class="h-24 mt-4 p-2 relative transition-all border border-solid border-gray-600 delay-75 flex justify-between items-center w-full rounded-md">
       <div class="absolute opacity-60 bottom-0 left-0 h-full rounded-md bg-gray-900 bg-opacity-20 overflow-hidden"
