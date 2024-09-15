@@ -75,50 +75,7 @@
       </nz-form-control>
     </nz-form-item>
     <!-- batch submit -->
-    <image-uploader [isMultiple]="true" (onMultipleFileSelected)="handleMultipleFiles($event)"></image-uploader>
-    <!-- new items -->
-    <nz-table [nzBordered]="false">
-      <thead>
-      <tr class="text-xs">
-        <!--<th></th>-->
-        <th></th>
-        <th>کد محصول</th>
-        <th>نام محصول</th>
-        <th>توضیحات</th>
-        <th>رنگ</th>
-        <th>سایز</th>
-        <th>تعداد</th>
-        <th>قیمت خرید</th>
-        <th>قیمت فروش</th>
-        <th nzWidth="70px"></th>
-      </tr>
-      </thead>
-      <tbody>
-        @for (src of productSrcImages; track $index) {
-          <tr>
-            <!--<td>
-              <a nz-button nzType="text" nzSize="small">
-                <i class="fa-xs fa-solid fa-add"></i>
-              </a>
-            </td>-->
-            <td><img [src]="src" width="50" height="50" alt="" class="aspect-square object-cover"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <a nz-button nzType="text" nzDanger nzSize="small">
-                <i class="fa-xs fa-solid fa-trash"></i>
-              </a>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </nz-table>
+    <batch-purchase></batch-purchase>
     <!-- items -->
     <nz-form-item>
       <nz-divider></nz-divider>

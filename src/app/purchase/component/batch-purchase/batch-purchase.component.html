@@ -1,0 +1,93 @@
+<image-uploader [isMultiple]="true" (onMultipleFileSelected)="handleMultipleFiles($event)"></image-uploader>
+<form [formGroup]="defaultProductFrom" class="mb-4">
+  <table>
+    <thead>
+    <tr>
+      <th class="text-start font-normal py-2">کد پیشوندی</th>
+      <th class="text-start font-normal p-2">نام پیشفرض</th>
+      <th class="text-start font-normal py-2">توضیحات</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>
+        <input nz-input [formControl]="defaultProductFrom.controls.prefixCode" type="text" placeholder="ABC">
+      </td>
+      <td class="px-2">
+        <input nz-input [formControl]="defaultProductFrom.controls.productName" type="text" placeholder="شرت توری">
+      </td>
+      <td>
+        <input nz-input [formControl]="defaultProductFrom.controls.productDescription" type="text"
+               placeholder="طرح گلدار">
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+<nz-table nzTemplateMode="fixed" [nzBordered]="false" [nzData]="nzData">
+  <thead>
+  <tr class="text-xs">
+    <!--<th></th>-->
+    <th nzWidth="50"></th>
+    <th>کد محصول</th>
+    <th>نام محصول</th>
+    <th>توضیحات</th>
+    <th>رنگ</th>
+    <th>سایز</th>
+    <th>تعداد</th>
+    <th>قیمت خرید</th>
+    <th>قیمت فروش</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (purchaseItem of batchPurchaseForm.controls; let i = $index; track i) {
+      <tr [formGroup]="purchaseItem">
+        <td>
+          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" class="aspect-square object-cover">
+        </td>
+        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.code"></td>
+        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
+        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.desc"></td>
+        <td>
+          <nz-select nzPlaceHolder="رنگ" nzSize="small" [formControl]="purchaseItem.controls.color">
+            @for (color of colors$ | async; track $index) {
+              <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
+            }
+          </nz-select>
+        </td>
+        <td>
+          <nz-select nzSize="small" nzPlaceHolder="سایز" [formControl]="purchaseItem.controls.size">
+            @for (size of sizes$ | async; track $index) {
+              <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
+            }
+          </nz-select>
+        </td>
+        <td>
+          <nz-input-number nzInputMode="number" [nzStep]="1" [nzMin]="1" nzSize="small"
+                           [formControl]="purchaseItem.controls.quantity"></nz-input-number>
+        </td>
+        <td>
+          <nz-input-group nzSize="small" nzAddOnBefore="ریال">
+            <input nz-input name="purchaseUnitPrice" type="number"
+                   inputmode="numeric"
+                   nzSize="small" [formControl]="purchaseItem.controls.purchasePrice"/>
+          </nz-input-group>
+        </td>
+        <td>
+          <nz-input-group nzSize="small" nzAddOnBefore="ریال">
+            <input nz-input name="purchaseUnitPrice" type="number"
+                   inputmode="numeric"
+                   nzSize="small" [formControl]="purchaseItem.controls.sellPrice"/>
+          </nz-input-group>
+        </td>
+        <td>
+          <a nz-button nzType="text" nzDanger nzSize="small">
+            <i class="fa-xs fa-solid fa-trash"></i>
+          </a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</nz-table>
