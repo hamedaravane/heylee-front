@@ -1,68 +1,115 @@
-<page-container>
-  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock
-          (click)="isAddTransactionVisible = true">
-    <i class="fa-solid fa-plus mx-2"></i>
-    <span>افزودن تراکنش</span>
-  </button>
-  <nz-divider></nz-divider>
-  @if (transactionsIndex$ | async; as transactions) {
-    <ul>
-      @for (transaction of transactions.items; track $index) {
-        <card-container class="mb-3 last:mb-0">
-          <div class="flex w-full justify-between mb-2">
-            <span>{{ transaction.type }}</span>
-            <span>{{ transaction.transactionDate | persianDate }}</span>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">دسته‌بندی: </span>
-            <span>{{ transaction.category }}</span>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">مبلغ: </span>
-            <span>{{ transaction.amount | number }}</span>
-            <currency-wrapper></currency-wrapper>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">طرف حساب: </span>
-            <span>{{ transaction.entityName }}</span>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">روش پرداخت: </span>
-            <span>{{ transaction.paymentMethod }}</span>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">کد پیگیری: </span>
-            <span>{{ transaction.referenceNumber }}</span>
-          </div>
-          <div class="mb-1">
-            <span class="me-4 text-gray-400">توضیحات: </span>
-            <span>{{ transaction.description }}</span>
-          </div>
-          <div class="flex gap-4 mt-2">
-            <button nz-button nzType="primary" nzBlock (click)="handleEditTransaction(transaction)">ویرایش</button>
-            <button nz-button nzType="default" nzDanger nzBlock (click)="deleteTransaction(transaction.id)">حذف</button>
-          </div>
-        </card-container>
-      } @empty {
-        <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
+@if (transactionsIndex$ | async; as transactions) {
+  <responsive-container (isDesktopChange)="isDesktop.set($event)">
+    @if (isDesktop()) {
+      <nz-table [nzData]="transactions.items">
+        <thead>
+        <tr class="text-xs">
+          <th>نوع</th>
+          <th>تاریخ</th>
+          <th>دسته‌بندی</th>
+          <th>مبلغ</th>
+          <th>طرف حساب</th>
+          <th>روش پرداخت</th>
+          <th>کد پیگیری</th>
+          <th>توضیحات</th>
+          <th nzWidth="70px"></th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (transaction of transactions.items; track $index) {
+            <tr class="text-xs">
+              <td [ngClass]="{'text-rose-500': transaction.type === 'expense', 'text-emerald-500': transaction.type === 'investment'}">{{ transaction.type }}</td>
+              <td>{{ transaction.transactionDate | persianDate: dateTimeFormatOptions }}</td>
+              <td>{{ transaction.category }}</td>
+              <td>
+                <span>{{ transaction.amount | number }}</span>
+                <currency-wrapper></currency-wrapper>
+              </td>
+              <td>{{ transaction.entityName }}</td>
+              <td>{{ transaction.paymentMethod }}</td>
+              <td>{{ transaction.referenceNumber }}</td>
+              <td>{{ transaction.description }}</td>
+              <td>
+                <a class="inline-block" nz-button nzType="text" nzSize="small" (click)="handleEditTransaction(transaction)">
+                  <i class="fa-xs fa-solid fa-pen"></i>
+                </a>
+                <a class="inline-block" nz-button nzType="text" nzDanger nzSize="small" (click)="deleteTransaction(transaction.id)">
+                  <i class="fa-xs fa-solid fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    } @else {
+      <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock
+              (click)="isAddTransactionVisible = true">
+        <i class="fa-solid fa-plus mx-2"></i>
+        <span>افزودن تراکنش</span>
+      </button>
+      <nz-divider></nz-divider>
+      @if (transactions; as transactions) {
+        <ul>
+          @for (transaction of transactions.items; track $index) {
+            <card-container class="mb-3 last:mb-0">
+              <div class="flex w-full justify-between mb-2">
+                <span>{{ transaction.type }}</span>
+                <span>{{ transaction.transactionDate | persianDate }}</span>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">دسته‌بندی: </span>
+                <span>{{ transaction.category }}</span>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">مبلغ: </span>
+                <span>{{ transaction.amount | number }}</span>
+                <currency-wrapper></currency-wrapper>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">طرف حساب: </span>
+                <span>{{ transaction.entityName }}</span>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">روش پرداخت: </span>
+                <span>{{ transaction.paymentMethod }}</span>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">کد پیگیری: </span>
+                <span>{{ transaction.referenceNumber }}</span>
+              </div>
+              <div class="mb-1">
+                <span class="me-4 text-gray-400">توضیحات: </span>
+                <span>{{ transaction.description }}</span>
+              </div>
+              <div class="flex gap-4 mt-2">
+                <button nz-button nzType="primary" nzBlock (click)="handleEditTransaction(transaction)">ویرایش</button>
+                <button nz-button nzType="default" nzDanger nzBlock (click)="deleteTransaction(transaction.id)">حذف
+                </button>
+              </div>
+            </card-container>
+          } @empty {
+            <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
+          }
+        </ul>
+        <div class="mt-4">
+          <nz-pagination [nzTotal]="transactions._meta.totalCount"
+                         [nzPageIndex]="transactions._meta.currentPage"
+                         (nzPageIndexChange)="pageIndexChange($event)"
+                         [nzPageSize]="transactions._meta.perPage"></nz-pagination>
+        </div>
+      } @else if (loadingState) {
+        <ul>
+          @for (_ of [].constructor(3); track $index) {
+            <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
+              <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+            </li>
+          }
+        </ul>
       }
-    </ul>
-    <div class="mt-4">
-      <nz-pagination [nzTotal]="transactions._meta.totalCount"
-                     [nzPageIndex]="transactions._meta.currentPage"
-                     (nzPageIndexChange)="pageIndexChange($event)"
-                     [nzPageSize]="transactions._meta.perPage"></nz-pagination>
-    </div>
-  } @else if (loadingState) {
-    <ul>
-      @for (_ of [].constructor(3); track $index) {
-        <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
-          <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
-        </li>
-      }
-    </ul>
-  }
-</page-container>
+    }
+  </responsive-container>
+}
+
 <nz-drawer [nzFooter]="createTransactionFooter"
            nzClosable
            nzHeight="75%"
@@ -94,13 +141,16 @@
     <nz-form-item>
       <nz-form-label nzFor="transactionDate">تاریخ تراکنش</nz-form-label>
       <nz-form-control>
-        <nz-date-picker [formControl]="transactionForm.controls.transactionDate" nzId="transactionDate" nzFormat="yyyy/MM/dd" nzMode="date" nzSize="default" nzSeparator="/" class="w-full"></nz-date-picker>
+        <nz-date-picker [formControl]="transactionForm.controls.transactionDate" nzId="transactionDate"
+                        nzFormat="yyyy/MM/dd" nzMode="date" nzSize="default" nzSeparator="/"
+                        class="w-full"></nz-date-picker>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzFor="amount">مبلغ</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="amount" type="number" id="amount" [formControl]="transactionForm.controls.amount"/>
+        <input nz-input required name="amount" type="number" id="amount"
+               [formControl]="transactionForm.controls.amount"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -130,13 +180,15 @@
     <nz-form-item>
       <nz-form-label nzFor="entityName">طرف حساب</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="entityName" type="text" id="entityName" [formControl]="transactionForm.controls.entityName"/>
+        <input nz-input required name="entityName" type="text" id="entityName"
+               [formControl]="transactionForm.controls.entityName"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzFor="description">توضیحات</nz-form-label>
       <nz-form-control>
-        <textarea nz-input required name="description" id="description" [formControl]="transactionForm.controls.description"
+        <textarea nz-input required name="description" id="description"
+                  [formControl]="transactionForm.controls.description"
                   [nzAutosize]="{ minRows: 1, maxRows: 2 }"></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -154,7 +206,8 @@
     <nz-form-item>
       <nz-form-label nzFor="referenceNumber">کد پیگیری</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="referenceNumber" type="text" id="referenceNumber" [formControl]="transactionForm.controls.referenceNumber"/>
+        <input nz-input required name="referenceNumber" type="text" id="referenceNumber"
+               [formControl]="transactionForm.controls.referenceNumber"/>
       </nz-form-control>
     </nz-form-item>
   </form>

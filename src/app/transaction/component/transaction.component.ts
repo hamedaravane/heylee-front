@@ -1,29 +1,32 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {TransactionFacade} from '../data-access/transaction.facade';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {PageContainerComponent} from "@shared/component/page-container/page-container.component";
-import {NzButtonModule} from "ng-zorro-antd/button";
-import {AsyncPipe, DatePipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
-import {CardContainerComponent} from "@shared/component/card-container/card-container.component";
-import {NzDividerModule} from "ng-zorro-antd/divider";
-import {NzEmptyModule} from "ng-zorro-antd/empty";
-import {NzPaginationModule} from "ng-zorro-antd/pagination";
-import {NzSkeletonModule} from "ng-zorro-antd/skeleton";
-import {NzInputModule} from "ng-zorro-antd/input";
-import {NzDrawerModule} from "ng-zorro-antd/drawer";
-import {NzFormModule} from "ng-zorro-antd/form";
-import {BidiModule} from "@angular/cdk/bidi";
-import {NzIconModule} from "ng-zorro-antd/icon";
-import {NzUploadModule} from "ng-zorro-antd/upload";
-import {RouterLink} from "@angular/router";
-import {CreateTransaction, Transaction} from "../entity/transaction.entity";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
-import {NzRadioModule} from "ng-zorro-antd/radio";
-import {NzSelectModule} from "ng-zorro-antd/select";
-import {distinctUntilChanged, map} from "rxjs";
-import {PersianDatePipe} from "@shared/pipe/persian-date.pipe";
-import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {AsyncPipe, DatePipe, DecimalPipe, NgClass, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzEmptyModule} from 'ng-zorro-antd/empty';
+import {NzPaginationModule} from 'ng-zorro-antd/pagination';
+import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzDrawerModule} from 'ng-zorro-antd/drawer';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzIconModule} from 'ng-zorro-antd/icon';
+import {NzUploadModule} from 'ng-zorro-antd/upload';
+import {RouterLink} from '@angular/router';
+import {CreateTransaction, Transaction} from '../entity/transaction.entity';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
+import {NzRadioModule} from 'ng-zorro-antd/radio';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {distinctUntilChanged, map} from 'rxjs';
+import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {BreakpointService} from '@shared/service/breakpoint.service';
+import {ResponsiveContainerComponent} from '@shared/component/responsive-container/responsive-container.component';
+import {NzTableModule} from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'transaction',
@@ -51,15 +54,20 @@ import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.com
     NgTemplateOutlet,
     NzDatePickerModule,
     NzRadioModule,
+    NzTableModule,
     DatePipe,
     NzSelectModule,
     PersianDatePipe,
     CurrencyComponent,
+    ResponsiveContainerComponent,
+    NgClass
   ]
 })
 export class TransactionComponent implements OnInit {
   private readonly transactionFacade = inject(TransactionFacade);
   private readonly destroyRef = inject(DestroyRef);
+  isDesktop = signal<boolean>(false);
+  dateTimeFormatOptions: Intl.DateTimeFormatOptions = {year: '2-digit', month: '2-digit', day: '2-digit'};
   transactionsIndex$ = this.transactionFacade.transactionsIndex$;
   isAddTransactionVisible = false;
   isEditTransactionVisible = false;
@@ -130,4 +138,6 @@ export class TransactionComponent implements OnInit {
     this.isAddTransactionVisible = false;
     this.isEditTransactionVisible = false;
   }
+
+  protected readonly Breakpoint = BreakpointService;
 }

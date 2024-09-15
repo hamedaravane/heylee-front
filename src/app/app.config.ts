@@ -22,7 +22,15 @@ const ngZorroConfig: NzConfig = {
   modal: {nzDirection: 'rtl'},
   drawer: {nzDirection: 'rtl'},
   notification: {nzDirection: 'rtl'},
-  image: {nzCloseOnNavigation: true, nzDirection: 'rtl'}
+  image: {nzCloseOnNavigation: true, nzDirection: 'rtl'},
+  table: {
+    nzBordered: true,
+    nzSize: 'small',
+    nzShowQuickJumper: true,
+    nzShowSizeChanger: true,
+    nzSimple: true,
+    nzHideOnSinglePage: true,
+  }
   // empty: { nzDefaultEmptyContent: '' }
 };
 
