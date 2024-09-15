@@ -39,5 +39,5 @@
     </div>
   }
 </div>
-<input #fileInput id="fileInput" type="file" accept=".jpg, .jpeg, .png" hidden [multiple]="false"
+<input #fileInput id="fileInput" type="file" accept=".jpg, .jpeg, .png" hidden [multiple]="isMultiple"
        (change)="onFileChange($event)">
