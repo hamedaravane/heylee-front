@@ -2,7 +2,7 @@ import {Observable} from 'rxjs';
 import {CreateTransactionDto, mapTransactionDto, Transaction, TransactionDto} from '../entity/transaction.entity';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {BaseInfra} from '@shared/service/base.infra';
-import {Injectable} from "@angular/core";
+import {Injectable} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class TransactionInfra extends BaseInfra {
   }
 
   fetchTransactions(pageIndex: number = 1): Observable<IndexResponse<Transaction>> {
-    return this.fetchEntities<TransactionDto, Transaction>(this.endpoint, mapTransactionDto, pageIndex);
+    return this.fetchEntities<TransactionDto, Transaction>(this.endpoint, mapTransactionDto, pageIndex, undefined, undefined, 100, '-transaction_date');
   }
 
   deleteTransaction(id: number): Observable<void> {

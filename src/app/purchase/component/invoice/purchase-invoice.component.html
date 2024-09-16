@@ -42,36 +42,21 @@
     <nz-form-item>
       <nz-form-label nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
       <nz-form-control>
-        <nz-input-group nzAddOnBefore="ریال">
-          <input class="font-mono"
-                 nz-input name="totalPrice"
-                 type="number" inputmode="numeric"
-                 id="totalPrice" formControlName="totalPrice"/>
-        </nz-input-group>
+        <currency-input formControlName="totalPrice"></currency-input>
       </nz-form-control>
     </nz-form-item>
     <!-- discount -->
     <nz-form-item>
       <nz-form-label nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control>
-        <nz-input-group nzAddOnBefore="ریال">
-          <input class="font-mono"
-                 nz-input name="discount"
-                 type="number" inputmode="numeric"
-                 id="discount" formControlName="discount"/>
-        </nz-input-group>
+        <currency-input formControlName="discount"></currency-input>
       </nz-form-control>
     </nz-form-item>
     <!-- paid price -->
     <nz-form-item>
       <nz-form-label nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
       <nz-form-control>
-        <nz-input-group nzAddOnBefore="ریال">
-          <input class="font-mono"
-                 nz-input name="paidPrice"
-                 type="number" inputmode="numeric"
-                 id="paidPrice" formControlName="paidPrice"/>
-        </nz-input-group>
+        <currency-input formControlName="paidPrice"></currency-input>
       </nz-form-control>
     </nz-form-item>
     <!-- batch submit -->
@@ -140,11 +125,7 @@
                     </div>
                     <div>
                       <div id="unitPrice" class="mb-2">
-                        <nz-input-group class="inline-block" nzAddOnBefore="خرید (ریال)">
-                          <input class="w-40 font-mono" nz-input name="purchaseUnitPrice" type="number"
-                                 inputmode="numeric"
-                                 formControlName="purchaseUnitPrice"/>
-                        </nz-input-group>
+                        <currency-input formControlName="purchaseUnitPrice"></currency-input>
                       </div>
                       <div id="sellingPrice">
                         <nz-input-group class="inline-block" nzAddOnBefore="فروش (ریال)">

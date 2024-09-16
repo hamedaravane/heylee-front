@@ -1,5 +1,11 @@
 @if (transactionsIndex$ | async; as transactions) {
   <responsive-container (isDesktopChange)="isDesktop.set($event)">
+    <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button [nzBlock]="!isDesktop()"
+            (click)="isAddTransactionVisible = true">
+      <i class="fa-solid fa-plus me-2"></i>
+      <span>افزودن تراکنش</span>
+    </button>
+    <nz-divider></nz-divider>
     @if (isDesktop()) {
       <nz-table [nzData]="transactions.items">
         <thead>
@@ -42,11 +48,6 @@
         </tbody>
       </nz-table>
     } @else {
-      <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock
-              (click)="isAddTransactionVisible = true">
-        <i class="fa-solid fa-plus mx-2"></i>
-        <span>افزودن تراکنش</span>
-      </button>
       <nz-divider></nz-divider>
       @if (transactions; as transactions) {
         <ul>
@@ -149,8 +150,7 @@
     <nz-form-item>
       <nz-form-label nzFor="amount">مبلغ</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="amount" type="number" id="amount"
-               [formControl]="transactionForm.controls.amount"/>
+        <currency-input [formControl]="transactionForm.controls.amount"></currency-input>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>

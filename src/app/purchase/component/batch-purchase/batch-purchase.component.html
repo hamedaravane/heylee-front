@@ -1,34 +1,42 @@
 <image-uploader [isMultiple]="true" (onMultipleFileSelected)="handleMultipleFiles($event)"></image-uploader>
 <form [formGroup]="defaultProductFrom" class="mb-4">
-  <table>
+  <nz-table nzSize="small" [nzData]="[1]" nzBordered nzTitle="مقادیر کلی">
     <thead>
     <tr>
-      <th class="text-start font-normal py-2">کد پیشوندی</th>
-      <th class="text-start font-normal p-2">نام پیشفرض</th>
-      <th class="text-start font-normal py-2">توضیحات</th>
+      <th>کد</th>
+      <th>نام</th>
+      <th>توضیحات</th>
+      <th>قیمت خرید</th>
+      <th>قیمت فروش</th>
     </tr>
     </thead>
     <tbody>
     <tr>
       <td>
-        <input nz-input [formControl]="defaultProductFrom.controls.prefixCode" type="text" placeholder="ABC">
+        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.prefixCode" type="text" placeholder="ABC">
       </td>
       <td class="px-2">
-        <input nz-input [formControl]="defaultProductFrom.controls.productName" type="text" placeholder="شرت توری">
+        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productName" type="text">
       </td>
       <td>
-        <input nz-input [formControl]="defaultProductFrom.controls.productDescription" type="text"
-               placeholder="طرح گلدار">
+        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productDescription" type="text">
+      </td>
+      <td>
+        <currency-input size="small" [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></currency-input>
+      </td>
+      <td>
+        <currency-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></currency-input>
       </td>
     </tr>
     </tbody>
-  </table>
+  </nz-table>
 </form>
-<nz-table nzTemplateMode="fixed" [nzBordered]="false" [nzData]="nzData">
+<nz-divider></nz-divider>
+<nz-table nzSize="small" nzTemplateMode="fixed" [nzBordered]="false" [nzData]="nzData">
   <thead>
-  <tr class="text-xs">
+  <tr>
     <!--<th></th>-->
-    <th nzWidth="50"></th>
+    <th></th>
     <th>کد محصول</th>
     <th>نام محصول</th>
     <th>توضیحات</th>
@@ -44,8 +52,8 @@
     @for (purchaseItem of batchPurchaseForm.controls; let i = $index; track i) {
       <tr [formGroup]="purchaseItem">
         <td>
-          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
-               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" class="aspect-square object-cover">
+          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64" [src]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" style="min-width: 40px" class="aspect-square object-cover">
         </td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.code"></td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
@@ -65,22 +73,14 @@
           </nz-select>
         </td>
         <td>
-          <nz-input-number nzInputMode="number" [nzStep]="1" [nzMin]="1" nzSize="small"
+          <nz-input-number nzInputMode="number" [nzStep]="1" [nzMin]="1" nzSize="small" style="max-width: 45px"
                            [formControl]="purchaseItem.controls.quantity"></nz-input-number>
         </td>
         <td>
-          <nz-input-group nzSize="small" nzAddOnBefore="ریال">
-            <input nz-input name="purchaseUnitPrice" type="number"
-                   inputmode="numeric"
-                   nzSize="small" [formControl]="purchaseItem.controls.purchasePrice"/>
-          </nz-input-group>
+          <currency-input size="small" [formControl]="purchaseItem.controls.purchasePrice"></currency-input>
         </td>
         <td>
-          <nz-input-group nzSize="small" nzAddOnBefore="ریال">
-            <input nz-input name="purchaseUnitPrice" type="number"
-                   inputmode="numeric"
-                   nzSize="small" [formControl]="purchaseItem.controls.sellPrice"/>
-          </nz-input-group>
+          <currency-input size="small" [formControl]="purchaseItem.controls.sellPrice"></currency-input>
         </td>
         <td>
           <a nz-button nzType="text" nzDanger nzSize="small">

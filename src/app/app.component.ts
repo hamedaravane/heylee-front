@@ -21,8 +21,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.updateService.checkForUpdates().then((u) => {
       if (u) {
-        this.nzNotificationService.blank('new version is available.',
-          'click to update',
+        this.nzNotificationService.blank('نسخه‌ی جدیدی از اپلیکیشن موجود شده',
+          'بروزرسانی',
           {
             nzPlacement: 'bottom',
             nzKey: 'UPDATE',

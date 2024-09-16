@@ -27,6 +27,7 @@ import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.com
 import {BreakpointService} from '@shared/service/breakpoint.service';
 import {ResponsiveContainerComponent} from '@shared/component/responsive-container/responsive-container.component';
 import {NzTableModule} from 'ng-zorro-antd/table';
+import {CurrencyInputComponent} from '@shared/component/currency-input/currency-input.component';
 
 @Component({
   selector: 'transaction',
@@ -60,7 +61,8 @@ import {NzTableModule} from 'ng-zorro-antd/table';
     PersianDatePipe,
     CurrencyComponent,
     ResponsiveContainerComponent,
-    NgClass
+    NgClass,
+    CurrencyInputComponent
   ]
 })
 export class TransactionComponent implements OnInit {
