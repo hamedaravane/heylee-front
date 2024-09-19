@@ -13,7 +13,7 @@
       <i class="fa-solid fa-search"></i>
     </ng-template>
     <ng-template #prefixSearchBy>
-      <nz-select [formControl]="filterForm.controls.searchBy" id="searchBy" style="min-width: 200px" nzPlaceHolder="جستجو بر اساس">
+      <nz-select [formControl]="filterForm.controls.searchBy" id="searchBy" style="min-width: 110px" nzPlaceHolder="جستجو بر اساس">
         @for (item of searchByOptions; track item.value) {
           <nz-option [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
         }
