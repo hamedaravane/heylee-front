@@ -1,15 +1,15 @@
 import {Component, DestroyRef, forwardRef, inject, Input} from '@angular/core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule} from '@angular/forms';
-import {NzInputModule} from 'ng-zorro-antd/input';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule} from "@angular/forms";
+import {NzInputModule} from "ng-zorro-antd/input";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
+  selector: 'ngx-price-input',
   standalone: true,
-  selector: 'currency-input',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CurrencyInputComponent),
+      useExisting: forwardRef(() => NgxPriceInputComponent),
       multi: true
     }
   ],
@@ -23,14 +23,14 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
           nz-input
           type="text"
           inputmode="numeric"
-          class="font-mono"
+          style="'font-family': ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"
           [formControl]="controlValue"
           (input)="onInput($event)"
           (blur)="onBlur()"
       />
     </nz-input-group>`
 })
-export class CurrencyInputComponent implements ControlValueAccessor {
+export class NgxPriceInputComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
   @Input() currency: string = 'ریال';
   @Input() size: 'large' | 'default' | 'small' = 'default';
@@ -62,7 +62,7 @@ export class CurrencyInputComponent implements ControlValueAccessor {
 
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/[^\d]/g, ''); // Remove non-digit characters
+    let value = input.value.replace(/[^\d]/g, '');
     if (value) {
       const numericValue = parseInt(value, 10);
       input.value = this.formatValue(numericValue);

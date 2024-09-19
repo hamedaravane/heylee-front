@@ -22,10 +22,10 @@
         <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productDescription" type="text">
       </td>
       <td>
-        <currency-input size="small" [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></currency-input>
+        <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></ngx-price-input>
       </td>
       <td>
-        <currency-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></currency-input>
+        <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></ngx-price-input>
       </td>
     </tr>
     </tbody>
@@ -77,10 +77,10 @@
                            [formControl]="purchaseItem.controls.quantity"></nz-input-number>
         </td>
         <td>
-          <currency-input size="small" [formControl]="purchaseItem.controls.purchasePrice"></currency-input>
+          <ngx-price-input size="small" [formControl]="purchaseItem.controls.purchasePrice"></ngx-price-input>
         </td>
         <td>
-          <currency-input size="small" [formControl]="purchaseItem.controls.sellPrice"></currency-input>
+          <ngx-price-input size="small" [formControl]="purchaseItem.controls.sellPrice"></ngx-price-input>
         </td>
         <td>
           <a nz-button nzType="text" nzDanger nzSize="small">

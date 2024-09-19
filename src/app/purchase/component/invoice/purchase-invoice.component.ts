@@ -19,13 +19,15 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
 import {ProductApi} from '@product/api/product.api';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 import {ImageUploaderComponent} from '@shared/component/image-uploader/image-uploader.component';
 import {NzTableModule} from 'ng-zorro-antd/table';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 import {BatchPurchaseComponent} from '@purchase/component/batch-purchase/batch-purchase.component';
-import {CurrencyInputComponent} from '@shared/component/currency-input/currency-input.component';
+import {NgxPriceInputComponent} from "ngx-price-input";
 
 @Component({
   selector: 'purchase-invoice',
@@ -54,7 +56,7 @@ import {CurrencyInputComponent} from '@shared/component/currency-input/currency-
     CurrencyComponent,
     PersianDatePipe,
     BatchPurchaseComponent,
-    CurrencyInputComponent
+    NgxPriceInputComponent,
   ],
   standalone: true
 })

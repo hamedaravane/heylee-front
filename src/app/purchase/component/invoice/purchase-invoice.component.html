@@ -42,21 +42,21 @@
     <nz-form-item>
       <nz-form-label nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
       <nz-form-control>
-        <currency-input formControlName="totalPrice"></currency-input>
+        <ngx-price-input formControlName="totalPrice"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- discount -->
     <nz-form-item>
       <nz-form-label nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control>
-        <currency-input formControlName="discount"></currency-input>
+        <ngx-price-input formControlName="discount"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- paid price -->
     <nz-form-item>
       <nz-form-label nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
       <nz-form-control>
-        <currency-input formControlName="paidPrice"></currency-input>
+        <ngx-price-input formControlName="paidPrice"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- items -->
@@ -118,10 +118,10 @@
                     </nz-select>
                   </td>
                   <td>
-                    <currency-input size="small" formControlName="purchaseUnitPrice"></currency-input>
+                    <ngx-price-input formControlName="purchaseUnitPrice"></ngx-price-input>
                   </td>
                   <td>
-                    <currency-input size="small" formControlName="sellingUnitPrice"></currency-input>
+                    <ngx-price-input formControlName="sellingUnitPrice"></ngx-price-input>
                   </td>
                   <td>
                     <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text" nzDanger

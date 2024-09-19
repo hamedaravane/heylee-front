@@ -36,7 +36,12 @@
       "@sale/*": ["app/sale/*"],
       "@shared/*": ["app/shared/*"],
       "@supplier/*": ["app/supplier/*"],
-      "@colors": ["styles/colors.ts"],
+      "@colors": [
+        "styles/colors.ts"
+      ],
+      "ngx-price-input": [
+        "../dist/ngx-price-input"
+      ],
     }
   },
   "angularCompilerOptions": {

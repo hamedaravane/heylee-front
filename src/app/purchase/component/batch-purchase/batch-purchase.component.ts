@@ -13,7 +13,7 @@ import {fallbackImageBase64} from '@shared/constant/fallbackImage';
 import {filter} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
-import {CurrencyInputComponent} from '@shared/component/currency-input/currency-input.component';
+import {NgxPriceInputComponent} from "ngx-price-input";
 
 @Component({
   standalone: true,
@@ -30,7 +30,7 @@ import {CurrencyInputComponent} from '@shared/component/currency-input/currency-
     NzDividerModule,
     ReactiveFormsModule,
     AsyncPipe,
-    CurrencyInputComponent
+    NgxPriceInputComponent
   ]
 })
 export class BatchPurchaseComponent implements OnInit {

@@ -1,0 +1,26 @@
+{
+  "name": "ngx-price-input",
+  "version": "0.0.3",
+  "description": "An Angular component for numeric input with currency display",
+  "author": "Hamed Arghavan <hamedaravane@gmail.com>",
+  "repository": {
+    "type": "git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "input",
+    "currency",
+    "ngx",
+    "ng-zorro"
+  ],
+  "peerDependencies": {
+    "@angular/common": "^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0",
+    "@angular/core": "^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0",
+    "ng-zorro-antd": "^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

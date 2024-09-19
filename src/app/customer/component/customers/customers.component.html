@@ -1,10 +1,25 @@
 <page-container>
-  <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="primary" nz-button nzBlock (click)="isAddCustomerVisible = true">
+  <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="primary" nz-button nzBlock
+          (click)="isAddCustomerVisible = true">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن مشتری</span>
   </button>
   <nz-divider></nz-divider>
   @if (customersIndex$ | async; as customers) {
+    <nz-input-group [nzSuffix]="suffixIconSearch" [nzAddOnBefore]="prefixSearchBy">
+      <input [formControl]="filterForm.controls.searchValue" type="text" nz-input placeholder="متن جستجو را اینجا بنویسید"/>
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i class="fa-solid fa-search"></i>
+    </ng-template>
+    <ng-template #prefixSearchBy>
+      <nz-select [formControl]="filterForm.controls.searchBy" id="searchBy" style="min-width: 200px" nzPlaceHolder="جستجو بر اساس">
+        @for (item of searchByOptions; track item.value) {
+          <nz-option [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
+        }
+      </nz-select>
+    </ng-template>
+    <nz-divider></nz-divider>
     <ul>
       @for (customer of customers.items; track $index) {
         <card-container class="mb-3 last:mb-0">
@@ -12,41 +27,44 @@
             <!-- name -->
             <div>
               <i class="fa-solid fa-user mx-2"></i>
-              <span>{{ customer.name}}</span>
+              <span>{{ customer.name }}</span>
             </div>
             <!-- phone -->
             <div>
               <i class="fa-solid fa-phone mx-2"></i>
-              <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.phone | phoneFormat}}</a>
+              <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500"
+                 dir="ltr">{{ customer.phone | phoneFormat }}</a>
             </div>
             <div class="flex gap-2">
               <div>
                 <i class="fa-solid fa-location-dot mx-2"></i>
-                <span>{{ customer.city}}</span>
+                <span>{{ customer.city }}</span>
               </div>
               <!-- address -->
               <div class="col-span-8">
                 <span class="me-2">|</span>
-                <span>{{ customer.address}}</span>
+                <span>{{ customer.address }}</span>
               </div>
             </div>
             <!-- postal code -->
             @if (customer.postalCode) {
               <i class="fa-solid fa-map-location-dot mx-2"></i>
-              <span>{{ customer.postalCode}}</span>
+              <span>{{ customer.postalCode }}</span>
             }
             <!-- telegram username -->
             @if (customer.telegram) {
               <div>
                 <i class="fa-brands fa-telegram mx-2"></i>
-                <a [href]="'https://t.me/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram}}</a>
+                <a [href]="'https://t.me/' + customer.instagram" target="_blank"
+                   class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram }}</a>
               </div>
             }
             <!-- instagram username -->
             @if (customer.instagram) {
               <div>
                 <i class="fa-brands fa-instagram mx-2"></i>
-                <a [href]="'https://instagram.com/' + customer.instagram" target="_blank" class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram}}</a>
+                <a [href]="'https://instagram.com/' + customer.instagram" target="_blank"
+                   class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram }}</a>
               </div>
             }
             <!-- cashback balance -->
@@ -57,11 +75,13 @@
             </div>
             <div class="col-span-8 mt-4">
               <div class="flex gap-2">
-                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nz-button (click)="selectCustomerToEdit(customer)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nz-button
+                        (click)="selectCustomerToEdit(customer)">
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [nzLoading]="loadingState" [disabled]="loadingState || operatorUser" nzType="default" nzDanger nz-button (click)="deleteCustomer(customer.id)">
+                <button [nzLoading]="loadingState" [disabled]="loadingState || operatorUser" nzType="default" nzDanger
+                        nz-button (click)="deleteCustomer(customer.id)">
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>
@@ -140,12 +160,12 @@
       <nz-form-label nzRequired nzFor="address">آدرس</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            required
-            name="address"
-            id="address"
-            formControlName="address"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+          nz-input
+          required
+          name="address"
+          id="address"
+          formControlName="address"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -184,13 +204,15 @@
 </ng-template>
 
 <ng-template #createCustomerFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createCustomerForm.invalid || loadingState" (click)="createCustomer()">
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
+          [disabled]="createCustomerForm.invalid || loadingState" (click)="createCustomer()">
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
   </button>
 </ng-template>
 <ng-template #editCustomerFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="createCustomerForm.invalid || loadingState" (click)="editCustomer()">
+  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
+          [disabled]="createCustomerForm.invalid || loadingState" (click)="editCustomer()">
     <i class="fa-solid fa-pen mx-2"></i>
     <span>ویرایش</span>
   </button>
