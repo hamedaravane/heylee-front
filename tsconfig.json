@@ -40,7 +40,7 @@
         "styles/colors.ts"
       ],
       "ngx-price-input": [
-        "../dist/ngx-price-input"
+        "../projects/ngx-price-input/src/public-api"
       ],
     }
   },
