@@ -8,14 +8,14 @@
     <nz-form-item>
       <nz-form-label nzRequired nzFor="invoiceNumber">شماره فاکتور</nz-form-label>
       <nz-form-control dir="ltr">
-        <input nz-input required name="invoiceNumber" type="text" id="invoiceNumber" formControlName="number"/>
+        <input nz-input required name="invoiceNumber" type="text" id="invoiceNumber" [formControl]="purchaseForm.controls.number"/>
       </nz-form-control>
     </nz-form-item>
     <!-- supplier id -->
     <nz-form-item>
       <nz-form-label nzRequired nzFor="supplierId">تامین کننده</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="supplierId">
+        <nz-select [formControl]="purchaseForm.controls.supplierId">
           @if (suppliers$ | async; as suppliers) {
             @for (supplier of suppliers.items; track $index) {
               <nz-option [nzValue]="supplier.id" [nzLabel]="supplier.name"></nz-option>
@@ -33,7 +33,7 @@
           name="description"
           type="text"
           id="description"
-          formControlName="description"
+          [formControl]="purchaseForm.controls.description"
           [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
@@ -42,21 +42,21 @@
     <nz-form-item>
       <nz-form-label nzFor="totalPrice">مجموع قیمت سفارشات</nz-form-label>
       <nz-form-control>
-        <ngx-price-input formControlName="totalPrice"></ngx-price-input>
+        <ngx-price-input [formControl]="purchaseForm.controls.totalPrice"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- discount -->
     <nz-form-item>
       <nz-form-label nzFor="discount">تخفیف</nz-form-label>
       <nz-form-control>
-        <ngx-price-input formControlName="discount"></ngx-price-input>
+        <ngx-price-input [formControl]="purchaseForm.controls.discount"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- paid price -->
     <nz-form-item>
       <nz-form-label nzFor="paidPrice">مبلغ پرداختی</nz-form-label>
       <nz-form-control>
-        <ngx-price-input formControlName="paidPrice"></ngx-price-input>
+        <ngx-price-input [formControl]="purchaseForm.controls.paidPrice"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
     <!-- items -->

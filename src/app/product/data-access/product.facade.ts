@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {ProductInfra} from '../infrastructure/product.infra';
-import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
+import {BehaviorSubject, filter, firstValueFrom, Observable, Subject} from 'rxjs';
 import {Product} from '../entity/product.entity';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {IdLabel} from '@shared/entity/common.entity';
@@ -37,6 +37,10 @@ export class ProductFacade extends BaseFacade {
       () => firstValueFrom(this.productInfra.createProduct(formData)),
       () => this.loadProducts()
     )
+  }
+
+  createProduct$(formData: FormData): Observable<Product> {
+    return this.productInfra.createProduct(formData);
   }
 
   async editProduct(id: number, formData: FormData) {
