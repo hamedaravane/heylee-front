@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CreatePurchaseInvoice} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
@@ -28,6 +28,7 @@ import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.com
 import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 import {BatchPurchaseComponent} from '@purchase/component/batch-purchase/batch-purchase.component';
 import {NgxPriceInputComponent} from "ngx-price-input";
+import {NzModalModule} from "ng-zorro-antd/modal";
 
 @Component({
   selector: 'purchase-invoice',
@@ -51,6 +52,7 @@ import {NgxPriceInputComponent} from "ngx-price-input";
     PageContainerComponent,
     CardContainerComponent,
     AsyncPipe,
+    NzModalModule,
     ProductImageContainerComponent,
     ImageUploaderComponent,
     CurrencyComponent,
@@ -61,19 +63,11 @@ import {NgxPriceInputComponent} from "ngx-price-input";
   standalone: true
 })
 export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
+  loadingState = false;
+  isBatchPurchaseModalVisible = signal<boolean>(false);
+  confirmBatchPurchaseItems = signal<boolean>(false);
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly formBuilder = inject(FormBuilder);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly supplierApi = inject(SupplierApi);
-  private readonly productApi = inject(ProductApi);
-  private readonly cd = inject(ChangeDetectorRef);
-  suppliers$ = this.supplierApi.suppliers$;
-  products$ = this.productApi.productsIndex$;
-  sizes$ = this.productApi.sizes$;
-  colors$ = this.productApi.colors$;
-  loadingState = false;
-  suggestionSellPricesByPercentage = [30, 50, 60, 70, 100];
-
   purchaseForm = new FormGroup<{
     number: FormControl<string | null>;
     supplierId: FormControl<number | null>;
@@ -105,10 +99,25 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
       sellingUnitPrice: FormControl<number | null>;
     } | null>>([])
   });
-
   totalPriceControl = this.purchaseForm.controls.totalPrice as FormControl<number>;
   paidPriceControl = this.purchaseForm.controls.paidPrice as FormControl<number>;
   discountControl = this.purchaseForm.controls.discount as FormControl<number>;
+  invoiceFormValue: {
+    number: string | null,
+    supplierId: number | null,
+    description: string | null,
+    totalPrice: number | null,
+    discount: number | null,
+    paidPrice: number | null,
+  } = {...this.purchaseForm.getRawValue()};
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly supplierApi = inject(SupplierApi);
+  suppliers$ = this.supplierApi.suppliers$;
+  private readonly productApi = inject(ProductApi);
+  products$ = this.productApi.productsIndex$;
+  sizes$ = this.productApi.sizes$;
+  colors$ = this.productApi.colors$;
+  private readonly cd = inject(ChangeDetectorRef);
 
   get items(): FormArray {
     return this.purchaseForm.get('items') as FormArray;
@@ -158,6 +167,34 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
     this.subscribeToItemChanges(item);
   }
 
+  removeItem(index: number): void {
+    console.log(this.items.at(index).value);
+    this.items.removeAt(index);
+    this.cd.markForCheck();
+    console.log(index);
+    this.updateTotalPrice();
+    this.items.updateValueAndValidity()
+  }
+
+  async submitPurchaseForm(): Promise<void> {
+    if (this.purchaseForm.invalid) {
+      return;
+    }
+    try {
+      const formValue = this.extractDataFromPurchaseForm(this.purchaseForm.getRawValue());
+      await this.purchaseFacade.createPurchase(formValue);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  onConfirm() {
+    this.confirmBatchPurchaseItems.set(true);
+    this.invoiceFormValue = {
+      ...this.purchaseForm.getRawValue(),
+    };
+  }
+
   private updateTotalPrice() {
     const newTotalPrice = this.items.controls.reduce((total, item) => {
       const purchaseUnitPrice = item.get('purchaseUnitPrice')?.value || 0;
@@ -165,7 +202,7 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
       return total + (purchaseUnitPrice * quantity);
     }, 0);
 
-    this.totalPriceControl.setValue(newTotalPrice, { emitEvent: false });
+    this.totalPriceControl.setValue(newTotalPrice, {emitEvent: false});
     this.totalPriceControl.updateValueAndValidity();
   }
 
@@ -194,31 +231,10 @@ export class PurchaseInvoiceComponent implements OnInit, AfterViewInit {
       ),
       map(([totalPrice, discount]) => {
         const paidPrice = (totalPrice || 0) - (discount || 0);
-        this.paidPriceControl.setValue(paidPrice, { emitEvent: false });
+        this.paidPriceControl.setValue(paidPrice, {emitEvent: false});
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
-  }
-
-  removeItem(index: number): void {
-    console.log(this.items.at(index).value);
-    this.items.removeAt(index);
-    this.cd.markForCheck();
-    console.log(index);
-    this.updateTotalPrice();
-    this.items.updateValueAndValidity()
-  }
-
-  async submitPurchaseForm(): Promise<void> {
-    if (this.purchaseForm.invalid) {
-      return;
-    }
-    try {
-      const formValue = this.extractDataFromPurchaseForm(this.purchaseForm.getRawValue());
-      await this.purchaseFacade.createPurchase(formValue);
-    } catch (e) {
-      console.error(e);
-    }
   }
 
   private extractDataFromPurchaseForm(value: any): CreatePurchaseInvoice {

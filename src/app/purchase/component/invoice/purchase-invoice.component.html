@@ -145,8 +145,7 @@
       }
     </nz-form-item>
     <nz-divider></nz-divider>
-    <!-- batch submit -->
-    <batch-purchase></batch-purchase>
+    <button nz-button nzType="primary" (click)="isBatchPurchaseModalVisible.set(true)">ثبت دسته جمعی محصولات</button>
     <nz-divider></nz-divider>
     <!-- submit -->
     <nz-form-item>
@@ -158,3 +157,19 @@
     </nz-form-item>
   </form>
 </page-container>
+
+<nz-modal nzTitle="ثبت محصولات به صورت دسته جمعی"
+          nzCentered
+          nzWidth="95%"
+          [nzVisible]="isBatchPurchaseModalVisible()"
+          (nzVisibleChange)="isBatchPurchaseModalVisible.set($event)"
+          (nzOnCancel)="isBatchPurchaseModalVisible.set(false)">
+  <ng-container *nzModalContent>
+    <!-- batch submit -->
+    <batch-purchase></batch-purchase>
+  </ng-container>
+  <ng-container *nzModalFooter>
+    <button nz-button nzType="primary" (click)="onConfirm()">تایید</button>
+    <button nz-button nzType="text" nzDanger (click)="isBatchPurchaseModalVisible.set(false)">لغو</button>
+  </ng-container>
+</nz-modal>

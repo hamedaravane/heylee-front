@@ -10,10 +10,12 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {ProductApi} from '@product/api/product.api';
 import {NzImageModule} from 'ng-zorro-antd/image';
 import {fallbackImageBase64} from '@shared/constant/fallbackImage';
-import {filter} from 'rxjs';
+import {filter, map, take} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NgxPriceInputComponent} from "ngx-price-input";
+import {SupplierApi} from "@supplier/api/supplier.api";
+import {NzEmptyModule} from "ng-zorro-antd/empty";
 
 @Component({
   standalone: true,
@@ -28,6 +30,7 @@ import {NgxPriceInputComponent} from "ngx-price-input";
     NzImageModule,
     NzSelectModule,
     NzDividerModule,
+    NzEmptyModule,
     ReactiveFormsModule,
     AsyncPipe,
     NgxPriceInputComponent
@@ -36,9 +39,28 @@ import {NgxPriceInputComponent} from "ngx-price-input";
 export class BatchPurchaseComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly productApi = inject(ProductApi);
+  private readonly supplierApi = inject(SupplierApi);
   protected readonly fallbackImageBase64 = fallbackImageBase64;
+  suppliers$ = this.supplierApi.suppliers$;
+
+  /**
+   * Form group for purchase invoice
+   */
+  purchaseInvoiceForm = new FormGroup({
+    number: new FormControl<string | null>(null, Validators.required),
+    supplierId: new FormControl<number | null>(null, Validators.required),
+    description: new FormControl<string | null>(null, Validators.required),
+    totalPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required),
+    discount: new FormControl<number | null>(null, Validators.required),
+    paidPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required),
+  })
+
+  /**
+   * Form array for purchase products
+   */
   batchPurchaseForm = new FormArray<FormGroup<{
     imageSrc: FormControl<string | null>;
+    imageFile: FormControl<File | null>;
     code: FormControl<string | null>;
     name: FormControl<string | null>;
     desc: FormControl<string | null>;
@@ -48,7 +70,13 @@ export class BatchPurchaseComponent implements OnInit {
     purchasePrice: FormControl<number | null>;
     sellPrice: FormControl<number | null>;
   }>>([]);
+
   colors$ = this.productApi.colors$;
+  sizes$ = this.productApi.sizes$;
+
+  /**
+   * Form group for getting default products data to apply to all purchase products
+   */
   defaultProductFrom = new FormGroup({
     prefixCode: new FormControl<string>('ABC'),
     productName: new FormControl<string | null>(null),
@@ -56,16 +84,23 @@ export class BatchPurchaseComponent implements OnInit {
     defaultPurchasePrice: new FormControl<number | null>(null),
     defaultSellPrice: new FormControl<number | null>(null)
   });
-  productFiles: File[] | null = null;
-  productSrcImages: string[] | null = null;
-  sizes$ = this.productApi.sizes$;
-
-  get nzData() {
-    return this.batchPurchaseForm.value;
-  }
 
   ngOnInit() {
     this.setDefaultValues();
+  }
+
+  getProductFormsData(): FormData[] {
+    const batchProducts = this.batchPurchaseForm.controls.map(control => control.value);
+    return batchProducts.map(form => {
+      const formData = new FormData();
+      if (form.imageFile && form.code && form.name && form.desc) {
+        formData.append('code', form.code);
+        formData.append('name', form.name);
+        formData.append('description', form.desc);
+        formData.append('image', form.imageFile, form.imageFile.name);
+      }
+      return formData;
+    });
   }
 
   private generateCode(prefix: string, index: number): string {
@@ -81,9 +116,10 @@ export class BatchPurchaseComponent implements OnInit {
     const prefixCode = this.defaultProductFrom.controls.prefixCode.value;
     if (!prefixCode) throw new Error('Prefix code is required');
     if (files) {
-      files.forEach((_, index) => {
+      files.forEach((f, index) => {
         const tempForm = new FormGroup({
-          imageSrc: new FormControl<string | null>(URL.createObjectURL(_), Validators.required),
+          imageSrc: new FormControl<string | null>(URL.createObjectURL(f), Validators.required),
+          imageFile: new FormControl<File | null>(f, Validators.required),
           code: new FormControl<string | null>(this.generateCode(prefixCode, index), Validators.required),
           name: new FormControl<string | null>(null, Validators.required),
           desc: new FormControl<string | null>(null, Validators.required),
@@ -95,8 +131,6 @@ export class BatchPurchaseComponent implements OnInit {
         });
         this.addProduct(tempForm);
       });
-      this.productFiles = files;
-      this.productSrcImages = files.map(file => URL.createObjectURL(file));
     }
   }
 
@@ -126,5 +160,33 @@ export class BatchPurchaseComponent implements OnInit {
         control.controls.sellPrice.setValue(defaultSellPrice);
       });
     });
+  }
+
+  submitInvoice() {
+    this.getProductFormsData();
+    const items: {
+      productId: number;
+      colorId: number;
+      sizeId: number;
+      quantity: number;
+      purchaseUnitPrice: number;
+      sellingUnitPrice: number;
+    }[] = [];
+    this.productApi.product$.pipe(map(product => {
+      const invoiceForm = this.batchPurchaseForm.controls.find(control => control.controls.code.value === product.code)?.getRawValue();
+      if (invoiceForm) {
+        items.push({
+          productId: product.id,
+          colorId: invoiceForm.color!,
+          sizeId: invoiceForm.size!,
+          quantity: invoiceForm.quantity!,
+          purchaseUnitPrice: invoiceForm.purchasePrice!,
+          sellingUnitPrice: invoiceForm.sellPrice!
+        })
+        return items;
+      } else return null;
+    }), take(this.batchPurchaseForm.controls.length)).subscribe({
+      complete: () => {},
+    })
   }
 }

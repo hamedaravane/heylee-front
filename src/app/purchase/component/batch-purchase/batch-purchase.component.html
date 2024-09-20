@@ -1,3 +1,39 @@
+<form [formGroup]="purchaseInvoiceForm" class="my-4">
+  <div class="flex gap-x-4">
+    <div class="flex gap-x-2 items-center">
+      <label class="whitespace-nowrap">شماره فاکتور</label>
+      <input nz-input [formControl]="purchaseInvoiceForm.controls.number" type="text" placeholder="شماره فاکتور">
+    </div>
+    <div class="flex gap-x-2 items-center">
+      <label>تامین کننده</label>
+      <nz-select class="min-w-52" nzPlaceHolder="تامین کننده" [formControl]="purchaseInvoiceForm.controls.supplierId">
+        @if (suppliers$ | async; as suppliers) {
+          @for (supplier of suppliers.items; track supplier.id) {
+            <nz-option [nzValue]="supplier.id" [nzLabel]="supplier.name"></nz-option>
+          } @empty {
+            <nz-empty></nz-empty>
+          }
+        }
+      </nz-select>
+    </div>
+  </div>
+  <textarea [formControl]="purchaseInvoiceForm.controls.description" nz-input type="text" class="my-4"
+            placeholder="توضیحات"></textarea>
+  <div class="flex gap-x-4">
+    <div class="flex gap-x-2 items-center">
+      <label>پرداختی</label>
+      <ngx-price-input [formControl]="purchaseInvoiceForm.controls.paidPrice"></ngx-price-input>
+    </div>
+    <div class="flex gap-x-2 items-center">
+      <label>تخفیف</label>
+      <ngx-price-input [formControl]="purchaseInvoiceForm.controls.discount"></ngx-price-input>
+    </div>
+    <div class="flex gap-x-2 items-center">
+      <label>مجموع پرداخت</label>
+      <ngx-price-input [formControl]="purchaseInvoiceForm.controls.totalPrice"></ngx-price-input>
+    </div>
+  </div>
+</form>
 <image-uploader [isMultiple]="true" (onMultipleFileSelected)="handleMultipleFiles($event)"></image-uploader>
 <form [formGroup]="defaultProductFrom" class="mb-4">
   <nz-table nzSize="small" [nzData]="[1]" nzBordered nzTitle="مقادیر کلی">
@@ -13,7 +49,8 @@
     <tbody>
     <tr>
       <td>
-        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.prefixCode" type="text" placeholder="ABC">
+        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.prefixCode" type="text"
+               placeholder="ABC">
       </td>
       <td class="px-2">
         <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productName" type="text">
@@ -22,7 +59,8 @@
         <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productDescription" type="text">
       </td>
       <td>
-        <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></ngx-price-input>
+        <ngx-price-input size="small"
+                         [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></ngx-price-input>
       </td>
       <td>
         <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></ngx-price-input>
@@ -32,7 +70,7 @@
   </nz-table>
 </form>
 <nz-divider></nz-divider>
-<nz-table nzSize="small" nzTemplateMode="fixed" [nzBordered]="false" [nzData]="nzData">
+<nz-table [nzData]="batchPurchaseForm.controls" nzSize="small" [nzBordered]="false">
   <thead>
   <tr>
     <!--<th></th>-->
@@ -52,8 +90,10 @@
     @for (purchaseItem of batchPurchaseForm.controls; let i = $index; track i) {
       <tr [formGroup]="purchaseItem">
         <td>
-          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64" [src]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
-               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" style="min-width: 40px" class="aspect-square object-cover">
+          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+               [src]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" style="min-width: 40px"
+               class="aspect-square object-cover">
         </td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.code"></td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
@@ -91,3 +131,4 @@
     }
   </tbody>
 </nz-table>
+<button class="mt-4" nz-button nzBlock nzType="primary" nzSize="large" type="submit" (click)="submitInvoice()">ثبت فاکتور</button>

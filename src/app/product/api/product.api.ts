@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {ProductFacade} from '@product/data-access/product.facade';
-import {concatMap, delay, from, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {Product} from '@product/entity/product.entity';
 import {IdLabel} from '@shared/entity/common.entity';
@@ -11,6 +11,10 @@ import {IdLabel} from '@shared/entity/common.entity';
 export class ProductApi {
   private readonly productFacade = inject(ProductFacade);
   isFetched = false;
+
+  get product$(): Observable<Product> {
+    return this.productFacade.product$;
+  }
 
   get productsIndex$(): Observable<IndexResponse<Product>> {
     if (!this.isFetched) {
@@ -33,11 +37,9 @@ export class ProductApi {
     return this.productFacade.createProduct(formData);
   }
 
-  batchCreateProducts(formsData: FormData[]): Observable<Product> {
-    return from(formsData).pipe(
-      concatMap<FormData, Observable<Product>>((formData) => {
-        return this.productFacade.createProduct$(formData).pipe(delay(1000));
-      })
-    );
+  batchCreateProducts(formsData: FormData[]): void {
+    formsData.forEach(formData => {
+      this.createProduct(formData).then(() => setTimeout(() => {}, 5000));
+    })
   }
 }
