@@ -37,6 +37,10 @@ export class ProductApi {
     return this.productFacade.createProduct(formData);
   }
 
+  createProduct$(formData: FormData): Observable<Product> {
+    return this.productFacade.createProduct$(formData);
+  }
+
   batchCreateProducts(formsData: FormData[]): void {
     formsData.forEach(formData => {
       this.createProduct(formData).then(() => setTimeout(() => {}, 5000));

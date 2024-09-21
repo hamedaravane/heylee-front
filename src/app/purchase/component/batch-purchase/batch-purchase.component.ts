@@ -10,12 +10,14 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {ProductApi} from '@product/api/product.api';
 import {NzImageModule} from 'ng-zorro-antd/image';
 import {fallbackImageBase64} from '@shared/constant/fallbackImage';
-import {filter, map, take} from 'rxjs';
+import {filter, firstValueFrom} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NgxPriceInputComponent} from "ngx-price-input";
 import {SupplierApi} from "@supplier/api/supplier.api";
 import {NzEmptyModule} from "ng-zorro-antd/empty";
+import {PurchaseFacade} from "@purchase/data-access/purchase.facade";
+import {CreatePurchaseInvoice} from "@purchase/entity/purchase.entity";
 
 @Component({
   standalone: true,
@@ -40,8 +42,11 @@ export class BatchPurchaseComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly productApi = inject(ProductApi);
   private readonly supplierApi = inject(SupplierApi);
+  private readonly purchaseFacade = inject(PurchaseFacade);
   protected readonly fallbackImageBase64 = fallbackImageBase64;
   suppliers$ = this.supplierApi.suppliers$;
+  colors$ = this.productApi.colors$;
+  sizes$ = this.productApi.sizes$;
 
   /**
    * Form group for purchase invoice
@@ -71,9 +76,6 @@ export class BatchPurchaseComponent implements OnInit {
     sellPrice: FormControl<number | null>;
   }>>([]);
 
-  colors$ = this.productApi.colors$;
-  sizes$ = this.productApi.sizes$;
-
   /**
    * Form group for getting default products data to apply to all purchase products
    */
@@ -86,10 +88,10 @@ export class BatchPurchaseComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.setDefaultValues();
+    this.setBatchValues();
   }
 
-  getProductFormsData(): FormData[] {
+  private getProductFormsData(): FormData[] {
     const batchProducts = this.batchPurchaseForm.controls.map(control => control.value);
     return batchProducts.map(form => {
       const formData = new FormData();
@@ -134,7 +136,7 @@ export class BatchPurchaseComponent implements OnInit {
     }
   }
 
-  private setDefaultValues() {
+  private setBatchValues() {
     this.defaultProductFrom.controls.prefixCode.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((prefixCode) => {
       this.batchPurchaseForm.controls.forEach((control, index) => {
         control.controls.code.setValue(this.generateCode(prefixCode, index));
@@ -163,7 +165,7 @@ export class BatchPurchaseComponent implements OnInit {
   }
 
   submitInvoice() {
-    this.getProductFormsData();
+    const productFormsData = this.getProductFormsData();
     const items: {
       productId: number;
       colorId: number;
@@ -172,21 +174,30 @@ export class BatchPurchaseComponent implements OnInit {
       purchaseUnitPrice: number;
       sellingUnitPrice: number;
     }[] = [];
-    this.productApi.product$.pipe(map(product => {
-      const invoiceForm = this.batchPurchaseForm.controls.find(control => control.controls.code.value === product.code)?.getRawValue();
-      if (invoiceForm) {
-        items.push({
-          productId: product.id,
-          colorId: invoiceForm.color!,
-          sizeId: invoiceForm.size!,
-          quantity: invoiceForm.quantity!,
-          purchaseUnitPrice: invoiceForm.purchasePrice!,
-          sellingUnitPrice: invoiceForm.sellPrice!
-        })
-        return items;
-      } else return null;
-    }), take(this.batchPurchaseForm.controls.length)).subscribe({
-      complete: () => {},
-    })
+    productFormsData.forEach(formData => {
+      firstValueFrom(this.productApi.createProduct$(formData)).then((product) => {
+        const invoiceForm = this.batchPurchaseForm.controls.find(control => control.controls.code.value === product.code)?.getRawValue();
+        if (invoiceForm) {
+          items.push({
+            productId: product.id,
+            colorId: invoiceForm.color!,
+            sizeId: invoiceForm.size!,
+            quantity: invoiceForm.quantity!,
+            purchaseUnitPrice: invoiceForm.purchasePrice!,
+            sellingUnitPrice: invoiceForm.sellPrice!
+          })
+        }
+      })
+    });
+    const invoice: CreatePurchaseInvoice = {
+      number: this.purchaseInvoiceForm.controls.number.value!,
+      supplierId: this.purchaseInvoiceForm.controls.supplierId.value!,
+      description: this.purchaseInvoiceForm.controls.description.value!,
+      totalPrice: this.purchaseInvoiceForm.controls.totalPrice.value!,
+      discount: this.purchaseInvoiceForm.controls.discount.value!,
+      paidPrice: this.purchaseInvoiceForm.controls.paidPrice.value!,
+      items
+    }
+    this.purchaseFacade.createPurchase(invoice);
   }
 }
