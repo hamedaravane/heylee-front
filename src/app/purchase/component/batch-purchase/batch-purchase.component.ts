@@ -10,7 +10,7 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {ProductApi} from '@product/api/product.api';
 import {NzImageModule} from 'ng-zorro-antd/image';
 import {fallbackImageBase64} from '@shared/constant/fallbackImage';
-import {catchError, EMPTY, filter, forkJoin, map, tap} from 'rxjs';
+import {catchError, combineLatest, EMPTY, filter, forkJoin, map, startWith, tap} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NgxPriceInputComponent} from 'ngx-price-input';
@@ -52,14 +52,6 @@ interface BatchPurchaseForm {
   ]
 })
 export class BatchPurchaseComponent implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly productApi = inject(ProductApi);
-  private readonly purchaseFacade = inject(PurchaseFacade);
-  private readonly supplierApi = inject(SupplierApi);
-  protected readonly fallbackImageBase64 = fallbackImageBase64;
-  suppliers$ = this.supplierApi.suppliers$;
-  colors$ = this.productApi.colors$;
-  sizes$ = this.productApi.sizes$;
   batchPurchaseForm = new FormArray<FormGroup<BatchPurchaseForm>>([], [Validators.required, Validators.minLength(1)]);
   defaultProductFrom = new FormGroup({
     prefixCode: new FormControl<string>('ABC'),
@@ -76,9 +68,19 @@ export class BatchPurchaseComponent implements OnInit {
     discount: new FormControl<number | null>(0, Validators.required),
     paidPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required)
   });
+  protected readonly fallbackImageBase64 = fallbackImageBase64;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly productApi = inject(ProductApi);
+  colors$ = this.productApi.colors$;
+  sizes$ = this.productApi.sizes$;
+  private readonly purchaseFacade = inject(PurchaseFacade);
+  private readonly supplierApi = inject(SupplierApi);
+  suppliers$ = this.supplierApi.suppliers$;
 
   ngOnInit() {
     this.setBatchValues();
+    this.subscribeToBatchPurchaseFormAndUpdateTotalPrice();
+    this.subscribeToPurchaseInvoiceFormAndUpdatePaidPrice();
   }
 
   addProduct(form: FormGroup) {
@@ -200,6 +202,25 @@ export class BatchPurchaseComponent implements OnInit {
       this.batchPurchaseForm.controls.forEach((control) => {
         control.controls.sellPrice.setValue(defaultSellPrice);
       });
+    });
+  }
+
+  private subscribeToPurchaseInvoiceFormAndUpdatePaidPrice() {
+    combineLatest([this.purchaseInvoiceForm.controls.totalPrice.valueChanges, this.purchaseInvoiceForm.controls.discount.valueChanges.pipe(startWith(0))]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map(([totalPrice, discount]) => {
+        return (totalPrice || 0) - (discount || 0);
+      })
+    ).subscribe((paidPrice) => {
+      this.purchaseInvoiceForm.controls.paidPrice.setValue(paidPrice, {emitEvent: false});
+    });
+  }
+
+  private subscribeToBatchPurchaseFormAndUpdateTotalPrice() {
+    this.batchPurchaseForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), map((forms) => {
+      return forms.reduce((acc, form) => acc + (form.quantity || 0) * (form.purchasePrice || 0), 0);
+    })).subscribe((value) => {
+      this.purchaseInvoiceForm.controls.totalPrice.setValue(value);
     });
   }
 }
