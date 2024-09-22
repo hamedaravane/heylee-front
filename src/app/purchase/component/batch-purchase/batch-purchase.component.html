@@ -95,7 +95,7 @@
                [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" style="min-width: 40px"
                class="aspect-square object-cover">
         </td>
-        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.code"></td>
+        <td><input nz-input nzSize="small" class="font-mono" [formControl]="purchaseItem.controls.code"></td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.desc"></td>
         <td>
@@ -131,4 +131,5 @@
     }
   </tbody>
 </nz-table>
-<button class="mt-4" nz-button nzBlock nzType="primary" nzSize="large" type="submit" (click)="submitInvoice()">ثبت فاکتور</button>
+<nz-divider></nz-divider>
+<button nz-button nzBlock nzSize="default" nzType="primary" type="button" (click)="submitInvoice()">ثبت محصولات</button>

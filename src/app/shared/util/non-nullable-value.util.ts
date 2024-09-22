@@ -1,16 +1,13 @@
-export function getNonNullableValue<T extends object>(obj: T): { [K in keyof T]: NonNullable<T[K]> } {
-  const result: Partial<{ [K in keyof T]: NonNullable<T[K]> }> = {};
-
+export function ensureNonNullable<T extends object>(obj: T): NonNullable<T> {
+  const result: any = {};
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (obj.hasOwnProperty(key)) {
       const value = obj[key];
-      if (value !== null && value !== undefined) {
-        result[key] = value as NonNullable<T[typeof key]>;
-      } else {
-        throw new Error(`Property ${String(key)} is null or undefined`);
+      if (value === null || value === undefined) {
+        throw new Error(`Property ${key} is null or undefined`);
       }
+      result[key] = value;
     }
   }
-
-  return result as { [K in keyof T]: NonNullable<T[K]> };
+  return result as NonNullable<T>;
 }
