@@ -132,4 +132,4 @@
   </tbody>
 </nz-table>
 <nz-divider></nz-divider>
-<button nz-button nzBlock nzSize="default" nzType="primary" type="button" (click)="submitInvoice()">ثبت محصولات</button>
+<button nz-button nzBlock nzSize="default" nzType="primary" type="button" [disabled]="purchaseInvoiceForm.invalid || batchPurchaseForm.invalid" (click)="submitInvoice()">ثبت محصولات</button>

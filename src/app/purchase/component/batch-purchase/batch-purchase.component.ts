@@ -17,28 +17,19 @@ import {NgxPriceInputComponent} from 'ngx-price-input';
 import {SupplierApi} from '@supplier/api/supplier.api';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
-import {CreatePurchaseItem} from '@purchase/entity/purchase.entity';
-
-interface PurchaseInvoiceForm {
-  description: string;
-  discount: number;
-  number: string;
-  paidPrice: number;
-  supplierId: number;
-  totalPrice: number;
-}
+import {CreatePurchaseInvoice, CreatePurchaseItem} from '@purchase/entity/purchase.entity';
 
 interface BatchPurchaseForm {
-  code: string;
-  color: number;
-  desc: string;
-  imageFile: File;
-  imageSrc: string;
-  name: string;
-  purchasePrice: number;
-  quantity: number;
-  sellPrice: number;
-  size: number;
+  imageSrc: FormControl<string | null>;
+  imageFile: FormControl<File | null>;
+  code: FormControl<string | null>;
+  name: FormControl<string | null>;
+  desc: FormControl<string | null>;
+  color: FormControl<number | null>;
+  size: FormControl<number | null>;
+  quantity: FormControl<number | null>;
+  purchasePrice: FormControl<number | null>;
+  sellPrice: FormControl<number | null>;
 }
 
 @Component({
@@ -69,18 +60,7 @@ export class BatchPurchaseComponent implements OnInit {
   suppliers$ = this.supplierApi.suppliers$;
   colors$ = this.productApi.colors$;
   sizes$ = this.productApi.sizes$;
-  batchPurchaseForm = new FormArray<FormGroup<{
-    imageSrc: FormControl<string | null>;
-    imageFile: FormControl<File | null>;
-    code: FormControl<string | null>;
-    name: FormControl<string | null>;
-    desc: FormControl<string | null>;
-    color: FormControl<number | null>;
-    size: FormControl<number | null>;
-    quantity: FormControl<number | null>;
-    purchasePrice: FormControl<number | null>;
-    sellPrice: FormControl<number | null>;
-  }>>([]);
+  batchPurchaseForm = new FormArray<FormGroup<BatchPurchaseForm>>([], [Validators.required, Validators.minLength(1)]);
   defaultProductFrom = new FormGroup({
     prefixCode: new FormControl<string>('ABC'),
     productName: new FormControl<string | null>(null),
@@ -93,7 +73,7 @@ export class BatchPurchaseComponent implements OnInit {
     supplierId: new FormControl<number | null>(null, Validators.required),
     description: new FormControl<string | null>(null, Validators.required),
     totalPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required),
-    discount: new FormControl<number | null>(null, Validators.required),
+    discount: new FormControl<number | null>(0, Validators.required),
     paidPrice: new FormControl<number | null>({value: 0, disabled: true}, Validators.required)
   });
 
@@ -137,14 +117,14 @@ export class BatchPurchaseComponent implements OnInit {
             const matchedPurchaseItem = this.batchPurchaseForm.controls.find(
               control => control.controls.code.value === product.code
             );
-            const invoiceForm = matchedPurchaseItem?.getRawValue() as BatchPurchaseForm;
+            const invoiceForm = matchedPurchaseItem?.getRawValue();
             return {
               productId: product.id,
-              colorId: invoiceForm.color,
-              sizeId: invoiceForm.size,
-              quantity: invoiceForm.quantity,
-              purchaseUnitPrice: invoiceForm.purchasePrice,
-              sellingUnitPrice: invoiceForm.sellPrice
+              colorId: invoiceForm?.color,
+              sizeId: invoiceForm?.size,
+              quantity: invoiceForm?.quantity,
+              purchaseUnitPrice: invoiceForm?.purchasePrice,
+              sellingUnitPrice: invoiceForm?.sellPrice
             } as CreatePurchaseItem;
           })
         )
@@ -152,7 +132,7 @@ export class BatchPurchaseComponent implements OnInit {
       forkJoin(itemObservables).pipe(
         map(items => items.filter(item => item !== null) as CreatePurchaseItem[]),
         map((items) => {
-          const purchaseInvoice = this.purchaseInvoiceForm.getRawValue() as PurchaseInvoiceForm;
+          const purchaseInvoice = this.purchaseInvoiceForm.getRawValue();
           return {
             number: purchaseInvoice.number,
             supplierId: purchaseInvoice.supplierId,
@@ -161,7 +141,7 @@ export class BatchPurchaseComponent implements OnInit {
             discount: purchaseInvoice.discount,
             paidPrice: purchaseInvoice.paidPrice,
             items
-          };
+          } as CreatePurchaseInvoice;
         }),
         tap(invoice => {
           this.purchaseFacade.createPurchase(invoice);
@@ -182,7 +162,9 @@ export class BatchPurchaseComponent implements OnInit {
   }
 
   private getProductFormsData(): FormData[] {
-    const batchProducts = this.batchPurchaseForm.controls.map(control => control.getRawValue() as BatchPurchaseForm);
+    const batchProducts = this.batchPurchaseForm.controls.map(control => {
+      return control.getRawValue() as { code: string, name: string, desc: string, imageFile: File };
+    });
     return batchProducts.map(form => {
       const formData = new FormData();
       formData.append('code', form.code);
