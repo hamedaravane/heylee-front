@@ -1,4 +1,8 @@
 <page-container>
+  <button nz-button nzType="primary" type="button" (click)="isBatchPurchaseModalVisible.set(true)">ثبت دسته جمعی
+    محصولات
+  </button>
+  <nz-divider></nz-divider>
   <form nz-form
         nzLabelAlign="right"
         nzLayout="vertical"
@@ -62,7 +66,8 @@
     </nz-form-item>
   </form>
   <!-- items -->
-  <nz-table nzSize="small" [nzData]="purchaseItemsForm.controls" [nzLoading]="loadingState" nzTableLayout="fixed"
+  <nz-table nzSize="small" [nzData]="purchaseItemsForm.controls" [nzLoading]="loadingState"
+            nzTableLayout="fixed"
             nzTitle="افزودن مشخصات محصولات به صورت تکی">
     <thead>
     <tr>
@@ -77,16 +82,17 @@
     </tr>
     </thead>
     <tbody>
-      @for (item of purchaseItemsForm.controls; let i = $index; track item.controls.uniqueId) {
+      @for (item of purchaseItemsForm.controls; let i = $index; track item.controls.uniqueId.value) {
         <tr [formGroup]="item">
           <td>
             <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text"
-                    type="button" nzBlock (click)="addItem(i)">
-              <i class="fa-solid fa-plus"></i>
+                    type="button" nzBlock nzSize="small" (click)="addItem(item)">
+              <i class="fa-solid fa-plus fa-sm"></i>
             </button>
           </td>
           <td>
-            <nz-select style="width: 100%" nzPlaceHolder="کد" [formControl]="item.controls.productId" [nzOptionHeightPx]="58">
+            <nz-select style="width: 100%" class="font-mono" [formControl]="item.controls.productId"
+                       [nzOptionHeightPx]="58">
               @if (products$ | async; as products) {
                 @for (product of products.items; track $index) {
                   <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
@@ -127,8 +133,8 @@
           </td>
           <td>
             <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text" nzDanger
-                    type="button" nzBlock (click)="removeItem(i)">
-              <i class="fa-solid fa-trash"></i>
+                    type="button" nzBlock nzSize="small" (click)="removeItem(i)">
+              <i class="fa-solid fa-trash fa-sm"></i>
             </button>
           </td>
         </tr>
@@ -140,10 +146,6 @@
       }
     </tbody>
   </nz-table>
-  <nz-divider></nz-divider>
-  <button nz-button nzType="primary" type="button" (click)="isBatchPurchaseModalVisible.set(true)">ثبت دسته جمعی
-    محصولات
-  </button>
   <nz-divider></nz-divider>
   <!-- submit -->
   <button [nzLoading]="loadingState" [disabled]="purchaseForm.invalid || loadingState" nz-button nzType="primary"

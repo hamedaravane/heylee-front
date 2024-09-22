@@ -1,7 +1,7 @@
-import {inject, Injectable} from "@angular/core";
-import {NzMessageService} from "ng-zorro-antd/message";
-import {BehaviorSubject, Subject} from "rxjs";
-import {ServerResponseError} from "@shared/entity/server-response.entity";
+import {inject, Injectable} from '@angular/core';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {ServerResponseError} from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'

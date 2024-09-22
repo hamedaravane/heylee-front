@@ -1,8 +1,8 @@
-import {inject, Injectable} from "@angular/core";
-import {BaseFacade} from "@shared/service/base.facade";
-import {StatisticInfra} from "../infrastructure/statistic.infra";
-import {firstValueFrom, Subject} from "rxjs";
-import {SaleReport} from "../entity/statistic.entity";
+import {inject, Injectable} from '@angular/core';
+import {BaseFacade} from '@shared/service/base.facade';
+import {StatisticInfra} from '../infrastructure/statistic.infra';
+import {firstValueFrom, Subject} from 'rxjs';
+import {SaleReport} from '../entity/statistic.entity';
 
 @Injectable({
   providedIn: 'root'

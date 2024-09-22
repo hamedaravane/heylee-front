@@ -18,8 +18,8 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PhoneFormatPipe} from '@shared/pipe/phone-format.pipe';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {AuthApi} from '@auth/api/auth.api';
-import {NzSelectModule} from "ng-zorro-antd/select";
-import {debounceTime, distinctUntilChanged, filter} from "rxjs";
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {debounceTime, distinctUntilChanged, filter} from 'rxjs';
 
 @Component({
   standalone: true,

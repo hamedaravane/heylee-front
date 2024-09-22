@@ -1,10 +1,10 @@
-import {Injectable} from "@angular/core";
-import {BaseInfra} from "@shared/service/base.infra";
-import {environment} from "@environment";
-import {ServerResponse} from "@shared/entity/server-response.entity";
-import {SaleReport, SaleReportDto} from "../entity/statistic.entity";
-import {map} from "rxjs";
-import {toCamelCase} from "@shared/entity/utility.entity";
+import {Injectable} from '@angular/core';
+import {BaseInfra} from '@shared/service/base.infra';
+import {environment} from '@environment';
+import {ServerResponse} from '@shared/entity/server-response.entity';
+import {SaleReport, SaleReportDto} from '../entity/statistic.entity';
+import {map} from 'rxjs';
+import {toCamelCase} from '@shared/entity/utility.entity';
 
 @Injectable({
   providedIn: 'root'

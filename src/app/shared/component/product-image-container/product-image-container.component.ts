@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {NzImageModule} from 'ng-zorro-antd/image';
-import {fallbackImageBase64} from "@shared/constant/fallbackImage";
+import {fallbackImageBase64} from '@shared/constant/fallbackImage';
 
 @Component({
   standalone: true,

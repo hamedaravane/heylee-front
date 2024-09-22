@@ -16,12 +16,7 @@ import {PageContainerComponent} from '@shared/component/page-container/page-cont
 import {Customer, CustomerDto} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {
-  CreateUpdateInvoice,
-  InvoiceItem,
-  SaleInvoice,
-  salesItemToStockItemSelection
-} from '@sale/entity/invoice.entity';
+import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {debounceTime, distinctUntilChanged, filter, of} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -31,9 +26,7 @@ import {Router} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({

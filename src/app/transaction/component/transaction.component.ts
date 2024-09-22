@@ -27,7 +27,7 @@ import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.com
 import {BreakpointService} from '@shared/service/breakpoint.service';
 import {ResponsiveContainerComponent} from '@shared/component/responsive-container/responsive-container.component';
 import {NzTableModule} from 'ng-zorro-antd/table';
-import {NgxPriceInputComponent} from "ngx-price-input";
+import {NgxPriceInputComponent} from 'ngx-price-input';
 
 @Component({
   selector: 'transaction',

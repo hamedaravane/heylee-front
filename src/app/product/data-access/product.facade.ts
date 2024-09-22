@@ -4,7 +4,7 @@ import {BehaviorSubject, filter, firstValueFrom, Observable, Subject} from 'rxjs
 import {Product} from '../entity/product.entity';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {IdLabel} from '@shared/entity/common.entity';
-import {BaseFacade} from "@shared/service/base.facade";
+import {BaseFacade} from '@shared/service/base.facade';
 
 @Injectable({
   providedIn: 'root'

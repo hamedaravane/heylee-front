@@ -5,22 +5,20 @@ import {CardContainerComponent} from '@shared/component/card-container/card-cont
 import {AsyncPipe, DecimalPipe, NgOptimizedImage} from '@angular/common';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {NzBadgeModule} from 'ng-zorro-antd/badge';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {GroupStockItemsPipe} from '@inventory/pipe/group-stock-items.pipe';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import {colors} from '@colors';
-import {StockItem} from "@inventory/entity/inventory.entity";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {NzFormModule} from "ng-zorro-antd/form";
-import {NzSelectModule} from "ng-zorro-antd/select";
-import {NzInputModule} from "ng-zorro-antd/input";
-import {NzFlexModule} from "ng-zorro-antd/flex";
-import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {distinctUntilChanged, map} from "rxjs";
+import {StockItem} from '@inventory/entity/inventory.entity';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzFlexModule} from 'ng-zorro-antd/flex';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {distinctUntilChanged, map} from 'rxjs';
 
 @Component({
   selector: 'inventory-inventory',

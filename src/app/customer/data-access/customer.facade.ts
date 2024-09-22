@@ -5,7 +5,7 @@ import {IndexResponse} from '@shared/entity/server-response.entity';
 import {CreateCustomer, CreateCustomerDto, Customer, CustomerDto} from '../entity/customer.entity';
 import {toSnakeCase} from '@shared/entity/utility.entity';
 import {FilterIndex} from '@shared/entity/common.entity';
-import {BaseFacade} from "@shared/service/base.facade";
+import {BaseFacade} from '@shared/service/base.facade';
 
 @Injectable({
   providedIn: 'root'

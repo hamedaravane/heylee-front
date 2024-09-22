@@ -1,7 +1,8 @@
 import {Component, DestroyRef, forwardRef, inject, Input} from '@angular/core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule} from "@angular/forms";
-import {NzInputModule} from "ng-zorro-antd/input";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule} from '@angular/forms';
+import {BidiModule} from '@angular/cdk/bidi';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ngx-price-input',
@@ -15,11 +16,13 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
   ],
   imports: [
     NzInputModule,
+    BidiModule,
     ReactiveFormsModule
   ],
   template: `
-    <nz-input-group [nzSize]="size" [nzAddOnBefore]="currency">
+    <nz-input-group [nzSize]="size" [nzAddOnAfter]="currency">
       <input
+          dir="ltr"
           nz-input
           type="text"
           inputmode="numeric"

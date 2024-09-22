@@ -1,15 +1,15 @@
-import {Component, DestroyRef, inject, OnInit} from "@angular/core";
-import {StatisticFacade} from "../data-access/statistic.facade";
-import {PageContainerComponent} from "@shared/component/page-container/page-container.component";
-import {CardContainerComponent} from "@shared/component/card-container/card-container.component";
-import {NzStatisticModule} from "ng-zorro-antd/statistic";
-import {AsyncPipe, DecimalPipe} from "@angular/common";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {DailySale, TopSellingProduct} from "../entity/statistic.entity";
-import {CurrencyComponent} from "@shared/component/currency-wrapper/currency.component";
-import {Chart, ChartData, ChartOptions} from "chart.js";
-import {BaseChartDirective} from "ng2-charts";
-import {colors} from "@colors";
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {StatisticFacade} from '../data-access/statistic.facade';
+import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
+import {NzStatisticModule} from 'ng-zorro-antd/statistic';
+import {AsyncPipe, DecimalPipe} from '@angular/common';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {DailySale, TopSellingProduct} from '../entity/statistic.entity';
+import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
+import {Chart, ChartData, ChartOptions} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
+import {colors} from '@colors';
 
 interface Report {
   id: string;

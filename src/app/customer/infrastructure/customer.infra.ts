@@ -1,11 +1,5 @@
 import {Injectable} from '@angular/core';
-import {
-  CreateCustomerDto,
-  Customer,
-  CustomerDto,
-  mapCustomerDtoToCustomer,
-  mapCustomerToDto
-} from '../entity/customer.entity';
+import {CreateCustomerDto, Customer, CustomerDto, mapCustomerDtoToCustomer, mapCustomerToDto} from '../entity/customer.entity';
 import {Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
 import {FilterIndex} from '@shared/entity/common.entity';

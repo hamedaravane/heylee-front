@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
             nzKey: 'UPDATE',
             nzDuration: 0,
             nzAnimate: true,
-            nzButton: this.updateBtnRef,
+            nzButton: this.updateBtnRef
           }
         ).onClick.subscribe(() => this.updateApplication());
       }

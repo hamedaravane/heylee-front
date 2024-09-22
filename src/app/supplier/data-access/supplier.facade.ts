@@ -3,8 +3,8 @@ import {SupplierInfra} from '../infrastructure/supplier.infra';
 import {BehaviorSubject, filter, firstValueFrom, Subject} from 'rxjs';
 import {CreateSupplier, CreateSupplierDto, Supplier} from '../entity/supplier.entity';
 import {IndexResponse} from '@shared/entity/server-response.entity';
-import {BaseFacade} from "@shared/service/base.facade";
-import {toSnakeCase} from "@shared/entity/utility.entity";
+import {BaseFacade} from '@shared/service/base.facade';
+import {toSnakeCase} from '@shared/entity/utility.entity';
 
 @Injectable({
   providedIn: 'root'

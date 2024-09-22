@@ -17,9 +17,7 @@ import {InventoryApi} from '@inventory/api/inventory.api';
 import {Router, RouterLink} from '@angular/router';
 import * as htmlToImage from 'html-to-image';
 import {ShareImageService} from '@shared/service/share-image.service';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
 import {NzBadgeModule} from 'ng-zorro-antd/badge';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
