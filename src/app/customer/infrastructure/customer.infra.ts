@@ -29,9 +29,7 @@ export class CustomerInfra extends BaseInfra {
       this.endpoint,
       mapCustomerDtoToCustomer,
       pageIndex,
-      '',
       filter,
-      50,
     );
   }
 

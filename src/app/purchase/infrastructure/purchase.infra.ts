@@ -19,15 +19,14 @@ export class PurchaseInfra extends BaseInfra {
     );
   }
 
-  fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoiceDto>[]): Observable<IndexResponse<PurchaseInvoice>> {
+  fetchPurchaseInvoices(pageIndex: number = 1, filter?: FilterIndex<PurchaseInvoiceDto>[], sort?: string): Observable<IndexResponse<PurchaseInvoice>> {
     return this.fetchEntities<PurchaseInvoiceDto, PurchaseInvoice>(
       this.endpoint,
       mapPurchaseInvoiceDtoToDomain,
       pageIndex,
-      'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size',
       filter,
-      100,
-      'created_at'
+      sort,
+      'supplier,purchases_item,purchases_item.product,purchases_item.color,purchases_item.size',
     );
   }
 }

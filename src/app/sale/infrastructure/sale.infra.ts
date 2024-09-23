@@ -12,15 +12,14 @@ import {BaseInfra} from '@shared/service/base.infra';
 export class SaleInfra extends BaseInfra {
   private readonly endpoint = 'sales-invoice';
 
-  fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[]): Observable<IndexResponse<SaleInvoice>> {
+  fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[], sort?: string): Observable<IndexResponse<SaleInvoice>> {
     return this.fetchEntities<SaleInvoiceDTO, SaleInvoice>(
       this.endpoint,
       toCamelCase,
       pageIndex,
-      'customer,sales_item,sales_item.product,sales_item.color,sales_item.size',
       filters,
-      25,
-      '-created_at'
+      sort,
+      'customer,sales_item,sales_item.product,sales_item.color,sales_item.size',
     );
   }
 

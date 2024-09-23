@@ -14,25 +14,21 @@ export class BaseInfra {
   protected fetchEntities<TDto, TDomain>(
     endpoint: string,
     dtoToDomainMapper: (dto: TDto) => TDomain,
-    pageIndex: number = 1,
-    expand: string = '',
+    page: number = 1,
     filters?: FilterIndex<TDto>[],
+    sort: string = '-created_at',
+    expand: string = '',
     perPage: number = 100,
-    sort: string = ''
   ): Observable<IndexResponse<TDomain>> {
     let params = new HttpParams()
-      .set('page', pageIndex)
+      .set('page', page)
       .set('per-page', perPage);
 
     if (expand) {
       params = params.append('expand', expand);
     }
 
-    if (sort) {
-      params = params.append('sort', sort);
-    } else {
-      params = params.append('sort', '-created_at');
-    }
+    params = params.append('sort', sort);
 
     if (filters && filters.length > 0) {
       for (const filter of filters) {
@@ -100,7 +96,7 @@ export class BaseInfra {
 
   protected deleteEntity<TDto>(
     endpoint: string,
-    id: number,
+    id: number
   ): Observable<void> {
     return this.http.delete<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/delete/${id}`)
       .pipe(
