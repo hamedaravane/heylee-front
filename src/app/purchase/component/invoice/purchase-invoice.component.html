@@ -162,6 +162,6 @@
           (nzOnCancel)="isBatchPurchaseModalVisible.set(false)">
   <ng-container *nzModalContent>
     <!-- batch submit -->
-    <batch-purchase></batch-purchase>
+    <batch-purchase (onFormsSubmitted)="isBatchPurchaseModalVisible.set(!$event)"></batch-purchase>
   </ng-container>
 </nz-modal>

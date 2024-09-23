@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {ImageUploaderComponent} from '@shared/component/image-uploader/image-uploader.component';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzTableModule} from 'ng-zorro-antd/table';
@@ -10,7 +10,7 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {ProductApi} from '@product/api/product.api';
 import {NzImageModule} from 'ng-zorro-antd/image';
 import {fallbackImageBase64} from '@shared/constant/fallbackImage';
-import {catchError, combineLatest, EMPTY, filter, forkJoin, map, startWith, tap} from 'rxjs';
+import {catchError, combineLatest, concatMap, EMPTY, filter, from, map, Observable, of, startWith, tap, toArray} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NgxPriceInputComponent} from 'ngx-price-input';
@@ -18,18 +18,21 @@ import {SupplierApi} from '@supplier/api/supplier.api';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {CreatePurchaseInvoice, CreatePurchaseItem} from '@purchase/entity/purchase.entity';
+import {Product} from '@product/entity/product.entity';
+import {NzProgressModule} from 'ng-zorro-antd/progress';
+import {NzModalModule} from 'ng-zorro-antd/modal';
 
 interface BatchPurchaseForm {
   imageSrc: FormControl<string | null>;
   imageFile: FormControl<File | null>;
   code: FormControl<string | null>;
   name: FormControl<string | null>;
-  desc: FormControl<string | null>;
-  color: FormControl<number | null>;
-  size: FormControl<number | null>;
+  description: FormControl<string | null>;
+  colorId: FormControl<number | null>;
+  sizeId: FormControl<number | null>;
   quantity: FormControl<number | null>;
-  purchasePrice: FormControl<number | null>;
-  sellPrice: FormControl<number | null>;
+  purchaseUnitPrice: FormControl<number | null>;
+  sellingUnitPrice: FormControl<number | null>;
 }
 
 @Component({
@@ -46,12 +49,15 @@ interface BatchPurchaseForm {
     NzSelectModule,
     NzDividerModule,
     NzEmptyModule,
+    NzProgressModule,
+    NzModalModule,
     ReactiveFormsModule,
     AsyncPipe,
     NgxPriceInputComponent
   ]
 })
 export class BatchPurchaseComponent implements OnInit {
+  @Output() onFormsSubmitted = new EventEmitter<boolean>();
   batchPurchaseForm = new FormArray<FormGroup<BatchPurchaseForm>>([], [Validators.required, Validators.minLength(1)]);
   defaultProductFrom = new FormGroup({
     prefixCode: new FormControl<string>('ABC'),
@@ -76,6 +82,9 @@ export class BatchPurchaseComponent implements OnInit {
   private readonly purchaseFacade = inject(PurchaseFacade);
   private readonly supplierApi = inject(SupplierApi);
   suppliers$ = this.supplierApi.suppliers$;
+  isProgressModalVisible = false;
+  progressPercentage = 0;
+  progressMessage = 'در حال شروع پروسه‌ی ثبت محصولات...';
 
   ngOnInit() {
     this.setBatchValues();
@@ -110,52 +119,110 @@ export class BatchPurchaseComponent implements OnInit {
   }
 
   submitInvoice() {
-    try {
-      const productFormsData = this.getProductFormsData();
+    const totalProducts = this.getProductFormsData().length;
+    let submittedProducts = 0;
 
-      const itemObservables = productFormsData.map(formData =>
-        this.productApi.createProduct$(formData).pipe(
-          map(product => {
-            const matchedPurchaseItem = this.batchPurchaseForm.controls.find(
-              control => control.controls.code.value === product.code
-            );
-            const invoiceForm = matchedPurchaseItem?.getRawValue();
-            return {
-              productId: product.id,
-              colorId: invoiceForm?.color,
-              sizeId: invoiceForm?.size,
-              quantity: invoiceForm?.quantity,
-              purchaseUnitPrice: invoiceForm?.purchasePrice,
-              sellingUnitPrice: invoiceForm?.sellPrice
-            } as CreatePurchaseItem;
-          })
-        )
-      );
-      forkJoin(itemObservables).pipe(
-        map(items => items.filter(item => item !== null) as CreatePurchaseItem[]),
-        map((items) => {
-          const purchaseInvoice = this.purchaseInvoiceForm.getRawValue();
-          return {
-            number: purchaseInvoice.number,
-            supplierId: purchaseInvoice.supplierId,
-            description: purchaseInvoice.description,
-            totalPrice: purchaseInvoice.totalPrice,
-            discount: purchaseInvoice.discount,
-            paidPrice: purchaseInvoice.paidPrice,
-            items
-          } as CreatePurchaseInvoice;
-        }),
-        tap(invoice => {
-          this.purchaseFacade.createPurchase(invoice);
+    this.isProgressModalVisible = true;
+    this.processProductSubmissions(totalProducts, submittedProducts)
+      .pipe(
+        map(items => this.createInvoiceObject(items)),
+        tap(() => {
+          this.progressPercentage = 100;
+          this.progressMessage = 'همه محصولات با موفقیت ثبت شدند!';
+          setTimeout(() => {
+            this.isProgressModalVisible = false;
+            this.batchPurchaseForm.reset();
+            this.defaultProductFrom.reset();
+            this.purchaseInvoiceForm.reset();
+            this.onFormsSubmitted.emit(true);
+          }, 2000);
         }),
         catchError(error => {
           console.error('Error creating invoice:', error);
+          this.progressMessage = 'خطایی در حال ثبت رخ داد.';
           return EMPTY;
         })
-      ).subscribe();
-    } catch (e) {
-      console.error(e);
+      )
+      .subscribe(invoice => this.purchaseFacade.createPurchase(invoice));
+  }
+
+  /**
+   * Processes the product submissions sequentially and returns an observable of items.
+   */
+  private processProductSubmissions(totalProducts: number, submittedProducts: number): Observable<CreatePurchaseItem[]> {
+    const productFormsData = this.getProductFormsData();
+
+    return from(productFormsData).pipe(
+      concatMap(formData => this.createProductItem(formData).pipe(
+        tap(() => {
+          submittedProducts++;
+          this.progressPercentage = Math.round((submittedProducts / totalProducts) * 100);
+          this.progressMessage = `${submittedProducts} از ${totalProducts} محصول...`;
+        }))),
+      toArray(),
+      map(items => items.filter(item => item !== null) as CreatePurchaseItem[])
+    );
+  }
+
+  /**
+   * Creates a product and maps it to a purchase item.
+   * @param formData - The form data for the product.
+   */
+  private createProductItem(formData: FormData): Observable<CreatePurchaseItem | null> {
+    return this.productApi.createProduct$(formData).pipe(
+      map(product => this.mapProductToPurchaseItem(product)),
+      catchError(error => {
+        console.error('Error creating product:', error);
+        this.progressMessage = 'خطایی در حال ثبت رخ داد.';
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Maps a product to a purchase item using the form controls.
+   * @param product - The created product.
+   */
+  private mapProductToPurchaseItem(product: Product): CreatePurchaseItem | null {
+    const matchedPurchaseItem = this.batchPurchaseForm.controls.find(
+      control => control.controls.code.value === product.code
+    );
+    if (!matchedPurchaseItem) {
+      console.warn(`No matching purchase item found for product code: ${product.code}`);
+      return null;
     }
+    const invoiceForm = matchedPurchaseItem.getRawValue() as {
+      colorId: number,
+      sizeId: number,
+      quantity: number,
+      purchaseUnitPrice: number,
+      sellingUnitPrice: number
+    };
+    return {
+      productId: product.id,
+      colorId: invoiceForm.colorId,
+      sizeId: invoiceForm.sizeId,
+      quantity: invoiceForm.quantity,
+      purchaseUnitPrice: invoiceForm.purchaseUnitPrice,
+      sellingUnitPrice: invoiceForm.sellingUnitPrice
+    };
+  }
+
+  /**
+   * Creates the invoice object from the purchase items.
+   * @param items - The array of purchase items.
+   */
+  private createInvoiceObject(items: CreatePurchaseItem[]): CreatePurchaseInvoice {
+    const purchaseInvoice = this.purchaseInvoiceForm.getRawValue() as Omit<CreatePurchaseInvoice, 'items'>;
+    return {
+      number: purchaseInvoice.number,
+      supplierId: purchaseInvoice.supplierId,
+      description: purchaseInvoice.description,
+      totalPrice: purchaseInvoice.totalPrice,
+      discount: purchaseInvoice.discount,
+      paidPrice: purchaseInvoice.paidPrice,
+      items
+    };
   }
 
   private generateCode(prefix: string, index: number): string {
@@ -165,13 +232,18 @@ export class BatchPurchaseComponent implements OnInit {
 
   private getProductFormsData(): FormData[] {
     const batchProducts = this.batchPurchaseForm.controls.map(control => {
-      return control.getRawValue() as { code: string, name: string, desc: string, imageFile: File };
+      return control.getRawValue() as {
+        code: string,
+        name: string,
+        description: string,
+        imageFile: File
+      };
     });
     return batchProducts.map(form => {
       const formData = new FormData();
       formData.append('code', form.code);
       formData.append('name', form.name);
-      formData.append('description', form.desc);
+      formData.append('description', form.description);
       formData.append('image', form.imageFile, form.imageFile.name);
       return formData;
     });
@@ -190,17 +262,17 @@ export class BatchPurchaseComponent implements OnInit {
     });
     this.defaultProductFrom.controls.productDescription.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((productDescription) => {
       this.batchPurchaseForm.controls.forEach((control) => {
-        control.controls.desc.setValue(productDescription);
+        control.controls.description.setValue(productDescription);
       });
     });
     this.defaultProductFrom.controls.defaultPurchasePrice.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((defaultPurchasePrice) => {
       this.batchPurchaseForm.controls.forEach((control) => {
-        control.controls.purchasePrice.setValue(defaultPurchasePrice);
+        control.controls.purchaseUnitPrice.setValue(defaultPurchasePrice);
       });
     });
     this.defaultProductFrom.controls.defaultSellPrice.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((defaultSellPrice) => {
       this.batchPurchaseForm.controls.forEach((control) => {
-        control.controls.sellPrice.setValue(defaultSellPrice);
+        control.controls.sellingUnitPrice.setValue(defaultSellPrice);
       });
     });
   }
@@ -218,7 +290,7 @@ export class BatchPurchaseComponent implements OnInit {
 
   private subscribeToBatchPurchaseFormAndUpdateTotalPrice() {
     this.batchPurchaseForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), map((forms) => {
-      return forms.reduce((acc, form) => acc + (form.quantity || 0) * (form.purchasePrice || 0), 0);
+      return forms.reduce((acc, form) => acc + (form.quantity || 0) * (form.purchaseUnitPrice || 0), 0);
     })).subscribe((value) => {
       this.purchaseInvoiceForm.controls.totalPrice.setValue(value);
     });

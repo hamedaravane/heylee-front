@@ -97,16 +97,16 @@
         </td>
         <td><input nz-input nzSize="small" class="font-mono" [formControl]="purchaseItem.controls.code"></td>
         <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
-        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.desc"></td>
+        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.description"></td>
         <td>
-          <nz-select nzPlaceHolder="رنگ" nzSize="small" [formControl]="purchaseItem.controls.color">
+          <nz-select nzPlaceHolder="رنگ" nzSize="small" [formControl]="purchaseItem.controls.colorId">
             @for (color of colors$ | async; track $index) {
               <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
             }
           </nz-select>
         </td>
         <td>
-          <nz-select nzSize="small" nzPlaceHolder="سایز" [formControl]="purchaseItem.controls.size">
+          <nz-select nzSize="small" nzPlaceHolder="سایز" [formControl]="purchaseItem.controls.sizeId">
             @for (size of sizes$ | async; track $index) {
               <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
             }
@@ -117,10 +117,10 @@
                            [formControl]="purchaseItem.controls.quantity"></nz-input-number>
         </td>
         <td>
-          <ngx-price-input size="small" [formControl]="purchaseItem.controls.purchasePrice"></ngx-price-input>
+          <ngx-price-input size="small" [formControl]="purchaseItem.controls.purchaseUnitPrice"></ngx-price-input>
         </td>
         <td>
-          <ngx-price-input size="small" [formControl]="purchaseItem.controls.sellPrice"></ngx-price-input>
+          <ngx-price-input size="small" [formControl]="purchaseItem.controls.sellingUnitPrice"></ngx-price-input>
         </td>
         <td>
           <a nz-button nzType="text" nzDanger nzSize="small">
@@ -133,3 +133,11 @@
 </nz-table>
 <nz-divider></nz-divider>
 <button nz-button nzBlock nzSize="default" nzType="primary" type="button" [disabled]="purchaseInvoiceForm.invalid || batchPurchaseForm.invalid" (click)="submitInvoice()">ثبت محصولات</button>
+
+<!-- Progress Modal -->
+<nz-modal [(nzVisible)]="isProgressModalVisible" nzTitle="در حال ثبت" [nzFooter]="null" nzClosable="false">
+  <div>
+    <nz-progress [nzPercent]="progressPercentage" nzStatus="active"></nz-progress>
+    <p>{{ progressMessage }}</p>
+  </div>
+</nz-modal>
