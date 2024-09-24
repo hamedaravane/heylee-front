@@ -101,21 +101,26 @@ export class BatchPurchaseComponent implements OnInit {
     if (!prefixCode) throw new Error('Prefix code is required');
     if (files) {
       files.forEach((f, index) => {
-        const tempForm = new FormGroup({
+        const tempForm = new FormGroup<BatchPurchaseForm>({
           imageSrc: new FormControl<string | null>(URL.createObjectURL(f), Validators.required),
           imageFile: new FormControl<File | null>(f, Validators.required),
           code: new FormControl<string | null>(this.generateCode(prefixCode, index), Validators.required),
           name: new FormControl<string | null>(null, Validators.required),
-          desc: new FormControl<string | null>(null, Validators.required),
-          color: new FormControl<number | null>(null, Validators.required),
-          size: new FormControl<number | null>(null, Validators.required),
+          description: new FormControl<string | null>(null, Validators.required),
+          colorId: new FormControl<number | null>(null, Validators.required),
+          sizeId: new FormControl<number | null>(null, Validators.required),
           quantity: new FormControl<number>(1, Validators.required),
-          purchasePrice: new FormControl<number | null>(null, Validators.required),
-          sellPrice: new FormControl<number | null>(null, Validators.required)
+          purchaseUnitPrice: new FormControl<number | null>(null, Validators.required),
+          sellingUnitPrice: new FormControl<number | null>(null, Validators.required)
         });
         this.addProduct(tempForm);
       });
     }
+  }
+
+  removeItem(index: number): void {
+    this.batchPurchaseForm.removeAt(index);
+    this.purchaseInvoiceForm.updateValueAndValidity();
   }
 
   submitInvoice() {

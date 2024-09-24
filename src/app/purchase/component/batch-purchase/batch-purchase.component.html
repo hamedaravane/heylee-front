@@ -123,7 +123,7 @@
           <ngx-price-input size="small" [formControl]="purchaseItem.controls.sellingUnitPrice"></ngx-price-input>
         </td>
         <td>
-          <a nz-button nzType="text" nzDanger nzSize="small">
+          <a nz-button nzType="text" nzDanger nzSize="small" (click)="removeItem(i)">
             <i class="fa-xs fa-solid fa-trash"></i>
           </a>
         </td>
