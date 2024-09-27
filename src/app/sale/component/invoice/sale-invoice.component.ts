@@ -10,13 +10,18 @@ import {AsyncPipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {Customer, CustomerDto} from '@customer/entity/customer.entity';
 import {CustomerApi} from '@customer/api/customer.api';
 import {InventoryApi} from '@inventory/api/inventory.api';
-import {CreateUpdateInvoice, InvoiceItem, SaleInvoice, salesItemToStockItemSelection} from '@sale/entity/invoice.entity';
+import {
+  CreateUpdateInvoice,
+  InvoiceItem,
+  SaleInvoice,
+  salesItemToStockItemSelection
+} from '@sale/entity/invoice.entity';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
 import {debounceTime, distinctUntilChanged, filter, of} from 'rxjs';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
@@ -26,7 +31,9 @@ import {Router} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzRadioModule} from 'ng-zorro-antd/radio';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
 
 @Component({
@@ -51,7 +58,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   invoiceToUpdate: SaleInvoice | null = null;
-  loading$ = this.saleFacade.loading$;
+  loading = toSignal(this.saleFacade.loading$, { initialValue: false })
   paymentStatusOptions = ['paid', 'unpaid', 'partially-paid'];
   shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship', 'on-hold'];
   customers: Customer[] | null = null;
