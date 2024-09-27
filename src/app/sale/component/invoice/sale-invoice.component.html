@@ -78,6 +78,7 @@
 </page-container>
 
 <page-container>
+  <button nz-button type="button" nzType="primary" class="mb-4" (click)="isPreviewReceiptModalVisible.set(true)">پیش نمایش فاکتور</button>
   <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="customerForm">
     <nz-alert class="mb-4" nzType="info" nzMessage="قبل از ثبت این فاکتور، مشتری باید ثبت شده باشه!" nzShowIcon/>
     <!-- customer phone -->
@@ -343,3 +344,49 @@
     <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
   }
 </ng-template>
+
+<nz-modal nzTitle="پیش نمایش فاکتور مشتری"
+          [nzFooter]="null"
+          [nzVisible]="isPreviewReceiptModalVisible()"
+          (nzVisibleChange)="isPreviewReceiptModalVisible.set($event)"
+          (nzOnCancel)="isPreviewReceiptModalVisible.set(false)"
+          (nzAfterOpen)="previewReceipt()">
+  <ng-container *nzModalContent>
+    <div id="receipt" #receipt>
+      <h1>با تشکر از انتخاب شما</h1>
+      <div class="flex justify-between mb-2">
+        <span class="text-xs">مجموع سفارشات:</span>
+        <div class="mx-2 inline-block">
+          <span class="font-mono">{{ totalOrderPrice() | number }}</span>
+          <currency-wrapper></currency-wrapper>
+        </div>
+      </div>
+      <div class="flex justify-between mb-2">
+        <span class="text-xs">هزینه ارسال:</span>
+        <div class="mx-2 inline-block">
+          <span class="font-mono">{{ shippingPrice() | number }}</span>
+          <currency-wrapper></currency-wrapper>
+        </div>
+      </div>
+      <div class="flex justify-between mb-2">
+        <span class="text-xs">تخفیف:</span>
+        <div class="mx-2 inline-block">
+          <span class="font-mono">{{ discount() | number }}</span>
+          <currency-wrapper></currency-wrapper>
+        </div>
+      </div>
+      <div class="flex justify-between mb-2">
+        <span class="text-xs">هزینه نهایی:</span>
+        <div class="mx-2 inline-block">
+          <span class="font-mono">{{ customerPayment() | number }}</span>
+          <currency-wrapper></currency-wrapper>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<div id="download" hidden>
+  <img #canvas>
+  <a #downloadLink></a>
+</div>

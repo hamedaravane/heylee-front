@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -35,17 +35,23 @@ import {
   ProductImageContainerComponent
 } from '@shared/component/product-image-container/product-image-container.component';
 import {FilterIndex} from '@shared/entity/common.entity';
+import {NzModalModule} from "ng-zorro-antd/modal";
+import html2canvas from "html2canvas";
+import {colors} from "@colors";
 
 @Component({
   selector: 'sale-invoice',
   imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
     NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
-    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule,
+    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule, NzModalModule,
     CardContainerComponent, PageContainerComponent, CurrencyComponent, ProductImageContainerComponent],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
 export class SaleInvoiceComponent implements OnInit {
+  @ViewChild('receipt') receipt!: ElementRef<HTMLDivElement>;
+  @ViewChild('canvas') canvas!: ElementRef<HTMLImageElement>;
+  @ViewChild('downloadLink') downloadLink!: ElementRef<HTMLAnchorElement>;
   private readonly destroyRef = inject(DestroyRef);
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);
@@ -58,7 +64,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   invoiceToUpdate: SaleInvoice | null = null;
-  loading = toSignal(this.saleFacade.loading$, { initialValue: false })
+  loading = toSignal(this.saleFacade.loading$, {initialValue: false})
   paymentStatusOptions = ['paid', 'unpaid', 'partially-paid'];
   shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship', 'on-hold'];
   customers: Customer[] | null = null;
@@ -70,7 +76,7 @@ export class SaleInvoiceComponent implements OnInit {
   customerPayment = computed(() => this.totalOrderPrice() + this.shippingPrice() - this.discount());
   shippingPrice = signal(0);
   discount = signal(0);
-
+  isPreviewReceiptModalVisible = signal(false);
   saleInvoiceForm = new FormGroup({
     customerId: new FormControl<number | null>(null, Validators.required),
     city: new FormControl<string | null>(null, Validators.required),
@@ -163,6 +169,20 @@ export class SaleInvoiceComponent implements OnInit {
     if (this.saleInvoiceForm.valid && this.invoiceToUpdate?.id) {
       this.saleFacade.updateSaleInvoice(this.invoiceToUpdate.id, this.extractDataFromInvoiceForm()).then();
     }
+  }
+
+  previewReceipt() {
+    const element = this.receipt.nativeElement;
+    html2canvas(element, {backgroundColor: colors.gray_8, logging: true}).then(canvas => {
+      this.canvas.nativeElement.src = canvas.toDataURL();
+      this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
+      this.downloadLink.nativeElement.download = 'marble-diagram.png';
+      this.downloadLink.nativeElement.click();
+    }).catch((err) => {
+      console.error(err);
+    }).finally(() => {
+      this.isPreviewReceiptModalVisible.set(false);
+    });
   }
 
   submitOrderForm() {
