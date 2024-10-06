@@ -1,27 +1,149 @@
-# HeyleeFront
+# Hey Lee
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.6.
+An all-in-one inventory management and accounting application designed specifically for small online stores. This Angular project simplifies the complexities of managing sales, expenses, investments, and inventory, making it ideal for both solo entrepreneurs and small teams.
 
-## Development server
+![Logo](./images/logo.png)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Table of Contents
 
-## Code scaffolding
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## About the Project
 
-## Build
+Managing accounting and inventory for small online stores can be intricate, especially for one-person operations. This application aims to streamline these processes by providing an integrated solution for managing customers, transactions, inventory, and more. It bridges the gap between different departments, making coordination seamless for team-managed stores as well.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Features
 
-## Running unit tests
+- **Customers Management**
+  - Central hub for adding, editing, and viewing customer details.
+- **Transactions Overview**
+  - Comprehensive view of all financial transactions, including expenses, investments, and business dealings.
+- **Purchase Invoices**
+  - Dedicated section for tracking and managing purchase invoices, crucial for brokerage businesses.
+- **Record Purchase Invoice**
+  - Straightforward tool for creating new purchase invoices.
+- **Suppliers Directory**
+  - Manage suppliers and their associated information.
+- **Record Customer Orders**
+  - Streamlined process for creating customer orders with quick selection of existing customers.
+  - Auto-populates customer details and performs real-time inventory checks.
+- **Inventory Management**
+  - Real-time view of current stock levels.
+- **Product Catalog**
+  - Manage product information, including adding, editing, and deleting products.
+- **Statistics and Analytics**
+  - Detailed sales analytics, including daily sales and product-specific performance metrics.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Built With
 
-## Running end-to-end tests
+- [Angular v18]([https://angular.dev/])
+- [TypeScript](https://www.typescriptlang.org/)
+- [Ant Design of Angular](https://ng.ant.design/docs/introduce/en)
+- [Tailwind CSS](https://tailwindcss.com/)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Getting Started
 
-## Further help
+To get a local copy up and running, follow these simple steps.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Install Angular CLI globally if you haven't:
+
+```bash
+npm install -g @angular/cli
+```
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/hamedaravane/heylee-front.git
+   ```
+
+2. **Navigate to the project directory**
+
+   ```bash
+   cd heylee-front
+   ```
+
+3. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+### Running the Application
+
+1. **Start the development server**
+
+   ```bash
+   ng serve
+   ```
+
+2. **Open the application in your browser**
+
+   Navigate to `http://localhost:4200/` in your web browser.
+
+## Usage
+
+- **Customers Domain**
+  - Navigate to the **Customer** section to add, edit, or view customer details.
+- **Transaction Domain**
+  - Access the **Transaction** section to monitor all financial transactions.
+- **Purchase Domain**
+  - Use the **Purchase** section to track and manage your invoices and also Create new purchase invoices.
+- **Supplier Domain**
+  - Manage your suppliers in the **Supplier** section.
+- **Inventory**
+  - View current stock levels in real-time in the **Inventory** section.
+- **Product**
+  - Manage your product catalog in the **Product** section.
+- **Statistic**
+  - Access detailed sales analytics in the **Statistic** section.
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard Screenshot](./images/dashboard.png)
+
+*(Replace "path-to-your-image" with the actual paths to your screenshots.)*
+
+## Roadmap
+
+- [ ] Implement user authentication and role-based access control.
+- [ ] Integrate with third-party e-commerce platforms (e.g., Shopify, WooCommerce).
+- [ ] Add multi-language support.
+
+## License
+
+Distributed under the MIT License. See `LICENSE` file for more information.
+
+## Contact
+
+- **Author**: Hamed Arghavan
+- **Email**: [hamedaravane@gmail.com](mailto:hamedaravane@gmail.com)
+- **GitHub**: [hamedaravane](https://github.com/hamedaravane)
+
+Project Link: [https://github.com/hamedaravane/heylee-front](https://github.com/hamedaravane/heylee-front)
+
+## Acknowledgments
+
+- [Angular Documentation](https://angular.dev/docs)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [Ant Design of Angular](https://ng.ant.design/docs/introduce/en)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [RxJS Documentation](https://rxjs.dev/guide/overview)
+- [Font Awesome](https://fontawesome.com/) for icons
