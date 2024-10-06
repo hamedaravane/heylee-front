@@ -119,14 +119,6 @@ npm install -g @angular/cli
 
 ![Dashboard Screenshot](./images/dashboard.png)
 
-*(Replace "path-to-your-image" with the actual paths to your screenshots.)*
-
-## Roadmap
-
-- [ ] Implement user authentication and role-based access control.
-- [ ] Integrate with third-party e-commerce platforms (e.g., Shopify, WooCommerce).
-- [ ] Add multi-language support.
-
 ## License
 
 Distributed under the MIT License. See `LICENSE` file for more information.
