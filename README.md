@@ -2,7 +2,7 @@
 
 An all-in-one inventory management and accounting application designed specifically for small online stores. This Angular project simplifies the complexities of managing sales, expenses, investments, and inventory, making it ideal for both solo entrepreneurs and small teams.
 
-<img src="./images/logo.png" alt="hey lee logo" width="500"/>
+<img src="./images/logo.png" alt="hey lee logo" width="300" style="margin: auto;"/>
 
 ## Table of Contents
 
