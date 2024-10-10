@@ -34,12 +34,12 @@
       <nz-form-label nzRequired nzFor="description">توضیحات بیشتر</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            name="description"
-            type="text"
-            id="description"
-            [formControl]="purchaseForm.controls.description"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+          nz-input
+          name="description"
+          type="text"
+          id="description"
+          [formControl]="purchaseForm.controls.description"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -64,93 +64,93 @@
         <ngx-price-input [formControl]="purchaseForm.controls.paidPrice"></ngx-price-input>
       </nz-form-control>
     </nz-form-item>
-  </form>
-  <!-- items -->
-  <nz-table nzSize="small" [nzData]="purchaseItemsForm.controls" [nzLoading]="loadingState"
-            nzTableLayout="fixed"
-            nzTitle="افزودن مشخصات محصولات به صورت تکی">
-    <thead>
-    <tr>
-      <th nzWidth="50px"></th>
-      <th nzWidth="252px">کد محصول</th>
-      <th nzWidth="144px">رنگ</th>
-      <th nzWidth="100px">سایز</th>
-      <th nzWidth="100px">تعداد</th>
-      <th>خرید</th>
-      <th>فروش</th>
-      <th nzWidth="50px"></th>
-    </tr>
-    </thead>
-    <tbody>
-      @for (item of purchaseItemsForm.controls; let i = $index; track item.controls.uniqueId.value) {
-        <tr [formGroup]="item">
-          <td>
-            <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text"
-                    type="button" nzBlock nzSize="small" (click)="addItem(item)">
-              <i class="fa-solid fa-plus fa-sm"></i>
-            </button>
-          </td>
-          <td>
-            <nz-select style="width: 100%" class="font-mono" [formControl]="item.controls.productId"
-                       [nzOptionHeightPx]="58">
-              @if (products$ | async; as products) {
-                @for (product of products.items; track $index) {
-                  <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
-                    <div class="flex gap-2">
-                      <product-image-container [imageSrc]="product.image"></product-image-container>
-                      <div>
-                        <div class="col-span-5 text-xs">{{ product.name }}</div>
-                        <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
+    <!-- items -->
+    <nz-table nzSize="small" [nzData]="purchaseItemsForm.controls" [nzLoading]="loadingState"
+              nzTableLayout="fixed"
+              nzTitle="افزودن مشخصات محصولات به صورت تکی">
+      <thead>
+      <tr>
+        <th nzWidth="50px"></th>
+        <th nzWidth="252px">کد محصول</th>
+        <th nzWidth="144px">رنگ</th>
+        <th nzWidth="100px">سایز</th>
+        <th nzWidth="100px">تعداد</th>
+        <th>خرید</th>
+        <th>فروش</th>
+        <th nzWidth="50px"></th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of purchaseItemsForm.controls; let i = $index; track item.controls.uniqueId.value) {
+          <tr [formGroup]="item">
+            <td>
+              <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text"
+                      type="button" nzBlock nzSize="small" (click)="addItem(item)">
+                <i class="fa-solid fa-plus fa-sm"></i>
+              </button>
+            </td>
+            <td>
+              <nz-select style="width: 100%" class="font-mono" [formControl]="item.controls.productId"
+                         [nzOptionHeightPx]="58">
+                @if (products$ | async; as products) {
+                  @for (product of products.items; track $index) {
+                    <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
+                      <div class="flex gap-2">
+                        <product-image-container [imageSrc]="product.image"></product-image-container>
+                        <div>
+                          <div class="col-span-5 text-xs">{{ product.name }}</div>
+                          <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
+                        </div>
                       </div>
-                    </div>
-                  </nz-option>
+                    </nz-option>
+                  }
                 }
-              }
-            </nz-select>
-          </td>
-          <td>
-            <nz-select style="width: 100%;" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">
-              @for (color of colors$ | async; track $index) {
-                <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
-              }
-            </nz-select>
-          </td>
-          <td>
-            <nz-select nzPlaceHolder="سایز" [formControl]="item.controls.sizeId">
-              @for (size of sizes$ | async; track $index) {
-                <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
-              }
-            </nz-select>
-          </td>
-          <td>
-            <nz-input-number class="max-w-16" [formControl]="item.controls.quantity"></nz-input-number>
-          </td>
-          <td>
-            <ngx-price-input [formControl]="item.controls.purchaseUnitPrice"></ngx-price-input>
-          </td>
-          <td>
-            <ngx-price-input [formControl]="item.controls.sellingUnitPrice"></ngx-price-input>
-          </td>
-          <td>
-            <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text" nzDanger
-                    type="button" nzBlock nzSize="small" (click)="removeItem(i)">
-              <i class="fa-solid fa-trash fa-sm"></i>
-            </button>
-          </td>
-        </tr>
-      } @empty {
-        <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
-                type="button" nzBlock (click)="addItem()">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-      }
-    </tbody>
-  </nz-table>
-  <nz-divider></nz-divider>
-  <!-- submit -->
-  <button [nzLoading]="loadingState" [disabled]="purchaseForm.invalid || loadingState" nz-button nzType="primary"
-          nzBlock type="submit">ثبت فاکتور
-  </button>
+              </nz-select>
+            </td>
+            <td>
+              <nz-select style="width: 100%;" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">
+                @for (color of colors$ | async; track $index) {
+                  <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
+                }
+              </nz-select>
+            </td>
+            <td>
+              <nz-select nzPlaceHolder="سایز" [formControl]="item.controls.sizeId">
+                @for (size of sizes$ | async; track $index) {
+                  <nz-option [nzValue]="size.id" [nzLabel]="size.label"></nz-option>
+                }
+              </nz-select>
+            </td>
+            <td>
+              <nz-input-number class="max-w-16" [formControl]="item.controls.quantity"></nz-input-number>
+            </td>
+            <td>
+              <ngx-price-input [formControl]="item.controls.purchaseUnitPrice"></ngx-price-input>
+            </td>
+            <td>
+              <ngx-price-input [formControl]="item.controls.sellingUnitPrice"></ngx-price-input>
+            </td>
+            <td>
+              <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text" nzDanger
+                      type="button" nzBlock nzSize="small" (click)="removeItem(i)">
+                <i class="fa-solid fa-trash fa-sm"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
+                  type="button" nzBlock (click)="addItem()">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        }
+      </tbody>
+    </nz-table>
+    <nz-divider></nz-divider>
+    <!-- submit -->
+    <button [nzLoading]="loadingState" [disabled]="purchaseForm.invalid || loadingState" nz-button nzType="primary"
+            nzBlock type="submit">ثبت فاکتور
+    </button>
+  </form>
 </page-container>
 
 <nz-modal nzTitle="ثبت محصولات به صورت دسته جمعی"
