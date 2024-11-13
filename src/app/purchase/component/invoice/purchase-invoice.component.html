@@ -90,11 +90,12 @@
               </button>
             </td>
             <td>
-              <nz-select style="width: 100%" class="font-mono" [formControl]="item.controls.productId"
-                         [nzOptionHeightPx]="58">
+              <input nz-input type="text" [formControl]="productCodeFilter" [nzAutocomplete]="autoProducts" />
+              <input nz-input type="text" [formControl]="item.controls.productId" hidden [nzAutocomplete]="autoProducts" />
+              <nz-autocomplete #autoProducts>
                 @if (products$ | async; as products) {
                   @for (product of products.items; track $index) {
-                    <nz-option [nzValue]="product.id" nzCustomContent [nzLabel]="product.code">
+                    <nz-auto-option [nzValue]="product.id" [nzLabel]="product.code">
                       <div class="flex gap-2">
                         <product-image-container [imageSrc]="product.image"></product-image-container>
                         <div>
@@ -102,10 +103,10 @@
                           <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
                         </div>
                       </div>
-                    </nz-option>
+                    </nz-auto-option>
                   }
                 }
-              </nz-select>
+              </nz-autocomplete>
             </td>
             <td>
               <nz-select style="width: 100%;" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">

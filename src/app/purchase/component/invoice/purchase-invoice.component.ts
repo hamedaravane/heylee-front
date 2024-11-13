@@ -1,5 +1,5 @@
 import {AfterContentInit, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CreatePurchaseInvoice, CreatePurchaseItem} from '@purchase/entity/purchase.entity';
 import {PurchaseFacade} from '@purchase/data-access/purchase.facade';
 import {BidiModule} from '@angular/cdk/bidi';
@@ -10,7 +10,7 @@ import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
-import {combineLatest, distinctUntilChanged, map, startWith} from 'rxjs';
+import {combineLatest, debounceTime, distinctUntilChanged, filter, map, startWith} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
@@ -19,7 +19,9 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SupplierApi} from '@supplier/api/supplier.api';
 import {ProductApi} from '@product/api/product.api';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
 import {ImageUploaderComponent} from '@shared/component/image-uploader/image-uploader.component';
 import {NzTableModule} from 'ng-zorro-antd/table';
 import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
@@ -66,7 +68,8 @@ interface ItemForms {
     CurrencyComponent,
     PersianDatePipe,
     BatchPurchaseComponent,
-    NgxPriceInputComponent
+    NgxPriceInputComponent,
+    FormsModule
   ],
   standalone: true
 })
@@ -102,10 +105,22 @@ export class PurchaseInvoiceComponent implements OnInit, AfterContentInit {
     })
   ], Validators.minLength(1))
 
+  productCodeFilter = new FormControl<string>('');
+
   ngOnInit() {
     this.purchaseFacade.loading$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.loadingState = value);
+
+      this.productCodeFilter.valueChanges
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          filter(Boolean),
+          distinctUntilChanged(),
+          debounceTime(2000)
+        ).subscribe(code => {
+          this.productApi.loadProducts([{ prop: 'code', operator: 'like', value: code}]);
+      })
   }
 
   ngAfterContentInit() {

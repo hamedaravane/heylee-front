@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.entity';
 import {firstValueFrom, Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
-import {IdLabel} from '@shared/entity/common.entity';
+import {FilterIndex, IdLabel} from '@shared/entity/common.entity';
 import {BaseInfra} from '@shared/service/base.infra';
 
 @Injectable({
@@ -32,11 +32,12 @@ export class ProductInfra extends BaseInfra {
     );
   }
 
-  fetchProducts(pageIndex: number = 1): Observable<IndexResponse<Product>> {
+  fetchProducts(pageIndex: number = 1, filter?: FilterIndex<ProductDto>[]): Observable<IndexResponse<Product>> {
     return this.fetchEntities<ProductDto, Product>(
       this.endpoint,
       mapProductDtoToProduct,
-      pageIndex
+      pageIndex,
+      filter
     );
   }
 

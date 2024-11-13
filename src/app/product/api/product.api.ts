@@ -2,8 +2,8 @@ import {inject, Injectable} from '@angular/core';
 import {ProductFacade} from '@product/data-access/product.facade';
 import {Observable} from 'rxjs';
 import {IndexResponse} from '@shared/entity/server-response.entity';
-import {Product} from '@product/entity/product.entity';
-import {IdLabel} from '@shared/entity/common.entity';
+import {Product, ProductDto} from '@product/entity/product.entity';
+import {FilterIndex, IdLabel} from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,10 @@ export class ProductApi {
       })
     }
     return this.productFacade.productsIndex$;
+  }
+
+  loadProducts(filter?: FilterIndex<ProductDto>[]) {
+    this.productFacade.loadProducts(1, filter);
   }
 
   get sizes$(): Promise<IdLabel[]> {

@@ -1,9 +1,9 @@
 import {inject, Injectable} from '@angular/core';
 import {ProductInfra} from '../infrastructure/product.infra';
 import {BehaviorSubject, filter, firstValueFrom, Observable, Subject} from 'rxjs';
-import {Product} from '../entity/product.entity';
+import {Product, ProductDto} from '../entity/product.entity';
 import {IndexResponse} from '@shared/entity/server-response.entity';
-import {IdLabel} from '@shared/entity/common.entity';
+import {FilterIndex, IdLabel} from '@shared/entity/common.entity';
 import {BaseFacade} from '@shared/service/base.facade';
 
 @Injectable({
@@ -22,10 +22,10 @@ export class ProductFacade extends BaseFacade {
     return this.productsIndexSubject.asObservable().pipe(filter(Boolean))
   }
 
-  async loadProducts(pageIndex: number = 1) {
+  async loadProducts(pageIndex: number = 1, filter?: FilterIndex<ProductDto>[]) {
     await this.loadEntity(
       this.productsIndexSubject,
-      () => firstValueFrom(this.productInfra.fetchProducts(pageIndex)),
+      () => firstValueFrom(this.productInfra.fetchProducts(pageIndex, filter)),
       undefined,
       true
     )
