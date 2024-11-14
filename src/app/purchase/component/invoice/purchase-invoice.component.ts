@@ -10,7 +10,7 @@ import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
-import {combineLatest, debounceTime, distinctUntilChanged, filter, map, startWith} from 'rxjs';
+import {BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, startWith} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
 import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
@@ -29,6 +29,7 @@ import {PersianDatePipe} from '@shared/pipe/persian-date.pipe';
 import {BatchPurchaseComponent} from '@purchase/component/batch-purchase/batch-purchase.component';
 import {NgxPriceInputComponent} from 'ngx-price-input';
 import {NzModalModule} from 'ng-zorro-antd/modal';
+import {NzIconModule} from "ng-zorro-antd/icon";
 
 interface ItemForms {
   uniqueId: FormControl<string | null>;
@@ -49,6 +50,7 @@ interface ItemForms {
     NzInputNumberModule,
     NzButtonModule,
     NzDividerModule,
+    NzIconModule,
     NzEmptyModule,
     NzSelectModule,
     NzAutocompleteModule,
@@ -105,27 +107,33 @@ export class PurchaseInvoiceComponent implements OnInit, AfterContentInit {
     })
   ], Validators.minLength(1))
 
-  productCodeFilter = new FormControl<string>('');
+  private readonly searchChange$ = new BehaviorSubject('');
 
   ngOnInit() {
     this.purchaseFacade.loading$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.loadingState = value);
 
-      this.productCodeFilter.valueChanges
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          filter(Boolean),
-          distinctUntilChanged(),
-          debounceTime(2000)
-        ).subscribe(code => {
-          this.productApi.loadProducts([{ prop: 'code', operator: 'like', value: code}]);
-      })
+    this.searchChange$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        filter(Boolean),
+        distinctUntilChanged(),
+        debounceTime(2000)
+      )
+      .subscribe(code => {
+        this.productApi.loadProducts([{ prop: 'code', operator: 'like', value: code}]);
+      });
   }
 
   ngAfterContentInit() {
     this.subscribeToPurchaseFormAndUpdatePaidPrice();
     this.subscribeToItemsAndUpdateTotalPrice();
+  }
+
+  onSearch(value: string) {
+    this.loadingState = true;
+    this.searchChange$.next(value);
   }
 
   addItem(item?: FormGroup<ItemForms>) {

@@ -90,23 +90,35 @@
               </button>
             </td>
             <td>
-              <input nz-input type="text" [formControl]="productCodeFilter" [nzAutocomplete]="autoProducts" />
-              <input nz-input type="text" [formControl]="item.controls.productId" hidden [nzAutocomplete]="autoProducts" />
-              <nz-autocomplete #autoProducts>
-                @if (products$ | async; as products) {
-                  @for (product of products.items; track $index) {
-                    <nz-auto-option [nzValue]="product.id" [nzLabel]="product.code">
-                      <div class="flex gap-2">
-                        <product-image-container [imageSrc]="product.image"></product-image-container>
-                        <div>
-                          <div class="col-span-5 text-xs">{{ product.name }}</div>
-                          <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
+              <nz-select
+                nzMode="default"
+                nzPlaceHolder="Code"
+                nzAllowClear
+                nzShowSearch
+                nzServerSearch
+                [formControl]="item.controls.productId"
+                (nzOnSearch)="onSearch($event)"
+              >
+                @if (!loadingState) {
+                  @if (products$ | async; as products) {
+                    @for (product of products.items; track $index) {
+                      <nz-option [nzValue]="product.id" [nzLabel]="product.code">
+                        <div class="flex gap-2">
+                          <product-image-container [imageSrc]="product.image"></product-image-container>
+                          <div>
+                            <div class="col-span-5 text-xs">{{ product.name }}</div>
+                            <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
+                          </div>
                         </div>
-                      </div>
-                    </nz-auto-option>
+                      </nz-option>
+                    }
                   }
+                } @else {
+                  <nz-option nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="mr-2"></span>
+                  </nz-option>
                 }
-              </nz-autocomplete>
+              </nz-select>
             </td>
             <td>
               <nz-select style="width: 100%;" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">
