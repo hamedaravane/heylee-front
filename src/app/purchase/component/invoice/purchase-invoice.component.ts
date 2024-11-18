@@ -132,7 +132,6 @@ export class PurchaseInvoiceComponent implements OnInit, AfterContentInit {
   }
 
   onSearch(value: string) {
-    this.loadingState = true;
     this.searchChange$.next(value);
   }
 
