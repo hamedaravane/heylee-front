@@ -44,7 +44,7 @@ export class AuthFacade {
       this.userSubject.next(user);
       this.authTokenSubject.next(authToken);
       if (user.id === 4) {
-        localStorage.setItem('activePages', 'sale,invoices,inventory,customer');
+        localStorage.setItem('activePages', 'sale,invoices,inventory,customer, transaction');
         localStorage.setItem('isOperator', 'true');
       } else {
         localStorage.setItem('activePages', 'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt,statistic,transaction');
