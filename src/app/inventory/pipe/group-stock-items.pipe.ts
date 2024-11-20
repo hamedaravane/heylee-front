@@ -1,9 +1,9 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {GroupedStockItem, StockItem} from '@inventory/entity/inventory.entity';
+import { Pipe, PipeTransform } from '@angular/core';
+import { GroupedStockItem, StockItem } from '@inventory/entity/inventory.entity';
 
 @Pipe({
   name: 'groupItems',
-  standalone: true,
+  standalone: true
 })
 export class GroupStockItemsPipe implements PipeTransform {
   transform(items: StockItem[]): GroupedStockItem[] {
@@ -35,7 +35,10 @@ export class GroupStockItemsPipe implements PipeTransform {
 
       const size = color.sizes.find(s => s.label === item.size.label);
       if (!size) {
-        color.sizes.push({ label: item.size.label, quantity: item.availableQuantity });
+        color.sizes.push({
+          label: item.size.label,
+          quantity: item.availableQuantity
+        });
       } else {
         size.quantity += item.availableQuantity;
       }

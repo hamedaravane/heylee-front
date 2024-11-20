@@ -1,14 +1,18 @@
-import {SupplierDto} from '@supplier/entity/supplier.entity';
-import {IdLabel} from '@shared/entity/common.entity';
-import {Product, ProductDto} from '@product/entity/product.entity';
+import { SupplierDto } from '@supplier/entity/supplier.entity';
+import { IdLabel } from '@shared/entity/common.entity';
+import { Product, ProductDto } from '@product/entity/product.entity';
 
 export type CreatePurchaseItemDTO = Omit<PurchaseItemDto, 'id' | 'created_at' | 'purchase_id'>;
 
-export type CreatePurchaseInvoiceDTO = Omit<PurchaseInvoiceDto, 'id' | 'created_at' | 'supplier' | 'purchases_item'> & { items: CreatePurchaseItemDTO[] };
+export type CreatePurchaseInvoiceDTO = Omit<PurchaseInvoiceDto, 'id' | 'created_at' | 'supplier' | 'purchases_item'> & {
+  items: CreatePurchaseItemDTO[];
+};
 
 export type CreatePurchaseItem = Omit<PurchaseItem, 'id' | 'createdAt' | 'purchaseId'>;
 
-export type CreatePurchaseInvoice = Omit<PurchaseInvoice, 'id' | 'createdAt' | 'supplier' | 'purchasesItem'> & { items: CreatePurchaseItem[] };
+export type CreatePurchaseInvoice = Omit<PurchaseInvoice, 'id' | 'createdAt' | 'supplier' | 'purchasesItem'> & {
+  items: CreatePurchaseItem[];
+};
 
 export function mapCreatePurchaseInvoiceToDTO(purchase: CreatePurchaseInvoice): CreatePurchaseInvoiceDTO {
   return {
@@ -50,7 +54,9 @@ export interface PurchaseInvoiceDto {
   paid_price: number;
   created_at: string;
   supplier: SupplierDto;
-  purchases_item: (PurchaseItemDto & { color: IdLabel } & { size: IdLabel } & { product: ProductDto })[];
+  purchases_item: (PurchaseItemDto & { color: IdLabel } & { size: IdLabel } & {
+    product: ProductDto;
+  })[];
 }
 
 export interface PurchaseItem {
@@ -74,7 +80,9 @@ export interface PurchaseInvoice {
   paidPrice: number;
   createdAt: string;
   supplier: SupplierDto;
-  purchasesItem: (PurchaseItem & { color: IdLabel } & { size: IdLabel } & { product: Product })[];
+  purchasesItem: (PurchaseItem & { color: IdLabel } & { size: IdLabel } & {
+    product: Product;
+  })[];
 }
 
 export function mapPurchaseInvoiceDtoToDomain(dto: PurchaseInvoiceDto): PurchaseInvoice {
@@ -102,8 +110,8 @@ export function mapPurchaseInvoiceDtoToDomain(dto: PurchaseInvoiceDto): Purchase
       product: {
         ...item.product,
         createdAt: item.product.created_at,
-        updatedAt: item.product.updated_at,
+        updatedAt: item.product.updated_at
       }
     }))
-  }
+  };
 }

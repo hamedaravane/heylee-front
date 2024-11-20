@@ -35,7 +35,7 @@ export function mapTransactionDto(dto: TransactionDto): Transaction {
     entityName: dto.entity_name,
     referenceNumber: dto.reference_number,
     description: dto.description,
-    paymentMethod: dto.payment_method,
+    paymentMethod: dto.payment_method
   };
 }
 
@@ -49,6 +49,6 @@ export function mapTransactionToDto(data: Transaction): TransactionDto {
     entity_name: data.entityName,
     reference_number: data.referenceNumber,
     description: data.description,
-    payment_method: data.paymentMethod,
-  }
+    payment_method: data.paymentMethod
+  };
 }

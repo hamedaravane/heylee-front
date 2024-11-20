@@ -12,7 +12,7 @@
     </nz-form-item>
     <nz-form-item class="grow">
       <nz-form-control>
-        <input [formControl]="filterForm.controls.value" nz-input placeholder="جستجو"/>
+        <input [formControl]="filterForm.controls.value" nz-input placeholder="جستجو" />
       </nz-form-control>
     </nz-form-item>
   </form>
@@ -38,7 +38,7 @@
               <span>{{ color.label }}:</span>
               @for (size of color.sizes; track $index) {
                 <div class="inline-block mx-2">
-                  <nz-badge [nzCount]="size.quantity" [nzStyle]="{'background-color': colors.gray_7}" nzSize="small">
+                  <nz-badge [nzCount]="size.quantity" [nzStyle]="{ 'background-color': colors.gray_7 }" nzSize="small">
                     <span class="px-2 border border-solid border-gray-600 rounded-md">{{ size.label }}</span>
                   </nz-badge>
                 </div>

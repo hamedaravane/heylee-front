@@ -1,7 +1,7 @@
-import {Customer, CustomerDto} from '@customer/entity/customer.entity';
-import {Product, ProductDto} from '@product/entity/product.entity';
-import {IdLabel} from '@shared/entity/common.entity';
-import {StockItemSelection} from '@inventory/entity/inventory.entity';
+import { Customer, CustomerDto } from '@customer/entity/customer.entity';
+import { Product, ProductDto } from '@product/entity/product.entity';
+import { IdLabel } from '@shared/entity/common.entity';
+import { StockItemSelection } from '@inventory/entity/inventory.entity';
 
 export interface SalesItemDTO {
   id: number;

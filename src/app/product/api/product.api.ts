@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {ProductFacade} from '@product/data-access/product.facade';
-import {Observable} from 'rxjs';
-import {IndexResponse} from '@shared/entity/server-response.entity';
-import {Product, ProductDto} from '@product/entity/product.entity';
-import {FilterIndex, IdLabel} from '@shared/entity/common.entity';
+import { inject, Injectable } from '@angular/core';
+import { ProductFacade } from '@product/data-access/product.facade';
+import { Observable } from 'rxjs';
+import { IndexResponse } from '@shared/entity/server-response.entity';
+import { Product, ProductDto } from '@product/entity/product.entity';
+import { FilterIndex, IdLabel } from '@shared/entity/common.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class ProductApi {
     if (!this.isFetched) {
       this.productFacade.loadProducts().then(() => {
         this.isFetched = true;
-      })
+      });
     }
     return this.productFacade.productsIndex$;
   }
@@ -48,6 +48,6 @@ export class ProductApi {
   batchCreateProducts(formsData: FormData[]): void {
     formsData.forEach(formData => {
       this.createProduct(formData).then(() => setTimeout(() => {}, 5000));
-    })
+    });
   }
 }

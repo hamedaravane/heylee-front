@@ -1,50 +1,71 @@
-import {Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
-import {NzButtonModule} from 'ng-zorro-antd/button';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NzFormModule} from 'ng-zorro-antd/form';
-import {NzInputModule} from 'ng-zorro-antd/input';
-import {BidiModule} from '@angular/cdk/bidi';
-import {NzDividerModule} from 'ng-zorro-antd/divider';
-import {SaleFacade} from '../../data-access/sale.facade';
-import {AsyncPipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
-import {NzCollapseModule} from 'ng-zorro-antd/collapse';
-import {ProductFilterPipe} from '../../pipe/product-filter.pipe';
-import {NzEmptyModule} from 'ng-zorro-antd/empty';
-import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
-import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
-import {Customer, CustomerDto} from '@customer/entity/customer.entity';
-import {CustomerApi} from '@customer/api/customer.api';
-import {InventoryApi} from '@inventory/api/inventory.api';
+import { Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { BidiModule } from '@angular/cdk/bidi';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { SaleFacade } from '../../data-access/sale.facade';
+import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
+import { Customer, CustomerDto } from '@customer/entity/customer.entity';
+import { CustomerApi } from '@customer/api/customer.api';
+import { InventoryApi } from '@inventory/api/inventory.api';
 import {
   CreateUpdateInvoice,
   InvoiceItem,
   SaleInvoice,
   salesItemToStockItemSelection
 } from '@sale/entity/invoice.entity';
-import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
-import {debounceTime, distinctUntilChanged, filter, of} from 'rxjs';
-import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
-import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
-import {selectedProductToInvoiceItem, StockItemSelection} from '@inventory/entity/inventory.entity';
-import {Router} from '@angular/router';
-import {NzAlertModule} from 'ng-zorro-antd/alert';
-import {NzSelectModule} from 'ng-zorro-antd/select';
-import {NzRadioModule} from 'ng-zorro-antd/radio';
+import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
+import { debounceTime, distinctUntilChanged, filter, of } from 'rxjs';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { selectedProductToInvoiceItem, StockItemSelection } from '@inventory/entity/inventory.entity';
+import { Router } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import {
   ProductImageContainerComponent
 } from '@shared/component/product-image-container/product-image-container.component';
-import {FilterIndex} from '@shared/entity/common.entity';
-import {NzModalModule} from "ng-zorro-antd/modal";
-import html2canvas from "html2canvas";
-import {colors} from "@colors";
+import { FilterIndex } from '@shared/entity/common.entity';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import html2canvas from 'html2canvas';
+import { colors } from '@colors';
 
 @Component({
   selector: 'sale-invoice',
-  imports: [NzButtonModule, NzAutocompleteModule, NzSegmentedModule, ReactiveFormsModule, NzCollapseModule,
-    NzEmptyModule, NzFormModule, NzInputModule, BidiModule, NzDividerModule, AsyncPipe, FormsModule,
-    DecimalPipe, ProductFilterPipe, NgTemplateOutlet, NzAlertModule, NzSelectModule, NzRadioModule, NzModalModule,
-    CardContainerComponent, PageContainerComponent, CurrencyComponent, ProductImageContainerComponent],
+  imports: [
+    NzButtonModule,
+    NzAutocompleteModule,
+    NzSegmentedModule,
+    ReactiveFormsModule,
+    NzCollapseModule,
+    NzEmptyModule,
+    NzFormModule,
+    NzInputModule,
+    BidiModule,
+    NzDividerModule,
+    AsyncPipe,
+    FormsModule,
+    DecimalPipe,
+    ProductFilterPipe,
+    NgTemplateOutlet,
+    NzAlertModule,
+    NzSelectModule,
+    NzRadioModule,
+    NzModalModule,
+    CardContainerComponent,
+    PageContainerComponent,
+    CurrencyComponent,
+    ProductImageContainerComponent
+  ],
   standalone: true,
   templateUrl: './sale-invoice.component.html'
 })
@@ -64,7 +85,7 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   invoiceToUpdate: SaleInvoice | null = null;
-  loading = toSignal(this.saleFacade.loading$, {initialValue: false})
+  loading = toSignal(this.saleFacade.loading$, { initialValue: false });
   paymentStatusOptions = ['paid', 'unpaid', 'partially-paid'];
   shippingStatusOptions = ['shipped', 'canceled', 'ready-to-ship', 'on-hold'];
   customers: Customer[] | null = null;
@@ -83,7 +104,10 @@ export class SaleInvoiceComponent implements OnInit {
     address: new FormControl<string | null>(null, Validators.required),
     description: new FormControl<string | null>(null),
     paymentStatus: new FormControl<'paid' | 'unpaid' | 'partially-paid'>('paid', Validators.required),
-    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>('ready-to-ship', Validators.required),
+    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>(
+      'ready-to-ship',
+      Validators.required
+    ),
     shippingPrice: new FormControl<number | null>(null, Validators.required),
     discount: new FormControl<number | null>(0, [Validators.min(0)]),
     refNumber: new FormControl<string | null>(null),
@@ -101,9 +125,9 @@ export class SaleInvoiceComponent implements OnInit {
 
   ngOnInit() {
     this.loadCustomers().then();
-    this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
+    this.inventoryApi.availableProducts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
       this.fillFormsToUpdate();
-      this.availableProducts = items.map((item) => {
+      this.availableProducts = items.map(item => {
         return {
           ...item,
           selectedQuantity: 0
@@ -118,25 +142,22 @@ export class SaleInvoiceComponent implements OnInit {
     await this.customerApi.loadCustomers();
     this.customerApi.customers$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((customers) => this.customers = customers.items);
+      .subscribe(customers => (this.customers = customers.items));
   }
 
   onPhoneSearch(e: string) {
-    of(e).pipe(debounceTime(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      const filter: FilterIndex<CustomerDto>[] = [{prop: 'phone', operator: 'like', value: e}]
-      this.customerApi.loadCustomers(1, filter).then();
-    })
+    of(e)
+      .pipe(debounceTime(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const filter: FilterIndex<CustomerDto>[] = [{ prop: 'phone', operator: 'like', value: e }];
+        this.customerApi.loadCustomers(1, filter).then();
+      });
   }
 
   addItem(item: StockItemSelection, quantity: number = 1): void {
     if (quantity <= 0 || quantity > item.availableQuantity) return;
 
-    this.updateArrays(
-      this.availableProducts,
-      this.selectedProducts,
-      item,
-      quantity
-    );
+    this.updateArrays(this.availableProducts, this.selectedProducts, item, quantity);
 
     const selectedIndex = this.findItemIndex(this.selectedProducts, item);
     if (selectedIndex !== -1) {
@@ -148,12 +169,7 @@ export class SaleInvoiceComponent implements OnInit {
   removeItem(item: StockItemSelection, quantity: number = 1): void {
     if (quantity <= 0 || quantity > item.selectedQuantity) return;
 
-    this.updateArrays(
-      this.selectedProducts,
-      this.availableProducts,
-      item,
-      quantity
-    );
+    this.updateArrays(this.selectedProducts, this.availableProducts, item, quantity);
 
     const selectedIndex = this.findItemIndex(this.selectedProducts, item);
     if (selectedIndex !== -1) {
@@ -173,16 +189,19 @@ export class SaleInvoiceComponent implements OnInit {
 
   previewReceipt() {
     const element = this.receipt.nativeElement;
-    html2canvas(element, {backgroundColor: colors.gray_8, logging: true}).then(canvas => {
-      this.canvas.nativeElement.src = canvas.toDataURL();
-      this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
-      this.downloadLink.nativeElement.download = 'marble-diagram.png';
-      this.downloadLink.nativeElement.click();
-    }).catch((err) => {
-      console.error(err);
-    }).finally(() => {
-      this.isPreviewReceiptModalVisible.set(false);
-    });
+    html2canvas(element, { backgroundColor: colors.gray_8, logging: true })
+      .then(canvas => {
+        this.canvas.nativeElement.src = canvas.toDataURL();
+        this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
+        this.downloadLink.nativeElement.download = 'marble-diagram.png';
+        this.downloadLink.nativeElement.click();
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.isPreviewReceiptModalVisible.set(false);
+      });
   }
 
   submitOrderForm() {
@@ -210,20 +229,14 @@ export class SaleInvoiceComponent implements OnInit {
     } as CreateUpdateInvoice;
   }
 
-  private findItemIndex(
-    array: StockItemSelection[],
-    item: StockItemSelection
-  ): number {
+  private findItemIndex(array: StockItemSelection[], item: StockItemSelection): number {
     return array.findIndex(
-      (i) =>
-        i.product.id === item.product.id &&
-        i.color.id === item.color.id &&
-        i.size.id === item.size.id
+      i => i.product.id === item.product.id && i.color.id === item.color.id && i.size.id === item.size.id
     );
   }
 
   private updateItemsControl(): void {
-    this.saleInvoiceForm.controls.items.setValue(this.selectedProducts.map((item) => selectedProductToInvoiceItem(item)));
+    this.saleInvoiceForm.controls.items.setValue(this.selectedProducts.map(item => selectedProductToInvoiceItem(item)));
   }
 
   private updateArrays(
@@ -301,8 +314,9 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private onPhoneControlChange() {
-    this.customerForm.controls.phone.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
-      .subscribe((phoneValue) => {
+    this.customerForm.controls.phone.valueChanges
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe(phoneValue => {
         const customer = this.customers?.find(c => c.phone === phoneValue);
         if (customer) {
           this.saleInvoiceForm.controls.customerId.setValue(customer.id);
@@ -326,10 +340,12 @@ export class SaleInvoiceComponent implements OnInit {
   private onItemsControlChange() {
     this.saleInvoiceForm.controls.items.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
-      .subscribe((items) => {
+      .subscribe(items => {
         this.totalItemsOrdered.set(items.reduce((acc, curr) => acc + curr.quantity, 0));
         const totalOrdersPrice = items.reduce((acc, curr) => {
-          const stockItem = this.selectedProducts.find(s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId);
+          const stockItem = this.selectedProducts.find(
+            s => s.product.id === curr.productId && s.color.id === curr.colorId && s.size.id === curr.sizeId
+          );
           if (stockItem) {
             return acc + curr.quantity * stockItem.sellingUnitPrice;
           } else {
@@ -341,33 +357,37 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private onDiscountControlChange() {
-    this.saleInvoiceForm.controls.discount.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((discount) => {
-      this.discount.set(discount);
-    });
+    this.saleInvoiceForm.controls.discount.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe(discount => {
+        this.discount.set(discount);
+      });
   }
 
   private onShippingPriceChange() {
-    this.saleInvoiceForm.controls.shippingPrice.valueChanges.pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean)).subscribe((shippingPrice) => {
-      this.shippingPrice.set(shippingPrice);
-    });
+    this.saleInvoiceForm.controls.shippingPrice.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), filter(Boolean))
+      .subscribe(shippingPrice => {
+        this.shippingPrice.set(shippingPrice);
+      });
   }
 
   private onPaymentStatusChange() {
     this.saleInvoiceForm.controls.paymentStatus.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((paymentStatus) => {
+      .subscribe(paymentStatus => {
         switch (paymentStatus) {
           case 'paid':
             this.saleInvoiceForm.controls.refNumber.addValidators(Validators.required);
-            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            this.saleInvoiceForm.markAsDirty({ emitEvent: true });
             break;
           case 'partially-paid':
             this.saleInvoiceForm.controls.refNumber.addValidators(Validators.required);
-            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            this.saleInvoiceForm.markAsDirty({ emitEvent: true });
             break;
           case 'unpaid':
             this.saleInvoiceForm.controls.refNumber.clearValidators();
-            this.saleInvoiceForm.markAsDirty({emitEvent: true})
+            this.saleInvoiceForm.markAsDirty({ emitEvent: true });
             break;
         }
       });

@@ -1,19 +1,21 @@
 <page-container>
-  <button nz-button nzType="primary" type="button" (click)="isBatchPurchaseModalVisible.set(true)">ثبت دسته جمعی
-    محصولات
+  <button nz-button nzType="primary" type="button" (click)="isBatchPurchaseModalVisible.set(true)">
+    ثبت دسته جمعی محصولات
   </button>
   <nz-divider></nz-divider>
-  <form nz-form
-        nzLabelAlign="right"
-        nzLayout="vertical"
-        (ngSubmit)="submitPurchaseForm()"
-        [formGroup]="purchaseForm">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitPurchaseForm()" [formGroup]="purchaseForm">
     <!-- invoice number -->
     <nz-form-item>
       <nz-form-label nzRequired nzFor="invoiceNumber">شماره فاکتور</nz-form-label>
       <nz-form-control dir="ltr">
-        <input nz-input required name="invoiceNumber" type="text" id="invoiceNumber"
-               [formControl]="purchaseForm.controls.number"/>
+        <input
+          nz-input
+          required
+          name="invoiceNumber"
+          type="text"
+          id="invoiceNumber"
+          [formControl]="purchaseForm.controls.number"
+        />
       </nz-form-control>
     </nz-form-item>
     <!-- supplier id -->
@@ -65,27 +67,39 @@
       </nz-form-control>
     </nz-form-item>
     <!-- items -->
-    <nz-table nzSize="small" [nzData]="purchaseItemsForm.controls" [nzLoading]="loadingState"
-              nzTableLayout="fixed"
-              nzTitle="افزودن مشخصات محصولات به صورت تکی">
+    <nz-table
+      nzSize="small"
+      [nzData]="purchaseItemsForm.controls"
+      [nzLoading]="loadingState"
+      nzTableLayout="fixed"
+      nzTitle="افزودن مشخصات محصولات به صورت تکی"
+    >
       <thead>
-      <tr>
-        <th nzWidth="50px"></th>
-        <th nzWidth="252px">کد محصول</th>
-        <th nzWidth="144px">رنگ</th>
-        <th nzWidth="100px">سایز</th>
-        <th nzWidth="100px">تعداد</th>
-        <th>خرید</th>
-        <th>فروش</th>
-        <th nzWidth="50px"></th>
-      </tr>
+        <tr>
+          <th nzWidth="50px"></th>
+          <th nzWidth="252px">کد محصول</th>
+          <th nzWidth="144px">رنگ</th>
+          <th nzWidth="100px">سایز</th>
+          <th nzWidth="100px">تعداد</th>
+          <th>خرید</th>
+          <th>فروش</th>
+          <th nzWidth="50px"></th>
+        </tr>
       </thead>
       <tbody>
         @for (item of purchaseItemsForm.controls; let i = $index; track item.controls.uniqueId.value) {
           <tr [formGroup]="item">
             <td>
-              <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text"
-                      type="button" nzBlock nzSize="small" (click)="addItem(item)">
+              <button
+                [nzLoading]="loadingState"
+                [disabled]="loadingState"
+                nz-button
+                nzType="text"
+                type="button"
+                nzBlock
+                nzSize="small"
+                (click)="addItem(item)"
+              >
                 <i class="fa-solid fa-plus fa-sm"></i>
               </button>
             </td>
@@ -105,8 +119,12 @@
                       <div class="flex gap-2">
                         <product-image-container [imageSrc]="product.image"></product-image-container>
                         <div>
-                          <div class="col-span-5 text-xs">{{ product.name }}</div>
-                          <div class="col-span-5 font-mono font-bold text-xs">{{ product.code }}</div>
+                          <div class="col-span-5 text-xs">
+                            {{ product.name }}
+                          </div>
+                          <div class="col-span-5 font-mono font-bold text-xs">
+                            {{ product.code }}
+                          </div>
                         </div>
                       </div>
                     </nz-option>
@@ -115,7 +133,7 @@
               </nz-select>
             </td>
             <td>
-              <nz-select style="width: 100%;" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">
+              <nz-select style="width: 100%" nzPlaceHolder="رنگ" [formControl]="item.controls.colorId">
                 @for (color of colors$ | async; track $index) {
                   <nz-option [nzValue]="color.id" [nzLabel]="color.label"></nz-option>
                 }
@@ -138,15 +156,31 @@
               <ngx-price-input [formControl]="item.controls.sellingUnitPrice"></ngx-price-input>
             </td>
             <td>
-              <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="text" nzDanger
-                      type="button" nzBlock nzSize="small" (click)="removeItem(i)">
+              <button
+                [nzLoading]="loadingState"
+                [disabled]="loadingState"
+                nz-button
+                nzType="text"
+                nzDanger
+                type="button"
+                nzBlock
+                nzSize="small"
+                (click)="removeItem(i)"
+              >
                 <i class="fa-solid fa-trash fa-sm"></i>
               </button>
             </td>
           </tr>
         } @empty {
-          <button [nzLoading]="loadingState" [disabled]="loadingState" nz-button nzType="primary"
-                  type="button" nzBlock (click)="addItem()">
+          <button
+            [nzLoading]="loadingState"
+            [disabled]="loadingState"
+            nz-button
+            nzType="primary"
+            type="button"
+            nzBlock
+            (click)="addItem()"
+          >
             <i class="fa-solid fa-plus"></i>
           </button>
         }
@@ -154,19 +188,28 @@
     </nz-table>
     <nz-divider></nz-divider>
     <!-- submit -->
-    <button [nzLoading]="loadingState" [disabled]="purchaseForm.invalid || loadingState" nz-button nzType="primary"
-            nzBlock type="submit">ثبت فاکتور
+    <button
+      [nzLoading]="loadingState"
+      [disabled]="purchaseForm.invalid || loadingState"
+      nz-button
+      nzType="primary"
+      nzBlock
+      type="submit"
+    >
+      ثبت فاکتور
     </button>
   </form>
 </page-container>
 
-<nz-modal nzTitle="ثبت محصولات به صورت دسته جمعی"
-          nzCentered
-          nzWidth="95%"
-          [nzFooter]="null"
-          [nzVisible]="isBatchPurchaseModalVisible()"
-          (nzVisibleChange)="isBatchPurchaseModalVisible.set($event)"
-          (nzOnCancel)="isBatchPurchaseModalVisible.set(false)">
+<nz-modal
+  nzTitle="ثبت محصولات به صورت دسته جمعی"
+  nzCentered
+  nzWidth="95%"
+  [nzFooter]="null"
+  [nzVisible]="isBatchPurchaseModalVisible()"
+  (nzVisibleChange)="isBatchPurchaseModalVisible.set($event)"
+  (nzOnCancel)="isBatchPurchaseModalVisible.set(false)"
+>
   <ng-container *nzModalContent>
     <!-- batch submit -->
     <batch-purchase (onFormsSubmitted)="isBatchPurchaseModalVisible.set(!$event)"></batch-purchase>

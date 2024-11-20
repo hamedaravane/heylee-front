@@ -10,11 +10,14 @@ function transformKeys(obj: any, transformFn: (key: string) => string): any {
   if (Array.isArray(obj)) {
     return obj.map(item => transformKeys(item, transformFn));
   } else if (obj !== null && obj.constructor === Object) {
-    return Object.keys(obj).reduce((acc, key) => {
-      const transformedKey = transformFn(key);
-      acc[transformedKey] = transformKeys(obj[key], transformFn);
-      return acc;
-    }, {} as Record<string, any>);
+    return Object.keys(obj).reduce(
+      (acc, key) => {
+        const transformedKey = transformFn(key);
+        acc[transformedKey] = transformKeys(obj[key], transformFn);
+        return acc;
+      },
+      {} as Record<string, any>
+    );
   }
   return obj;
 }

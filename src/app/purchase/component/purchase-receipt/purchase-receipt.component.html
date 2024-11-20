@@ -12,21 +12,21 @@
           </div>
           <div class="grid gap-y-2 grid-cols-2 mb-2">
             <div>
-              <span>{{invoice.supplier.name}}</span>
+              <span>{{ invoice.supplier.name }}</span>
             </div>
             <div>
               <span class="me-2 opacity-80">قیمت کل:</span>
-              <span>{{invoice.totalPrice | number}}</span>
+              <span>{{ invoice.totalPrice | number }}</span>
               <currency-wrapper></currency-wrapper>
             </div>
             <div>
               <span class="me-2 opacity-80">تخفیف:</span>
-              <span>{{invoice.discount | number}}</span>
+              <span>{{ invoice.discount | number }}</span>
               <currency-wrapper></currency-wrapper>
             </div>
             <div>
               <span class="me-2 opacity-80">پرداختی:</span>
-              <span>{{invoice.paidPrice | number}}</span>
+              <span>{{ invoice.paidPrice | number }}</span>
               <currency-wrapper></currency-wrapper>
             </div>
           </div>
@@ -77,10 +77,12 @@
       <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
     }
     <div class="mt-4">
-      <nz-pagination [nzTotal]="list._meta.totalCount"
-                     [nzPageIndex]="list._meta.currentPage"
-                     (nzPageIndexChange)="pageIndexChange($event)"
-                     [nzPageSize]="list._meta.perPage"></nz-pagination>
+      <nz-pagination
+        [nzTotal]="list._meta.totalCount"
+        [nzPageIndex]="list._meta.currentPage"
+        (nzPageIndexChange)="pageIndexChange($event)"
+        [nzPageSize]="list._meta.perPage"
+      ></nz-pagination>
     </div>
   }
 </page-container>

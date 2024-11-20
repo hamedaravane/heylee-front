@@ -2,7 +2,7 @@
   <div class="flex gap-x-4">
     <div class="flex gap-x-2 items-center">
       <label class="whitespace-nowrap">شماره فاکتور</label>
-      <input nz-input [formControl]="purchaseInvoiceForm.controls.number" type="text" placeholder="شماره فاکتور">
+      <input nz-input [formControl]="purchaseInvoiceForm.controls.number" type="text" placeholder="شماره فاکتور" />
     </div>
     <div class="flex gap-x-2 items-center">
       <label>تامین کننده</label>
@@ -17,8 +17,13 @@
       </nz-select>
     </div>
   </div>
-  <textarea [formControl]="purchaseInvoiceForm.controls.description" nz-input type="text" class="my-4"
-            placeholder="توضیحات"></textarea>
+  <textarea
+    [formControl]="purchaseInvoiceForm.controls.description"
+    nz-input
+    type="text"
+    class="my-4"
+    placeholder="توضیحات"
+  ></textarea>
   <div class="flex gap-x-4">
     <div class="flex gap-x-2 items-center">
       <label>پرداختی</label>
@@ -38,66 +43,86 @@
 <form [formGroup]="defaultProductFrom" class="mb-4">
   <nz-table nzSize="small" [nzData]="[1]" nzBordered nzTitle="مقادیر کلی">
     <thead>
-    <tr>
-      <th>کد</th>
-      <th>نام</th>
-      <th>توضیحات</th>
-      <th>قیمت خرید</th>
-      <th>قیمت فروش</th>
-    </tr>
+      <tr>
+        <th>کد</th>
+        <th>نام</th>
+        <th>توضیحات</th>
+        <th>قیمت خرید</th>
+        <th>قیمت فروش</th>
+      </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>
-        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.prefixCode" type="text"
-               placeholder="ABC">
-      </td>
-      <td class="px-2">
-        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productName" type="text">
-      </td>
-      <td>
-        <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productDescription" type="text">
-      </td>
-      <td>
-        <ngx-price-input size="small"
-                         [formControl]="defaultProductFrom.controls.defaultPurchasePrice"></ngx-price-input>
-      </td>
-      <td>
-        <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></ngx-price-input>
-      </td>
-    </tr>
+      <tr>
+        <td>
+          <input
+            nz-input
+            nzSize="small"
+            [formControl]="defaultProductFrom.controls.prefixCode"
+            type="text"
+            placeholder="ABC"
+          />
+        </td>
+        <td class="px-2">
+          <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productName" type="text" />
+        </td>
+        <td>
+          <input nz-input nzSize="small" [formControl]="defaultProductFrom.controls.productDescription" type="text" />
+        </td>
+        <td>
+          <ngx-price-input
+            size="small"
+            [formControl]="defaultProductFrom.controls.defaultPurchasePrice"
+          ></ngx-price-input>
+        </td>
+        <td>
+          <ngx-price-input size="small" [formControl]="defaultProductFrom.controls.defaultSellPrice"></ngx-price-input>
+        </td>
+      </tr>
     </tbody>
   </nz-table>
 </form>
 <nz-divider></nz-divider>
 <nz-table [nzData]="batchPurchaseForm.controls" nzSize="small" [nzBordered]="false">
   <thead>
-  <tr>
-    <!--<th></th>-->
-    <th></th>
-    <th>کد محصول</th>
-    <th>نام محصول</th>
-    <th>توضیحات</th>
-    <th>رنگ</th>
-    <th>سایز</th>
-    <th>تعداد</th>
-    <th>قیمت خرید</th>
-    <th>قیمت فروش</th>
-    <th></th>
-  </tr>
+    <tr>
+      <!--<th></th>-->
+      <th></th>
+      <th>کد محصول</th>
+      <th>نام محصول</th>
+      <th>توضیحات</th>
+      <th>رنگ</th>
+      <th>سایز</th>
+      <th>تعداد</th>
+      <th>قیمت خرید</th>
+      <th>قیمت فروش</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     @for (purchaseItem of batchPurchaseForm.controls; let i = $index; track i) {
       <tr [formGroup]="purchaseItem">
         <td>
-          <img nz-image [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
-               [src]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
-               [nzFallback]="fallbackImageBase64" width="50" height="50" alt="" style="min-width: 40px"
-               class="aspect-square object-cover">
+          <img
+            nz-image
+            [nzSrc]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+            [src]="purchaseItem.value.imageSrc ?? fallbackImageBase64"
+            [nzFallback]="fallbackImageBase64"
+            width="50"
+            height="50"
+            alt=""
+            style="min-width: 40px"
+            class="aspect-square object-cover"
+          />
         </td>
-        <td><input nz-input nzSize="small" class="font-mono" [formControl]="purchaseItem.controls.code"></td>
-        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.name"></td>
-        <td><input nz-input nzSize="small" [formControl]="purchaseItem.controls.description"></td>
+        <td>
+          <input nz-input nzSize="small" class="font-mono" [formControl]="purchaseItem.controls.code" />
+        </td>
+        <td>
+          <input nz-input nzSize="small" [formControl]="purchaseItem.controls.name" />
+        </td>
+        <td>
+          <input nz-input nzSize="small" [formControl]="purchaseItem.controls.description" />
+        </td>
         <td>
           <nz-select nzPlaceHolder="رنگ" nzSize="small" [formControl]="purchaseItem.controls.colorId">
             @for (color of colors$ | async; track $index) {
@@ -113,8 +138,14 @@
           </nz-select>
         </td>
         <td>
-          <nz-input-number nzInputMode="number" [nzStep]="1" [nzMin]="1" nzSize="small" style="max-width: 45px"
-                           [formControl]="purchaseItem.controls.quantity"></nz-input-number>
+          <nz-input-number
+            nzInputMode="number"
+            [nzStep]="1"
+            [nzMin]="1"
+            nzSize="small"
+            style="max-width: 45px"
+            [formControl]="purchaseItem.controls.quantity"
+          ></nz-input-number>
         </td>
         <td>
           <ngx-price-input size="small" [formControl]="purchaseItem.controls.purchaseUnitPrice"></ngx-price-input>
@@ -132,7 +163,17 @@
   </tbody>
 </nz-table>
 <nz-divider></nz-divider>
-<button nz-button nzBlock nzSize="default" nzType="primary" type="button" [disabled]="purchaseInvoiceForm.invalid || batchPurchaseForm.invalid" (click)="submitInvoice()">ثبت محصولات</button>
+<button
+  nz-button
+  nzBlock
+  nzSize="default"
+  nzType="primary"
+  type="button"
+  [disabled]="purchaseInvoiceForm.invalid || batchPurchaseForm.invalid"
+  (click)="submitInvoice()"
+>
+  ثبت محصولات
+</button>
 
 <!-- Progress Modal -->
 <nz-modal [(nzVisible)]="isProgressModalVisible" nzTitle="در حال ثبت" [nzFooter]="null" nzClosable="false">

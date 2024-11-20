@@ -1,7 +1,7 @@
-import {Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild} from '@angular/core';
-import {NzButtonModule} from 'ng-zorro-antd/button';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {NzBytesPipe} from 'ng-zorro-antd/pipes';
+import { Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzBytesPipe } from 'ng-zorro-antd/pipes';
 
 @Component({
   selector: 'image-uploader',

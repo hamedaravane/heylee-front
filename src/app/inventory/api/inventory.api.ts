@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {InventoryFacade} from '@inventory/data-access/inventory.facade';
+import { inject, Injectable } from '@angular/core';
+import { InventoryFacade } from '@inventory/data-access/inventory.facade';
 
 @Injectable({
   providedIn: 'root'

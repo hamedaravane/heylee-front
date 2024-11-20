@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto} from '../entity/supplier.entity';
-import {Observable} from 'rxjs';
-import {IndexResponse} from '@shared/entity/server-response.entity';
-import {toSnakeCase} from '@shared/entity/utility.entity';
-import {BaseInfra} from '@shared/service/base.infra';
+import { Injectable } from '@angular/core';
+import { CreateSupplierDto, mapSupplierDtoToSupplier, Supplier, SupplierDto } from '../entity/supplier.entity';
+import { Observable } from 'rxjs';
+import { IndexResponse } from '@shared/entity/server-response.entity';
+import { toSnakeCase } from '@shared/entity/utility.entity';
+import { BaseInfra } from '@shared/service/base.infra';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SupplierInfra extends BaseInfra {
   private readonly endpoint = 'supplier';
@@ -17,7 +17,7 @@ export class SupplierInfra extends BaseInfra {
       supplier,
       mapSupplierDtoToSupplier,
       toSnakeCase
-    )
+    );
   }
 
   editSupplier(id: number, supplier: CreateSupplierDto): Observable<Supplier> {
@@ -31,17 +31,10 @@ export class SupplierInfra extends BaseInfra {
   }
 
   fetchSuppliers(pageIndex: number = 1): Observable<IndexResponse<Supplier>> {
-    return this.fetchEntities<SupplierDto, Supplier>(
-      this.endpoint,
-      mapSupplierDtoToSupplier,
-      pageIndex
-    );
+    return this.fetchEntities<SupplierDto, Supplier>(this.endpoint, mapSupplierDtoToSupplier, pageIndex);
   }
 
   deleteSupplier(id: number): Observable<void> {
-    return this.deleteEntity<SupplierDto>(
-      this.endpoint,
-      id,
-    );
+    return this.deleteEntity<SupplierDto>(this.endpoint, id);
   }
 }

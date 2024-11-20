@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {InventoryInfra} from '@inventory/infrastructure/inventory.infra';
-import {BehaviorSubject, filter, firstValueFrom} from 'rxjs';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {StockItem} from '@inventory/entity/inventory.entity';
-import {ServerResponseError} from '@shared/entity/server-response.entity';
+import { inject, Injectable } from '@angular/core';
+import { InventoryInfra } from '@inventory/infrastructure/inventory.infra';
+import { BehaviorSubject, filter, firstValueFrom } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { StockItem } from '@inventory/entity/inventory.entity';
+import { ServerResponseError } from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'

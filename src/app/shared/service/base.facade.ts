@@ -1,7 +1,7 @@
-import {inject, Injectable} from '@angular/core';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {ServerResponseError} from '@shared/entity/server-response.entity';
+import { inject, Injectable } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { ServerResponseError } from '@shared/entity/server-response.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -37,10 +37,7 @@ export class BaseFacade {
     }
   }
 
-  protected async deleteEntity(
-    infraFn: () => Promise<void>,
-    reloadFn: () => Promise<void>
-  ) {
+  protected async deleteEntity(infraFn: () => Promise<void>, reloadFn: () => Promise<void>) {
     this.loadingSubject.next(true);
     try {
       await infraFn();

@@ -1,19 +1,35 @@
 <page-container>
-  <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="primary" nz-button nzBlock
-          (click)="isAddCustomerVisible = true">
+  <button
+    [nzLoading]="loadingState"
+    [disabled]="loadingState"
+    nzType="primary"
+    nz-button
+    nzBlock
+    (click)="isAddCustomerVisible = true"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن مشتری</span>
   </button>
   <nz-divider></nz-divider>
   @if (customersIndex$ | async; as customers) {
     <nz-input-group [nzSuffix]="suffixIconSearch" [nzAddOnBefore]="prefixSearchBy">
-      <input [formControl]="filterForm.controls.searchValue" type="text" nz-input placeholder="متن جستجو را اینجا بنویسید"/>
+      <input
+        [formControl]="filterForm.controls.searchValue"
+        type="text"
+        nz-input
+        placeholder="متن جستجو را اینجا بنویسید"
+      />
     </nz-input-group>
     <ng-template #suffixIconSearch>
       <i class="fa-solid fa-search"></i>
     </ng-template>
     <ng-template #prefixSearchBy>
-      <nz-select [formControl]="filterForm.controls.searchBy" id="searchBy" style="min-width: 110px" nzPlaceHolder="جستجو بر اساس">
+      <nz-select
+        [formControl]="filterForm.controls.searchBy"
+        id="searchBy"
+        style="min-width: 110px"
+        nzPlaceHolder="جستجو بر اساس"
+      >
         @for (item of searchByOptions; track item.value) {
           <nz-option [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
         }
@@ -32,8 +48,13 @@
             <!-- phone -->
             <div>
               <i class="fa-solid fa-phone mx-2"></i>
-              <a [href]="'tel:+98' + customer.phone" target="_blank" class="col-span-3 font-mono text-indigo-500"
-                 dir="ltr">{{ customer.phone | phoneFormat }}</a>
+              <a
+                [href]="'tel:+98' + customer.phone"
+                target="_blank"
+                class="col-span-3 font-mono text-indigo-500"
+                dir="ltr"
+                >{{ customer.phone | phoneFormat }}</a
+              >
             </div>
             <div class="flex gap-2">
               <div>
@@ -55,16 +76,26 @@
             @if (customer.telegram) {
               <div>
                 <i class="fa-brands fa-telegram mx-2"></i>
-                <a [href]="'https://t.me/' + customer.instagram" target="_blank"
-                   class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.telegram }}</a>
+                <a
+                  [href]="'https://t.me/' + customer.instagram"
+                  target="_blank"
+                  class="col-span-3 font-mono text-indigo-500"
+                  dir="ltr"
+                  >{{ customer.telegram }}</a
+                >
               </div>
             }
             <!-- instagram username -->
             @if (customer.instagram) {
               <div>
                 <i class="fa-brands fa-instagram mx-2"></i>
-                <a [href]="'https://instagram.com/' + customer.instagram" target="_blank"
-                   class="col-span-3 font-mono text-indigo-500" dir="ltr">{{ customer.instagram }}</a>
+                <a
+                  [href]="'https://instagram.com/' + customer.instagram"
+                  target="_blank"
+                  class="col-span-3 font-mono text-indigo-500"
+                  dir="ltr"
+                  >{{ customer.instagram }}</a
+                >
               </div>
             }
             <!-- cashback balance -->
@@ -75,13 +106,24 @@
             </div>
             <div class="col-span-8 mt-4">
               <div class="flex gap-2">
-                <button [nzLoading]="loadingState" [disabled]="loadingState" nzType="default" nz-button
-                        (click)="selectCustomerToEdit(customer)">
+                <button
+                  [nzLoading]="loadingState"
+                  [disabled]="loadingState"
+                  nzType="default"
+                  nz-button
+                  (click)="selectCustomerToEdit(customer)"
+                >
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [nzLoading]="loadingState" [disabled]="loadingState || operatorUser" nzType="default" nzDanger
-                        nz-button (click)="deleteCustomer(customer.id)">
+                <button
+                  [nzLoading]="loadingState"
+                  [disabled]="loadingState || operatorUser"
+                  nzType="default"
+                  nzDanger
+                  nz-button
+                  (click)="deleteCustomer(customer.id)"
+                >
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>
@@ -104,56 +146,65 @@
   }
 </page-container>
 
-<nz-drawer [nzFooter]="createCustomerFooter"
-           nzClosable
-           nzSize="large"
-           nzPlacement="bottom"
-           nzTitle="افزودن مشتری"
-           [nzVisible]="isAddCustomerVisible"
-           (nzOnClose)="closeAddCustomer()">
+<nz-drawer
+  [nzFooter]="createCustomerFooter"
+  nzClosable
+  nzSize="large"
+  nzPlacement="bottom"
+  nzTitle="افزودن مشتری"
+  [nzVisible]="isAddCustomerVisible"
+  (nzOnClose)="closeAddCustomer()"
+>
   <ng-container *nzDrawerContent>
     <ng-container *ngTemplateOutlet="customerFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
 
-<nz-drawer [nzFooter]="editCustomerFooter"
-           nzClosable
-           nzSize="large"
-           nzPlacement="bottom"
-           nzTitle="ویرایش مشتری"
-           [nzVisible]="isEditCustomerVisible"
-           (nzOnClose)="closeAddCustomer()">
+<nz-drawer
+  [nzFooter]="editCustomerFooter"
+  nzClosable
+  nzSize="large"
+  nzPlacement="bottom"
+  nzTitle="ویرایش مشتری"
+  [nzVisible]="isEditCustomerVisible"
+  (nzOnClose)="closeAddCustomer()"
+>
   <ng-container *nzDrawerContent>
     <ng-container *ngTemplateOutlet="customerFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
 
 <ng-template #customerFormTempRef>
-  <form nz-form nzLabelAlign="right"
-        nzLayout="vertical"
-        [formGroup]="createCustomerForm"
-        (ngSubmit)="createCustomer()">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="createCustomerForm" (ngSubmit)="createCustomer()">
     <nz-form-item>
       <nz-form-label nzRequired nzFor="name">نام مشتری</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="name" type="text" id="name"
-               formControlName="name"/>
+        <input nz-input required name="name" type="text" id="name" formControlName="name" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzRequired nzFor="phone">شماره موبایل</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="+98">
-          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
-                 inputmode="numeric" id="phone" formControlName="phone"/>
+          <input
+            nz-input
+            required
+            maxlength="10"
+            minlength="10"
+            name="phone"
+            type="tel"
+            pattern="[0-9]*"
+            inputmode="numeric"
+            id="phone"
+            formControlName="phone"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzRequired nzFor="city">شهر</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="city" type="text" id="city"
-               formControlName="city"/>
+        <input nz-input required name="city" type="text" id="city" formControlName="city" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -172,8 +223,17 @@
     <nz-form-item>
       <nz-form-label nzFor="postalCode">کد پستی</nz-form-label>
       <nz-form-control dir="ltr">
-        <input nz-input maxlength="10" minlength="10" name="postalCode" type="text" pattern="[0-9]*"
-               inputmode="numeric" id="postalCode" formControlName="postalCode"/>
+        <input
+          nz-input
+          maxlength="10"
+          minlength="10"
+          name="postalCode"
+          type="text"
+          pattern="[0-9]*"
+          inputmode="numeric"
+          id="postalCode"
+          formControlName="postalCode"
+        />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -183,8 +243,16 @@
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
-          <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
-                 pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
+          <input
+            nz-input
+            name="instagram"
+            type="text"
+            id="instagram"
+            minlength="1"
+            maxlength="30"
+            pattern="^[a-zA-Z0-9._]{1,30}$"
+            formControlName="instagram"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -195,8 +263,16 @@
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
-          <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
-                 pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
+          <input
+            nz-input
+            name="telegram"
+            type="text"
+            id="telegram"
+            minlength="5"
+            maxlength="32"
+            pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            formControlName="telegram"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -204,15 +280,29 @@
 </ng-template>
 
 <ng-template #createCustomerFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
-          [disabled]="createCustomerForm.invalid || loadingState" (click)="createCustomer()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="createCustomerForm.invalid || loadingState"
+    (click)="createCustomer()"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
   </button>
 </ng-template>
 <ng-template #editCustomerFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
-          [disabled]="createCustomerForm.invalid || loadingState" (click)="editCustomer()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="createCustomerForm.invalid || loadingState"
+    (click)="editCustomer()"
+  >
     <i class="fa-solid fa-pen mx-2"></i>
     <span>ویرایش</span>
   </button>

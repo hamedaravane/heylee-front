@@ -264,5 +264,5 @@ export const colors = {
   rose_7: '#be123c',
   rose_8: '#9f1239',
   rose_9: '#881337',
-  rose_10: '#4c0519',
-}
+  rose_10: '#4c0519'
+};

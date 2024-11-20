@@ -37,7 +37,10 @@ export class AuthToken implements AuthToken {
   ) {}
 }
 
-export function mapAuthResponseDTOToModels(dto: AuthResponseDTO): { user: User, authToken: AuthToken } {
+export function mapAuthResponseDTOToModels(dto: AuthResponseDTO): {
+  user: User;
+  authToken: AuthToken;
+} {
   const user = new User(dto.result.user_id, dto.result.username);
   const authToken = new AuthToken(dto.result.token, dto.result.expires_at);
 

@@ -40,7 +40,11 @@
   <ul>
     @if (invoiceIndex$ | async; as invoiceItems) {
       @for (invoice of invoiceItems.items; track $index) {
-        <nz-ribbon [nzText]="(invoice.shippingStatus | shippingStatus).label" nzPlacement="start" [nzColor]="(invoice.shippingStatus | shippingStatus).color">
+        <nz-ribbon
+          [nzText]="(invoice.shippingStatus | shippingStatus).label"
+          nzPlacement="start"
+          [nzColor]="(invoice.shippingStatus | shippingStatus).color"
+        >
           <card-container class="mb-2 last:mb-0">
             <li class="flex flex-col gap-2 text-xs">
               <div class="font-bold">{{ invoice.createdAt | persianDate }}</div>
@@ -49,8 +53,12 @@
                   <div class="flex gap-4">
                     <product-image-container [imageSrc]="item.product.image"></product-image-container>
                     <div>
-                      <div class="col-span-3 line-clamp-1">{{ item.product.name }}</div>
-                      <div class="line-clamp-1 font-mono">{{ item.product.code }}</div>
+                      <div class="col-span-3 line-clamp-1">
+                        {{ item.product.name }}
+                      </div>
+                      <div class="line-clamp-1 font-mono">
+                        {{ item.product.code }}
+                      </div>
                       <div class="flex gap-x-4">
                         <span class="line-clamp-1">{{ item.color.label }}</span>
                         <span class="line-clamp-1 font-mono">{{ item.size.label }}</span>
@@ -59,18 +67,21 @@
                   </div>
                 </card-container>
               }
-              <div *ngIf="{show: false} as modal">
+              <div *ngIf="{ show: false } as modal">
                 <i class="fa-solid fa-user fa-xs me-2"></i>
                 <span (click)="modal.show = true">{{ invoice.customer.name }}</span>
-                <nz-modal [nzVisible]="modal.show"
-                          [nzTitle]="invoice.customer.name"
-                          (nzOnCancel)="modal.show = false"
-                          [nzFooter]="null">
+                <nz-modal
+                  [nzVisible]="modal.show"
+                  [nzTitle]="invoice.customer.name"
+                  (nzOnCancel)="modal.show = false"
+                  [nzFooter]="null"
+                >
                   <ng-container *nzModalContent>
                     <div class="mb-2">
                       <i class="fa-solid fa-phone"></i>
-                      <a [href]="'tel:+98' + invoice.customer.phone" dir="ltr"
-                         class="mx-2">+98{{ invoice.customer.phone }}</a>
+                      <a [href]="'tel:+98' + invoice.customer.phone" dir="ltr" class="mx-2"
+                        >+98{{ invoice.customer.phone }}</a
+                      >
                     </div>
                     <div class="mb-2">
                       <i class="fa-solid fa-location-dot"></i>
@@ -87,29 +98,33 @@
                     @if (invoice.customer.telegram) {
                       <div class="mb-2">
                         <i class="fa-brands fa-telegram"></i>
-                        <a [href]="'https://t.me/' + invoice.customer.telegram" dir="ltr"
-                           class="mx-2">{{ invoice.customer.telegram }}</a>
+                        <a [href]="'https://t.me/' + invoice.customer.telegram" dir="ltr" class="mx-2">{{
+                          invoice.customer.telegram
+                        }}</a>
                       </div>
                     }
                     @if (invoice.customer.instagram) {
                       <div>
                         <i class="fa-brands fa-instagram"></i>
-                        <a [href]="'https://instagram.com/' + invoice.customer.instagram" dir="ltr"
-                           class="mx-2">{{ invoice.customer.instagram }}</a>
+                        <a [href]="'https://instagram.com/' + invoice.customer.instagram" dir="ltr" class="mx-2">{{
+                          invoice.customer.instagram
+                        }}</a>
                       </div>
                     }
                   </ng-container>
                 </nz-modal>
               </div>
-              <div *ngIf="{show: false} as modal" (click)="modal.show = true" class="flex justify-between">
+              <div *ngIf="{ show: false } as modal" (click)="modal.show = true" class="flex justify-between">
                 <div>
                   <span class="opacity-70">پرداختی</span>
                   <span class="ms-2">{{ invoice.paidPrice | number }}</span>
                   <currency-wrapper></currency-wrapper>
-                  <nz-modal [nzVisible]="modal.show"
-                            nzTitle="جزئیات فاکتور"
-                            (nzOnCancel)="modal.show = false"
-                            [nzFooter]="null">
+                  <nz-modal
+                    [nzVisible]="modal.show"
+                    nzTitle="جزئیات فاکتور"
+                    (nzOnCancel)="modal.show = false"
+                    [nzFooter]="null"
+                  >
                     <ng-container *nzModalContent>
                       <div class="grid grid-cols-2 gap-y-2">
                         <div>
@@ -120,22 +135,22 @@
                         </div>
                         <div>
                           <span class="opacity-70">تخفیف</span>
-                          <span class="ms-2">{{ invoice.discount |number }}</span>
+                          <span class="ms-2">{{ invoice.discount | number }}</span>
                           <currency-wrapper></currency-wrapper>
                         </div>
                         <div>
                           <span class="opacity-70">حمل و نقل</span>
-                          <span class="ms-2">{{ invoice.shippingPrice |number }}</span>
+                          <span class="ms-2">{{ invoice.shippingPrice | number }}</span>
                           <currency-wrapper></currency-wrapper>
                         </div>
                         <div>
                           <span class="opacity-70">مبلغ کل</span>
-                          <span class="ms-2">{{ invoice.totalPrice |number }}</span>
+                          <span class="ms-2">{{ invoice.totalPrice | number }}</span>
                           <currency-wrapper></currency-wrapper>
                         </div>
                         <div>
                           <span class="opacity-70">پرداختی</span>
-                          <span class="ms-2">{{ invoice.paidPrice |number }}</span>
+                          <span class="ms-2">{{ invoice.paidPrice | number }}</span>
                           <currency-wrapper></currency-wrapper>
                         </div>
                       </div>
@@ -148,13 +163,21 @@
                 </div>
               </div>
               <div class="flex gap-x-4">
-                <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="loadingButtons || loadingState"
-                        (click)="navigateToEdit(invoice)">
+                <button
+                  nz-button
+                  [nzLoading]="loadingButtons || loadingState"
+                  [disabled]="loadingButtons || loadingState"
+                  (click)="navigateToEdit(invoice)"
+                >
                   <i class="fa-solid fa-pen-to-square fa-sm me-2"></i>
                   <span>ویرایش فاکتور</span>
                 </button>
-                <button nz-button [nzLoading]="loadingButtons || loadingState" [disabled]="true"
-                        (click)="generateReceipt(invoice)">
+                <button
+                  nz-button
+                  [nzLoading]="loadingButtons || loadingState"
+                  [disabled]="true"
+                  (click)="generateReceipt(invoice)"
+                >
                   <i class="fa-solid fa-paper-plane fa-sm me-2"></i>
                   <span>ارسال فاکتور</span>
                 </button>
@@ -166,10 +189,12 @@
         <nz-empty nzNotFoundContent="فاکتوری وجود ندارد"></nz-empty>
       }
       <div class="mt-4">
-        <nz-pagination [nzTotal]="invoiceItems._meta.totalCount"
-                       [nzPageIndex]="invoiceItems._meta.currentPage"
-                       (nzPageIndexChange)="pageIndexChange($event)"
-                       [nzPageSize]="invoiceItems._meta.perPage"></nz-pagination>
+        <nz-pagination
+          [nzTotal]="invoiceItems._meta.totalCount"
+          [nzPageIndex]="invoiceItems._meta.currentPage"
+          (nzPageIndexChange)="pageIndexChange($event)"
+          [nzPageSize]="invoiceItems._meta.perPage"
+        ></nz-pagination>
       </div>
     } @else if (loadingState) {
       <ul>
@@ -201,11 +226,10 @@
         <card-container class="mb-2 last:mb-0">
           <div class="flex gap-2">
             <div
-              class="h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600 rounded-sm">
+              class="h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600 rounded-sm"
+            >
               @if (item.product.image) {
-                <img [src]="item.product.image"
-                     class="w-12 h-full object-cover"
-                     alt="product image"/>
+                <img [src]="item.product.image" class="w-12 h-full object-cover" alt="product image" />
               } @else {
                 <i class="fa-solid fa-image fa-xl text-gray-400"></i>
               }
@@ -225,23 +249,23 @@
     <div>
       <div class="text-xs">
         <span class="opacity-70">مبلغ کل سفارشات مشتری:</span>
-        <span class="ms-2">{{ invoice.totalPrice |number }}</span>
+        <span class="ms-2">{{ invoice.totalPrice | number }}</span>
         <currency-wrapper></currency-wrapper>
       </div>
       <div class="text-xs">
         <span class="opacity-70">هزینه حمل و نقل:</span>
-        <span class="ms-2">{{ invoice.shippingPrice |number }}</span>
+        <span class="ms-2">{{ invoice.shippingPrice | number }}</span>
         <currency-wrapper></currency-wrapper>
       </div>
       <div class="text-xs">
         <span class="opacity-70">تخفیف:</span>
-        <span class="ms-2">{{ invoice.discount |number }}</span>
+        <span class="ms-2">{{ invoice.discount | number }}</span>
         <currency-wrapper></currency-wrapper>
       </div>
       <div class="border-b border-solid border-gray-600 my-2"></div>
       <div>
         <span class="opacity-70">پرداختی مشتری:</span>
-        <span class="ms-2">{{ invoice.paidPrice |number }}</span>
+        <span class="ms-2">{{ invoice.paidPrice | number }}</span>
         <currency-wrapper></currency-wrapper>
       </div>
     </div>

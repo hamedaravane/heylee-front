@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {IndexResponse} from '@shared/entity/server-response.entity';
-import {CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO} from '@sale/entity/invoice.entity';
-import {toCamelCase, toSnakeCase} from '@shared/entity/utility.entity';
-import {FilterIndex} from '@shared/entity/common.entity';
-import {BaseInfra} from '@shared/service/base.infra';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IndexResponse } from '@shared/entity/server-response.entity';
+import { CreateUpdateInvoice, SaleInvoice, SaleInvoiceDTO } from '@sale/entity/invoice.entity';
+import { toCamelCase, toSnakeCase } from '@shared/entity/utility.entity';
+import { FilterIndex } from '@shared/entity/common.entity';
+import { BaseInfra } from '@shared/service/base.infra';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +12,18 @@ import {BaseInfra} from '@shared/service/base.infra';
 export class SaleInfra extends BaseInfra {
   private readonly endpoint = 'sales-invoice';
 
-  fetchSaleInvoices(pageIndex: number = 1, filters?: FilterIndex<SaleInvoiceDTO>[], sort?: string): Observable<IndexResponse<SaleInvoice>> {
+  fetchSaleInvoices(
+    pageIndex: number = 1,
+    filters?: FilterIndex<SaleInvoiceDTO>[],
+    sort?: string
+  ): Observable<IndexResponse<SaleInvoice>> {
     return this.fetchEntities<SaleInvoiceDTO, SaleInvoice>(
       this.endpoint,
       toCamelCase,
       pageIndex,
       filters,
       sort,
-      'customer,sales_item,sales_item.product,sales_item.color,sales_item.size',
+      'customer,sales_item,sales_item.product,sales_item.color,sales_item.size'
     );
   }
 

@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {FilterIndex} from '@shared/entity/common.entity';
-import {map, Observable} from 'rxjs';
-import {dtoConvertor, IndexResponse, ServerResponse} from '@shared/entity/server-response.entity';
-import {environment} from '@environment';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { FilterIndex } from '@shared/entity/common.entity';
+import { map, Observable } from 'rxjs';
+import { dtoConvertor, IndexResponse, ServerResponse } from '@shared/entity/server-response.entity';
+import { environment } from '@environment';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +18,9 @@ export class BaseInfra {
     filters?: FilterIndex<TDto>[],
     sort: string = '-created_at',
     expand: string = '',
-    perPage: number = 100,
+    perPage: number = 100
   ): Observable<IndexResponse<TDomain>> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('per-page', perPage);
+    let params = new HttpParams().set('page', page).set('per-page', perPage);
 
     if (expand) {
       params = params.append('expand', expand);
@@ -36,11 +34,12 @@ export class BaseInfra {
       }
     }
 
-    return this.http.get<ServerResponse<IndexResponse<TDto>>>(`${environment.apiUrl}/${endpoint}/index`, {params})
+    return this.http
+      .get<ServerResponse<IndexResponse<TDto>>>(`${environment.apiUrl}/${endpoint}/index`, { params })
       .pipe(
         map(res => {
           if (res.ok) {
-            return dtoConvertor(res.result, (indexResponse) => {
+            return dtoConvertor(res.result, indexResponse => {
               return {
                 ...indexResponse,
                 items: indexResponse.items.map(dtoToDomainMapper)
@@ -61,16 +60,15 @@ export class BaseInfra {
   ): Observable<TDomain> {
     const data = toDtoConverter ? toDtoConverter(payload as TDomain) : payload;
 
-    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/create`, data)
-      .pipe(
-        map(res => {
-          if (res.ok) {
-            return dtoToDomainMapper(res.result);
-          } else {
-            throw res.result as unknown;
-          }
-        })
-      );
+    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/create`, data).pipe(
+      map(res => {
+        if (res.ok) {
+          return dtoToDomainMapper(res.result);
+        } else {
+          throw res.result as unknown;
+        }
+      })
+    );
   }
 
   protected updateEntity<TUpdateDto, TDto, TDomain>(
@@ -82,31 +80,26 @@ export class BaseInfra {
   ): Observable<TDomain> {
     const data = toDtoConverter ? toDtoConverter(payload as TDomain) : payload;
 
-    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/update/${id}`, data)
-      .pipe(
-        map(res => {
-          if (res.ok) {
-            return dtoToDomainMapper(res.result);
-          } else {
-            throw res.result as unknown;
-          }
-        })
-      );
+    return this.http.post<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/update/${id}`, data).pipe(
+      map(res => {
+        if (res.ok) {
+          return dtoToDomainMapper(res.result);
+        } else {
+          throw res.result as unknown;
+        }
+      })
+    );
   }
 
-  protected deleteEntity<TDto>(
-    endpoint: string,
-    id: number
-  ): Observable<void> {
-    return this.http.delete<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/delete/${id}`)
-      .pipe(
-        map(res => {
-          if (res.ok) {
-            return;
-          } else {
-            throw res.result as unknown;
-          }
-        })
-      );
+  protected deleteEntity<TDto>(endpoint: string, id: number): Observable<void> {
+    return this.http.delete<ServerResponse<TDto>>(`${environment.apiUrl}/${endpoint}/delete/${id}`).pipe(
+      map(res => {
+        if (res.ok) {
+          return;
+        } else {
+          throw res.result as unknown;
+        }
+      })
+    );
   }
 }

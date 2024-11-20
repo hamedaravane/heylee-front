@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {StockItemSelection} from '@inventory/entity/inventory.entity';
+import { Pipe, PipeTransform } from '@angular/core';
+import { StockItemSelection } from '@inventory/entity/inventory.entity';
 
 @Pipe({
   standalone: true,

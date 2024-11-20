@@ -1,25 +1,27 @@
-import {Component, DestroyRef, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
-import {AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
-import {BidiModule} from '@angular/cdk/bidi';
-import {NzDrawerModule} from 'ng-zorro-antd/drawer';
-import {NzFormModule} from 'ng-zorro-antd/form';
-import {NzInputModule} from 'ng-zorro-antd/input';
-import {NzDividerModule} from 'ng-zorro-antd/divider';
-import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
-import {NzEmptyModule} from 'ng-zorro-antd/empty';
-import {NzButtonModule} from 'ng-zorro-antd/button';
-import {RouterLink} from '@angular/router';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ProductFacade} from '../../data-access/product.facade';
-import {Product} from '../../entity/product.entity';
-import {NzUploadModule} from 'ng-zorro-antd/upload';
-import {NzIconModule} from 'ng-zorro-antd/icon';
-import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
-import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {NzPaginationModule} from 'ng-zorro-antd/pagination';
-import {ProductImageContainerComponent} from '@shared/component/product-image-container/product-image-container.component';
-import {ImageUploaderComponent} from '@shared/component/image-uploader/image-uploader.component';
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { AsyncPipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { BidiModule } from '@angular/cdk/bidi';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { RouterLink } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ProductFacade } from '../../data-access/product.facade';
+import { Product } from '../../entity/product.entity';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
+import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import {
+  ProductImageContainerComponent
+} from '@shared/component/product-image-container/product-image-container.component';
+import { ImageUploaderComponent } from '@shared/component/image-uploader/image-uploader.component';
 
 @Component({
   standalone: true,
@@ -63,26 +65,27 @@ export class ProductsComponent implements OnInit {
   productForm = new FormGroup({
     code: new FormControl<string>('', Validators.required),
     name: new FormControl<string>('', Validators.required),
-    description: new FormControl<string | null>(null),
-  })
+    description: new FormControl<string | null>(null)
+  });
 
   ngOnInit() {
     this.productFacade.loadProducts().then();
-    this.productFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((loading) => this.loadingState = loading)
+    this.productFacade.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => (this.loadingState = loading));
   }
 
   pageIndexChange(pageIndex: number): void {
     this.productFacade.loadProducts(pageIndex).then();
   }
 
-  selectProductId(id: number, product: { name: string, code: string, description: string}) {
+  selectProductId(id: number, product: { name: string; code: string; description: string }) {
     this.selectedIdToEdit = id;
     this.productForm.setValue({
       name: product.name,
       code: product.code,
       description: product.description
-    })
+    });
     this.isEditProductVisible = true;
   }
 

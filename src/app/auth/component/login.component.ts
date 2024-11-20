@@ -1,20 +1,28 @@
-import {Component, inject} from '@angular/core';
-import {NzFormModule} from 'ng-zorro-antd/form';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthFacade} from '../data-access/auth.facade';
-import {AuthRequest} from '../entity/auth.entity';
-import {Router} from '@angular/router';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {NzInputModule} from 'ng-zorro-antd/input';
-import {NzButtonModule} from 'ng-zorro-antd/button';
-import {AsyncPipe} from '@angular/common';
-import {NzIconModule} from 'ng-zorro-antd/icon';
-import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
+import { Component, inject } from '@angular/core';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthFacade } from '../data-access/auth.facade';
+import { AuthRequest } from '../entity/auth.entity';
+import { Router } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { AsyncPipe } from '@angular/common';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
 
 @Component({
   selector: 'login',
   standalone: true,
-  imports: [NzFormModule, NzInputModule, NzButtonModule, ReactiveFormsModule, NzIconModule, AsyncPipe, PageContainerComponent],
+  imports: [
+    NzFormModule,
+    NzInputModule,
+    NzButtonModule,
+    ReactiveFormsModule,
+    NzIconModule,
+    AsyncPipe,
+    PageContainerComponent
+  ],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -27,7 +35,7 @@ export class LoginComponent {
   loginForm = new FormGroup({
     username: new FormControl<string>('', [Validators.required]),
     password: new FormControl<string>('', [Validators.required])
-  })
+  });
 
   login() {
     const authRequest = this.loginForm.value as AuthRequest;

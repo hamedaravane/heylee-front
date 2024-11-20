@@ -1,14 +1,16 @@
 <page-container>
   <div class="grid grid-cols-2 gap-4">
     @for (button of buttons; track $index) {
-      <button [routerLink]="button.link"
-              [disabled]="button.disabled"
-              nz-button
-              nzType="default"
-              class="h-24"
-              nzSize="large">
+      <button
+        [routerLink]="button.link"
+        [disabled]="button.disabled"
+        nz-button
+        nzType="default"
+        class="h-24"
+        nzSize="large"
+      >
         <i [class]="button.icon" class="fa-solid block mb-2"></i>
-        <span class="text-sm">{{button.text}}</span>
+        <span class="text-sm">{{ button.text }}</span>
       </button>
     }
   </div>

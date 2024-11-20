@@ -1,8 +1,8 @@
-import {inject, Injectable} from '@angular/core';
-import {AuthInfra} from '../infrastructure/auth.infra';
-import {AuthRequest, AuthToken, User} from '../entity/auth.entity';
-import {firstValueFrom, Subject} from 'rxjs';
-import {NzMessageService} from 'ng-zorro-antd/message';
+import { inject, Injectable } from '@angular/core';
+import { AuthInfra } from '../infrastructure/auth.infra';
+import { AuthRequest, AuthToken, User } from '../entity/auth.entity';
+import { firstValueFrom, Subject } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Injectable({
   providedIn: 'root'
@@ -40,14 +40,17 @@ export class AuthFacade {
   async login(authRequest: AuthRequest): Promise<void> {
     this.loginLoadingSubject.next(true);
     try {
-      const {user, authToken} = await firstValueFrom(this.authFacade.login(authRequest));
+      const { user, authToken } = await firstValueFrom(this.authFacade.login(authRequest));
       this.userSubject.next(user);
       this.authTokenSubject.next(authToken);
       if (user.id === 4) {
         localStorage.setItem('activePages', 'sale,invoices,inventory,customer, transaction');
         localStorage.setItem('isOperator', 'true');
       } else {
-        localStorage.setItem('activePages', 'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt,statistic,transaction');
+        localStorage.setItem(
+          'activePages',
+          'sale,invoices,inventory,product,purchase,supplier,customer,purchase-receipt,statistic,transaction'
+        );
         localStorage.setItem('isOperator', 'false');
       }
       localStorage.setItem('username', user.username);

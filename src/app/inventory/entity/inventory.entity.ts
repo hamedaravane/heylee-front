@@ -1,6 +1,6 @@
-import {IdLabel} from '@shared/entity/common.entity';
-import {Product, ProductDto} from '@product/entity/product.entity';
-import {InvoiceItem} from '@sale/entity/invoice.entity';
+import { IdLabel } from '@shared/entity/common.entity';
+import { Product, ProductDto } from '@product/entity/product.entity';
+import { InvoiceItem } from '@sale/entity/invoice.entity';
 
 export interface StockItem {
   product: Omit<Product, 'createdAt' | 'updatedAt'>;
@@ -48,6 +48,6 @@ export function selectedProductToInvoiceItem(selectedProduct: StockItemSelection
     productId: selectedProduct.product.id,
     colorId: selectedProduct.color.id,
     sizeId: selectedProduct.size.id,
-    quantity: selectedProduct.selectedQuantity,
+    quantity: selectedProduct.selectedQuantity
   };
 }

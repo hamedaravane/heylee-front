@@ -1,8 +1,8 @@
-import {Component, DestroyRef, forwardRef, inject, Input} from '@angular/core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule} from '@angular/forms';
-import {BidiModule} from '@angular/cdk/bidi';
-import {NzInputModule} from 'ng-zorro-antd/input';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, forwardRef, inject, Input } from '@angular/core';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { BidiModule } from '@angular/cdk/bidi';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ngx-price-input',
@@ -14,24 +14,19 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
       multi: true
     }
   ],
-  imports: [
-    NzInputModule,
-    BidiModule,
-    ReactiveFormsModule
-  ],
-  template: `
-    <nz-input-group [nzSize]="size" [nzAddOnAfter]="currency">
-      <input
-          dir="ltr"
-          nz-input
-          type="text"
-          inputmode="numeric"
-          style="'font-family': ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"
-          [formControl]="controlValue"
-          (input)="onInput($event)"
-          (blur)="onBlur()"
-      />
-    </nz-input-group>`
+  imports: [NzInputModule, BidiModule, ReactiveFormsModule],
+  template: ` <nz-input-group [nzSize]="size" [nzAddOnAfter]="currency">
+    <input
+      dir="ltr"
+      nz-input
+      type="text"
+      inputmode="numeric"
+      style="'font-family': ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"
+      [formControl]="controlValue"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+  </nz-input-group>`
 })
 export class NgxPriceInputComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
@@ -42,12 +37,10 @@ export class NgxPriceInputComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   constructor() {
-    this.controlValue.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(value => {
-        const numericValue = this.parseValue(value);
-        this.onChange(numericValue);
-      });
+    this.controlValue.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
+      const numericValue = this.parseValue(value);
+      this.onChange(numericValue);
+    });
   }
 
   private formatValue(value: number): string {
@@ -72,7 +65,7 @@ export class NgxPriceInputComponent implements ControlValueAccessor {
     } else {
       input.value = '';
     }
-    this.controlValue.setValue(input.value, {emitEvent: true});
+    this.controlValue.setValue(input.value, { emitEvent: true });
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -93,9 +86,9 @@ export class NgxPriceInputComponent implements ControlValueAccessor {
 
   writeValue(value: number | null): void {
     if (value !== null) {
-      this.controlValue.setValue(this.formatValue(value), {emitEvent: false});
+      this.controlValue.setValue(this.formatValue(value), { emitEvent: false });
     } else {
-      this.controlValue.setValue('', {emitEvent: false});
+      this.controlValue.setValue('', { emitEvent: false });
     }
   }
 }

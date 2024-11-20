@@ -1,45 +1,43 @@
 <page-container>
-  <form nz-form
-        nzLayout="vertical"
-        nzLabelAlign="right"
-        autocomplete="off"
-        (ngSubmit)="login()"
-        [formGroup]="loginForm">
+  <form
+    nz-form
+    nzLayout="vertical"
+    nzLabelAlign="right"
+    autocomplete="off"
+    (ngSubmit)="login()"
+    [formGroup]="loginForm"
+  >
     <nz-form-item>
       <nz-form-label nzFor="username">نام کاربری</nz-form-label>
       <nz-form-control>
-        <input nz-input
-               required
-               name="username"
-               type="text"
-               id="username"
-               formControlName="username"/>
+        <input nz-input required name="username" type="text" id="username" formControlName="username" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzFor="password">کلمه عبور</nz-form-label>
       <nz-form-control>
         <nz-input-group [nzSuffix]="suffixTemplate">
-          <input nz-input
-                 required
-                 name="password"
-                 [type]="passwordVisible ? 'text' : 'password'"
-                 id="password"
-                 formControlName="password"/>
+          <input
+            nz-input
+            required
+            name="password"
+            [type]="passwordVisible ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+          />
         </nz-input-group>
         <ng-template #suffixTemplate>
-          <span nz-icon
-                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-                (click)="passwordVisible = !passwordVisible">
+          <span
+            nz-icon
+            [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+            (click)="passwordVisible = !passwordVisible"
+          >
           </span>
         </ng-template>
       </nz-form-control>
     </nz-form-item>
-    <button nz-button
-            [nzLoading]="loginLoading$ | async"
-            nzBlock
-            nzType="primary"
-            [disabled]="loginForm.invalid">ورود
+    <button nz-button [nzLoading]="loginLoading$ | async" nzBlock nzType="primary" [disabled]="loginForm.invalid">
+      ورود
     </button>
   </form>
 </page-container>

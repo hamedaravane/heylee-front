@@ -1,5 +1,12 @@
 <page-container>
-  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock (click)="isAddProductVisible = true">
+  <button
+    [disabled]="loadingState"
+    [nzLoading]="loadingState"
+    nzType="primary"
+    nz-button
+    nzBlock
+    (click)="isAddProductVisible = true"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن محصول</span>
   </button>
@@ -20,10 +27,31 @@
               </div>
             </div>
             <div>
-              <button [nzLoading]="loadingState" class="block mb-2" nzType="default" nzSize="small" nz-button (click)="selectProductId(product.id, {name: product.name, code: product.code, description: product.description})">
+              <button
+                [nzLoading]="loadingState"
+                class="block mb-2"
+                nzType="default"
+                nzSize="small"
+                nz-button
+                (click)="
+                  selectProductId(product.id, {
+                    name: product.name,
+                    code: product.code,
+                    description: product.description
+                  })
+                "
+              >
                 <i class="fa-solid leading-none fa-pen fa-xs mx-2"></i>
               </button>
-              <button [nzLoading]="loadingState" class="block mb-2" nzType="default" nzSize="small" nzDanger nz-button (click)="deleteProduct(product.id)">
+              <button
+                [nzLoading]="loadingState"
+                class="block mb-2"
+                nzType="default"
+                nzSize="small"
+                nzDanger
+                nz-button
+                (click)="deleteProduct(product.id)"
+              >
                 <i class="fa-solid leading-none fa-trash fa-xs mx-2"></i>
               </button>
             </div>
@@ -34,10 +62,12 @@
       }
     </ul>
     <div class="mt-4">
-      <nz-pagination [nzTotal]="products._meta.totalCount"
-                     [nzPageIndex]="products._meta.currentPage"
-                     (nzPageIndexChange)="pageIndexChange($event)"
-                     [nzPageSize]="products._meta.perPage"></nz-pagination>
+      <nz-pagination
+        [nzTotal]="products._meta.totalCount"
+        [nzPageIndex]="products._meta.currentPage"
+        (nzPageIndexChange)="pageIndexChange($event)"
+        [nzPageSize]="products._meta.perPage"
+      ></nz-pagination>
     </div>
   } @else if (loadingState) {
     <ul>
@@ -50,71 +80,86 @@
   }
 </page-container>
 
-<nz-drawer [nzFooter]="createProductFooter"
-           nzClosable
-           nzHeight="75%"
-           nzPlacement="bottom"
-           nzTitle="افزودن محصول"
-           [nzVisible]="isAddProductVisible"
-           (nzOnClose)="closeProductFormDrawer()">
+<nz-drawer
+  [nzFooter]="createProductFooter"
+  nzClosable
+  nzHeight="75%"
+  nzPlacement="bottom"
+  nzTitle="افزودن محصول"
+  [nzVisible]="isAddProductVisible"
+  (nzOnClose)="closeProductFormDrawer()"
+>
   <ng-container *nzDrawerContent>
     <ng-container *ngTemplateOutlet="productFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
-<nz-drawer [nzFooter]="editProductFooter"
-           nzClosable
-           nzHeight="75%"
-           nzPlacement="bottom"
-           nzTitle="ویرایش محصول"
-           [nzVisible]="isEditProductVisible"
-           (nzOnClose)="closeProductFormDrawer()">
+<nz-drawer
+  [nzFooter]="editProductFooter"
+  nzClosable
+  nzHeight="75%"
+  nzPlacement="bottom"
+  nzTitle="ویرایش محصول"
+  [nzVisible]="isEditProductVisible"
+  (nzOnClose)="closeProductFormDrawer()"
+>
   <ng-container *nzDrawerContent>
     <ng-container *ngTemplateOutlet="productFormTempRef"></ng-container>
   </ng-container>
 </nz-drawer>
 
 <ng-template #productFormTempRef>
-  <form nz-form nzLabelAlign="right"
-        nzLayout="vertical"
-        [formGroup]="productForm"
-        (ngSubmit)="createProduct()">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="productForm" (ngSubmit)="createProduct()">
     <image-uploader (onFileSelected)="onImageSelected($event)"></image-uploader>
     <nz-form-item>
       <nz-form-label nzRequired nzFor="code">کد محصول</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="code" type="text" id="code"
-               formControlName="code"/>
+        <input nz-input required name="code" type="text" id="code" formControlName="code" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzRequired nzFor="name">نام محصول</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="name" type="text" id="name"
-               formControlName="name"/>
+        <input nz-input required name="name" type="text" id="name" formControlName="name" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzFor="description">توضیحات</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            name="description"
-            id="description"
-            formControlName="description"
-            [nzAutosize]="{ minRows: 1, maxRows: 2 }"
+          nz-input
+          name="description"
+          id="description"
+          formControlName="description"
+          [nzAutosize]="{ minRows: 1, maxRows: 2 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
   </form>
 </ng-template>
 <ng-template #createProductFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="productForm.invalid || loadingState" (click)="createProduct()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="productForm.invalid || loadingState"
+    (click)="createProduct()"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
   </button>
 </ng-template>
 <ng-template #editProductFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary" [disabled]="productForm.invalid || loadingState" (click)="editProduct()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="productForm.invalid || loadingState"
+    (click)="editProduct()"
+  >
     <i class="fa-solid fa-pen mx-2"></i>
     <span>ویرایش</span>
   </button>

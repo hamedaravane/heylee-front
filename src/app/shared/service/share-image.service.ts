@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {NzMessageService} from 'ng-zorro-antd/message';
+import { inject, Injectable } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import * as htmlToImage from 'html-to-image';
 
 @Injectable({
@@ -17,24 +17,24 @@ export class ShareImageService {
   }
 
   blobToFile(blob: Blob) {
-    return new File([blob], 'receipt', {type: 'image/png'});
+    return new File([blob], 'receipt', { type: 'image/png' });
   }
 
-  generateShareData(element: HTMLElement) {
-
-  }
+  generateShareData(element: HTMLElement) {}
 
   downloadImage(element: HTMLElement, fileName: string) {
-    this.generateDataUrl(element).then((dataUrl) => {
-      const link = document.createElement('a');
-      link.download = `${fileName}.png`;
-      link.href = dataUrl;
-      link.click();
-    }).catch((e) => {
-      console.error(`Error: ${e}`);
-      const error = e as Error;
-      this.nzMessageService.error(error.message);
-    })
+    this.generateDataUrl(element)
+      .then(dataUrl => {
+        const link = document.createElement('a');
+        link.download = `${fileName}.png`;
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(e => {
+        console.error(`Error: ${e}`);
+        const error = e as Error;
+        this.nzMessageService.error(error.message);
+      });
   }
 
   canBrowserShareData(data: ShareData) {

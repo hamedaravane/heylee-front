@@ -25,6 +25,6 @@ export function mapSupplierDtoToSupplier(dto: SupplierDto): Supplier {
   return {
     ...dto,
     createdAt: dto.created_at,
-    id: dto.id,
+    id: dto.id
   };
 }

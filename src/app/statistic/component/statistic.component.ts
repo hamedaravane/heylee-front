@@ -1,15 +1,15 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {StatisticFacade} from '../data-access/statistic.facade';
-import {PageContainerComponent} from '@shared/component/page-container/page-container.component';
-import {CardContainerComponent} from '@shared/component/card-container/card-container.component';
-import {NzStatisticModule} from 'ng-zorro-antd/statistic';
-import {AsyncPipe, DecimalPipe} from '@angular/common';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {DailySale, TopSellingProduct} from '../entity/statistic.entity';
-import {CurrencyComponent} from '@shared/component/currency-wrapper/currency.component';
-import {Chart, ChartData, ChartOptions} from 'chart.js';
-import {BaseChartDirective} from 'ng2-charts';
-import {colors} from '@colors';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { StatisticFacade } from '../data-access/statistic.facade';
+import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
+import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DailySale, TopSellingProduct } from '../entity/statistic.entity';
+import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { colors } from '@colors';
 
 interface Report {
   id: string;
@@ -37,15 +37,69 @@ Chart.defaults.font.family = 'Vazirmatn';
 })
 export class StatisticComponent implements OnInit {
   reports: Report[] = [
-    {id: 'totalProfit', title: 'سود کل', value: null, currency: true, icon: 'fa-dollar-sign'},
-    {id: 'averageOrderValue', title: 'میانگین ارزش خرید', value: null, currency: true, icon: 'fa-chart-line'},
-    {id: 'profitAfterExpenses', title: 'سود خالص', value: null, currency: true, icon: 'fa-chart-area'},
-    {id: 'totalInvestments', title: 'کل سرمایه‌گذاری‌ها', value: null, currency: true, icon: 'fa-money-bill-wave'},
-    {id: 'totalExpenses', title: 'کل هزینه‌ها', value: null, currency: true, icon: 'fa-money-bill-wave'},
-    {id: 'totalRevenue', title: 'کل درآمد', value: null, currency: true, icon: 'fa-money-bill-wave'},
-    {id: 'totalNumberOfItemsSold', title: 'تعداد کل فروش', value: null, currency: false, icon: 'fa-box'},
-    {id: 'totalNumberOfOrders', title: 'تعداد کل سفارش‌ها', value: null, currency: false, icon: 'fa-boxes'},
-    {id: 'expectedBankBalance', title: 'موجودی پیش‌بینی شده', value: null, currency: true, icon: 'fa-money-bill-wave'},
+    {
+      id: 'totalProfit',
+      title: 'سود کل',
+      value: null,
+      currency: true,
+      icon: 'fa-dollar-sign'
+    },
+    {
+      id: 'averageOrderValue',
+      title: 'میانگین ارزش خرید',
+      value: null,
+      currency: true,
+      icon: 'fa-chart-line'
+    },
+    {
+      id: 'profitAfterExpenses',
+      title: 'سود خالص',
+      value: null,
+      currency: true,
+      icon: 'fa-chart-area'
+    },
+    {
+      id: 'totalInvestments',
+      title: 'کل سرمایه‌گذاری‌ها',
+      value: null,
+      currency: true,
+      icon: 'fa-money-bill-wave'
+    },
+    {
+      id: 'totalExpenses',
+      title: 'کل هزینه‌ها',
+      value: null,
+      currency: true,
+      icon: 'fa-money-bill-wave'
+    },
+    {
+      id: 'totalRevenue',
+      title: 'کل درآمد',
+      value: null,
+      currency: true,
+      icon: 'fa-money-bill-wave'
+    },
+    {
+      id: 'totalNumberOfItemsSold',
+      title: 'تعداد کل فروش',
+      value: null,
+      currency: false,
+      icon: 'fa-box'
+    },
+    {
+      id: 'totalNumberOfOrders',
+      title: 'تعداد کل سفارش‌ها',
+      value: null,
+      currency: false,
+      icon: 'fa-boxes'
+    },
+    {
+      id: 'expectedBankBalance',
+      title: 'موجودی پیش‌بینی شده',
+      value: null,
+      currency: true,
+      icon: 'fa-money-bill-wave'
+    }
   ];
   dailySalesChartData: ChartData<'bar'> = {
     labels: [],
@@ -57,13 +111,13 @@ export class StatisticComponent implements OnInit {
       x: {
         title: {
           display: true,
-          text: 'تاریخ فروش',
+          text: 'تاریخ فروش'
         }
       },
       y: {
         title: {
           display: true,
-          text: 'مقدار کل فروش',
+          text: 'مقدار کل فروش'
         },
         beginAtZero: true
       }
@@ -79,13 +133,13 @@ export class StatisticComponent implements OnInit {
       x: {
         title: {
           display: true,
-          text: 'نام محصول',
+          text: 'نام محصول'
         }
       },
       y: {
         title: {
           display: true,
-          text: 'تعداد کل فروش',
+          text: 'تعداد کل فروش'
         },
         beginAtZero: true
       }
@@ -98,18 +152,17 @@ export class StatisticComponent implements OnInit {
 
   ngOnInit() {
     this.statisticFacade.loadStatistics().then();
-    this.statisticFacade.statistics$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((statistics) => {
-        this.reports.map(report => {
-          Object.entries(statistics).map(([key, value]) => {
-            if (report.id === key) {
-              report.value = value
-            }
-          })
-        })
-        this.initializeDailySalesChart(statistics.dailySales);
-        this.initializeTopSellingProductChart(statistics.topSellingProducts)
+    this.statisticFacade.statistics$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(statistics => {
+      this.reports.map(report => {
+        Object.entries(statistics).map(([key, value]) => {
+          if (report.id === key) {
+            report.value = value;
+          }
+        });
       });
+      this.initializeDailySalesChart(statistics.dailySales);
+      this.initializeTopSellingProductChart(statistics.topSellingProducts);
+    });
   }
 
   initializeDailySalesChart(dailySales: DailySale[]): void {

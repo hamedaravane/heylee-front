@@ -1,5 +1,5 @@
-import {SwUpdate} from '@angular/service-worker';
-import {inject, Injectable, isDevMode} from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
+import { inject, Injectable, isDevMode } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +9,9 @@ export class UpdateService {
 
   checkForUpdates() {
     if (!isDevMode()) {
-      return this.swUpdate.checkForUpdate()
+      return this.swUpdate.checkForUpdate();
     }
-    return new Promise<boolean>(() => false)
+    return new Promise<boolean>(() => false);
   }
 
   updateApplication() {

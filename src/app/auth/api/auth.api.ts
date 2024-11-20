@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {AuthFacade} from '@auth/data-access/auth.facade';
+import { inject, Injectable } from '@angular/core';
+import { AuthFacade } from '@auth/data-access/auth.facade';
 
 @Injectable({
   providedIn: 'root'

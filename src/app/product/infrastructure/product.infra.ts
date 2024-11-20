@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {mapProductDtoToProduct, Product, ProductDto} from '../entity/product.entity';
-import {firstValueFrom, Observable} from 'rxjs';
-import {IndexResponse} from '@shared/entity/server-response.entity';
-import {FilterIndex, IdLabel} from '@shared/entity/common.entity';
-import {BaseInfra} from '@shared/service/base.infra';
+import { Injectable } from '@angular/core';
+import { mapProductDtoToProduct, Product, ProductDto } from '../entity/product.entity';
+import { firstValueFrom, Observable } from 'rxjs';
+import { IndexResponse } from '@shared/entity/server-response.entity';
+import { FilterIndex, IdLabel } from '@shared/entity/common.entity';
+import { BaseInfra } from '@shared/service/base.infra';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductInfra extends BaseInfra {
   private readonly endpoint = 'product';
@@ -20,31 +20,18 @@ export class ProductInfra extends BaseInfra {
   }
 
   createProduct(formData: FormData): Observable<Product> {
-    return this.createEntity<void, ProductDto, Product>(this.endpoint, formData, mapProductDtoToProduct)
+    return this.createEntity<void, ProductDto, Product>(this.endpoint, formData, mapProductDtoToProduct);
   }
 
   updateProduct(id: number, formData: FormData): Observable<Product> {
-    return this.updateEntity<FormData, ProductDto, Product>(
-      this.endpoint,
-      id,
-      formData,
-      mapProductDtoToProduct
-    );
+    return this.updateEntity<FormData, ProductDto, Product>(this.endpoint, id, formData, mapProductDtoToProduct);
   }
 
   fetchProducts(pageIndex: number = 1, filter?: FilterIndex<ProductDto>[]): Observable<IndexResponse<Product>> {
-    return this.fetchEntities<ProductDto, Product>(
-      this.endpoint,
-      mapProductDtoToProduct,
-      pageIndex,
-      filter
-    );
+    return this.fetchEntities<ProductDto, Product>(this.endpoint, mapProductDtoToProduct, pageIndex, filter);
   }
 
   deleteProduct(id: number): Observable<void> {
-    return this.deleteEntity<ProductDto>(
-      this.endpoint,
-      id,
-    );
+    return this.deleteEntity<ProductDto>(this.endpoint, id);
   }
 }

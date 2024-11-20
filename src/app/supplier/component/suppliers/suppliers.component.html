@@ -1,6 +1,12 @@
 <page-container>
-  <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="primary" nz-button nzBlock
-          (click)="createSupplierFormDrawer = true">
+  <button
+    [disabled]="loadingState"
+    [nzLoading]="loadingState"
+    nzType="primary"
+    nz-button
+    nzBlock
+    (click)="createSupplierFormDrawer = true"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن تامین کننده</span>
   </button>
@@ -21,33 +27,47 @@
             @if (supplier.phone) {
               <div>
                 <i class="fa-solid fa-phone me-2"></i>
-                <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500  font-mono"
-                   dir="ltr">{{ supplier.phone | phoneFormat }}</a>
+                <a [href]="'tel:+98' + supplier.phone" class="text-indigo-500 font-mono" dir="ltr">{{
+                  supplier.phone | phoneFormat
+                }}</a>
               </div>
             }
             @if (supplier.telegram) {
               <div>
                 <i class="fa-brands fa-telegram me-2"></i>
-                <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500  font-mono"
-                   dir="ltr">{{ supplier.telegram }}</a>
+                <a [href]="'https://t.me/' + supplier.telegram" class="text-indigo-500 font-mono" dir="ltr">{{
+                  supplier.telegram
+                }}</a>
               </div>
             }
             @if (supplier.instagram) {
-              <div class=" text-start">
+              <div class="text-start">
                 <i class="fa-brands fa-instagram me-2"></i>
-                <a [href]="'https://instagram.com/' + supplier.instagram" class="text-indigo-500  font-mono"
-                   dir="ltr">{{ supplier.instagram }}</a>
+                <a [href]="'https://instagram.com/' + supplier.instagram" class="text-indigo-500 font-mono" dir="ltr">{{
+                  supplier.instagram
+                }}</a>
               </div>
             }
             <div class="mt-4">
               <div class="flex gap-2">
-                <button [disabled]="loadingState" [nzLoading]="loadingState" (click)="selectIdToEdit(supplier.id)"
-                        nzType="default" nz-button>
+                <button
+                  [disabled]="loadingState"
+                  [nzLoading]="loadingState"
+                  (click)="selectIdToEdit(supplier.id)"
+                  nzType="default"
+                  nz-button
+                >
                   <i class="fa-solid fa-pen fa-xs mx-2"></i>
                   <span>ویرایش</span>
                 </button>
-                <button [disabled]="loadingState" [nzLoading]="loadingState" nzType="default"
-                        nzDanger nz-button (click)="deleteSupplier(supplier.id)">
+                <button
+                  [disabled]="loadingState"
+                  [nzLoading]="loadingState"
+                  nzType="default"
+                  nzDanger
+                  nz-button
+                  (click)="deleteSupplier(supplier.id)"
+                >
                   <i class="fa-solid fa-trash fa-xs mx-2"></i>
                   <span>حذف</span>
                 </button>
@@ -70,52 +90,52 @@
   }
 </page-container>
 
-<nz-drawer [nzFooter]="createSupplierFooter"
-           nzClosable
-           nzHeight="75%"
-           nzPlacement="bottom"
-           nzTitle="افزودن تامین کننده"
-           [nzVisible]="createSupplierFormDrawer"
-           (nzOnClose)="closeSupplierFormDrawer()">
+<nz-drawer
+  [nzFooter]="createSupplierFooter"
+  nzClosable
+  nzHeight="75%"
+  nzPlacement="bottom"
+  nzTitle="افزودن تامین کننده"
+  [nzVisible]="createSupplierFormDrawer"
+  (nzOnClose)="closeSupplierFormDrawer()"
+>
   <ng-container *nzDrawerContent>
-    <ng-container *ngTemplateOutlet="supplierFormTemp; context: {$implicit: supplierForm}"></ng-container>
+    <ng-container *ngTemplateOutlet="supplierFormTemp; context: { $implicit: supplierForm }"></ng-container>
   </ng-container>
 </nz-drawer>
 
-<nz-drawer [nzFooter]="editSupplierFooter"
-           nzClosable
-           nzHeight="75%"
-           nzPlacement="bottom"
-           nzTitle="ویرایش تامین کننده"
-           [nzVisible]="editSupplierFormDrawer"
-           (nzOnClose)="closeSupplierFormDrawer()">
+<nz-drawer
+  [nzFooter]="editSupplierFooter"
+  nzClosable
+  nzHeight="75%"
+  nzPlacement="bottom"
+  nzTitle="ویرایش تامین کننده"
+  [nzVisible]="editSupplierFormDrawer"
+  (nzOnClose)="closeSupplierFormDrawer()"
+>
   <ng-container *nzDrawerContent>
-    <ng-container *ngTemplateOutlet="supplierFormTemp; context: {$implicit: supplierForm}"></ng-container>
+    <ng-container *ngTemplateOutlet="supplierFormTemp; context: { $implicit: supplierForm }"></ng-container>
   </ng-container>
 </nz-drawer>
 
 <ng-template #supplierFormTemp let-supplierForm>
-  <form nz-form nzLabelAlign="right"
-        nzLayout="vertical"
-        [formGroup]="supplierForm"
-        (ngSubmit)="createSupplier()">
+  <form nz-form nzLabelAlign="right" nzLayout="vertical" [formGroup]="supplierForm" (ngSubmit)="createSupplier()">
     <nz-form-item>
       <nz-form-label nzRequired nzFor="name">نام تامین کننده</nz-form-label>
       <nz-form-control>
-        <input nz-input required name="name" type="text" id="name"
-               formControlName="name"/>
+        <input nz-input required name="name" type="text" id="name" formControlName="name" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label nzRequired nzXs="4" nzFor="address">آدرس</nz-form-label>
       <nz-form-control>
         <textarea
-            nz-input
-            required
-            name="address"
-            id="address"
-            formControlName="address"
-            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+          nz-input
+          required
+          name="address"
+          id="address"
+          formControlName="address"
+          [nzAutosize]="{ minRows: 2, maxRows: 4 }"
         ></textarea>
       </nz-form-control>
     </nz-form-item>
@@ -123,8 +143,18 @@
       <nz-form-label nzRequired nzXs="4" nzFor="phone">شماره موبایل</nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="+98">
-          <input nz-input required maxlength="10" minlength="10" name="phone" type="tel" pattern="[0-9]*"
-                 inputmode="numeric" id="phone" formControlName="phone"/>
+          <input
+            nz-input
+            required
+            maxlength="10"
+            minlength="10"
+            name="phone"
+            type="tel"
+            pattern="[0-9]*"
+            inputmode="numeric"
+            id="phone"
+            formControlName="phone"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -135,8 +165,16 @@
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="instagram.com/" nzAddOnAfter="/">
-          <input nz-input name="instagram" type="text" id="instagram" minlength="1" maxlength="30"
-                 pattern="^[a-zA-Z0-9._]{1,30}$" formControlName="instagram"/>
+          <input
+            nz-input
+            name="instagram"
+            type="text"
+            id="instagram"
+            minlength="1"
+            maxlength="30"
+            pattern="^[a-zA-Z0-9._]{1,30}$"
+            formControlName="instagram"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -147,23 +185,45 @@
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="t.me/" nzAddOnAfter="/">
-          <input nz-input name="telegram" type="text" id="telegram" minlength="5" maxlength="32"
-                 pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$" formControlName="telegram"/>
+          <input
+            nz-input
+            name="telegram"
+            type="text"
+            id="telegram"
+            minlength="5"
+            maxlength="32"
+            pattern="^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            formControlName="telegram"
+          />
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
   </form>
 </ng-template>
 <ng-template #createSupplierFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
-          [disabled]="supplierForm.invalid || loadingState" (click)="createSupplier()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="supplierForm.invalid || loadingState"
+    (click)="createSupplier()"
+  >
     <i class="fa-solid fa-plus mx-2"></i>
     <span>افزودن</span>
   </button>
 </ng-template>
 <ng-template #editSupplierFooter>
-  <button [nzLoading]="loadingState" nz-button nzBlock nzSize="large" nzType="primary"
-          [disabled]="supplierForm.invalid || loadingState" (click)="editSupplier()">
+  <button
+    [nzLoading]="loadingState"
+    nz-button
+    nzBlock
+    nzSize="large"
+    nzType="primary"
+    [disabled]="supplierForm.invalid || loadingState"
+    (click)="editSupplier()"
+  >
     <i class="fa-solid fa-pen mx-2"></i>
     <span>ویرایش</span>
   </button>
