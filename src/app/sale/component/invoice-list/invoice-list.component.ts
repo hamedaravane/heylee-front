@@ -15,8 +15,6 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { InventoryApi } from '@inventory/api/inventory.api';
 import { Router, RouterLink } from '@angular/router';
-import * as htmlToImage from 'html-to-image';
-import { ShareImageService } from '@shared/service/share-image.service';
 import {
   ProductImageContainerComponent
 } from '@shared/component/product-image-container/product-image-container.component';
@@ -61,7 +59,6 @@ export class InvoiceListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly inventoryApi = inject(InventoryApi);
-  private readonly shareImageService = inject(ShareImageService);
   invoiceIndex$ = this.saleFacade.invoiceIndex$;
   loadingState = false;
   loadingButtons = false;
@@ -122,7 +119,7 @@ export class InvoiceListComponent implements OnInit {
     this.saleFacade.loadInvoices(pageIndex).then();
   }
 
-  async generateReceipt(invoice: SaleInvoice) {
+  /*async generateReceipt(invoice: SaleInvoice) {
     this.selectedInvoice.set(invoice);
     try {
       this.loadingButtons = true;
@@ -148,7 +145,7 @@ export class InvoiceListComponent implements OnInit {
       this.selectedInvoice.set(null);
       this.loadingButtons = false;
     }
-  }
+  }*/
 
   navigateToEdit(invoice: SaleInvoice) {
     this.router.navigate(['/sale'], { state: { invoice: invoice } });

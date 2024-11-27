@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild
+} from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -6,7 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { BidiModule } from '@angular/cdk/bidi';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { SaleFacade } from '../../data-access/sale.facade';
-import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ProductFilterPipe } from '../../pipe/product-filter.pipe';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
@@ -31,12 +41,11 @@ import { Router } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import { ProductImageContainerComponent } from '@shared/component/product-image-container/product-image-container.component';
 import { FilterIndex } from '@shared/entity/common.entity';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ReceiptService } from '@shared/service/receipt-service';
+import { ReceiptComponent } from '@shared/component/receipt/receipt.component';
 
 @Component({
   selector: 'sale-invoice',
@@ -51,7 +60,6 @@ import { ReceiptService } from '@shared/service/receipt-service';
     NzInputModule,
     BidiModule,
     NzDividerModule,
-    AsyncPipe,
     FormsModule,
     DecimalPipe,
     ProductFilterPipe,
@@ -63,7 +71,8 @@ import { ReceiptService } from '@shared/service/receipt-service';
     CardContainerComponent,
     PageContainerComponent,
     CurrencyComponent,
-    ProductImageContainerComponent
+    ProductImageContainerComponent,
+    ReceiptComponent
   ],
   standalone: true,
   providers: [ReceiptService],
@@ -80,14 +89,6 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly receiptService = inject(ReceiptService);
   private readonly router = inject(Router);
   protected readonly Validators = Validators;
-  readonly today = new Date();
-  dateFormatter = new Intl.DateTimeFormat('fa-IR', {
-    dateStyle: 'full'
-  });
-
-  timeFormatter = new Intl.DateTimeFormat('fa-IR', {
-    timeStyle: 'short'
-  });
 
   constructor() {
     this.checkUpdateMode();
@@ -198,7 +199,9 @@ export class SaleInvoiceComponent implements OnInit {
 
   async previewReceipt() {
     const element = this.receipt.nativeElement;
-    await this.receiptService.shareReceipt(element, 'Receipt', 'Receipt', () => this.isPreviewReceiptModalVisible.set(false))
+    await this.receiptService.shareReceipt(element, 'رسید سفارش شما', undefined, () =>
+      this.isPreviewReceiptModalVisible.set(false)
+    );
   }
 
   submitOrderForm() {

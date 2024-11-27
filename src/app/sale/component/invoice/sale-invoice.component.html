@@ -440,51 +440,16 @@
   (nzAfterOpen)="previewReceipt()"
 >
   <ng-container *nzModalContent>
-    <div class="bg-gray-800 text-gray-300 rounded-lg max-w-md w-full p-6" #receipt>
-      <h1 class="text-xl font-bold text-center">رسید خرید</h1>
-      <div class="mt-8">
-        <!-- Date and Time -->
-        <div class="flex justify-between">
-          <span>تاریخ:</span>
-          <span class="font-medium">{{ dateFormatter.format(today) }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>ساعت:</span>
-          <span class="font-medium">{{ timeFormatter.format(today) }}</span>
-        </div>
-
-        <hr class="my-4 border-gray-600">
-
-        <!-- Order Summary -->
-        <div>
-          <span class="me-6">مجموع سفارشات:</span>
-          <span>{{ totalOrderPrice() | number }}</span>
-          <currency-wrapper></currency-wrapper>
-        </div>
-        <div>
-          <span class="me-6">هزینه ارسال:</span>
-          <span>{{ shippingPrice() | number }}</span>
-          <currency-wrapper></currency-wrapper>
-        </div>
-        <div>
-          <span class="me-6">تخفیف:</span>
-          <span>{{ discount() | number }}</span>
-          <currency-wrapper></currency-wrapper>
-        </div>
-        <div>
-          <span class="me-6">هزینه نهایی:</span>
-          <span>{{ customerPayment() | number }}</span>
-          <currency-wrapper></currency-wrapper>
-        </div>
-
-        <hr class="my-4 border-gray-600">
-
-        <!-- Thank You Note -->
-        <div class="text-center">
-          <p>با تشکر از خرید شما</p>
-          <img src="/images/logo.png" width="100" alt="logo" class="inline-block m-3">
-        </div>
-      </div>
+    <div #receipt>
+      <receipt
+        [address]="saleInvoiceForm.controls.address.value!"
+        [customerName]="customerForm.controls.name.value!"
+        [customerPayment]="customerPayment()"
+        [discount]="discount()"
+        [selectedProducts]="selectedProducts"
+        [shippingPrice]="shippingPrice()"
+        [totalOrderPrice]="totalOrderPrice()"
+      ></receipt>
     </div>
   </ng-container>
 </nz-modal>
