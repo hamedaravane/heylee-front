@@ -94,7 +94,7 @@
     <!-- customer phone -->
     <nz-form-item>
       <nz-form-label [nzRequired]="customerForm.controls.phone.hasValidator(Validators.required)" nzFor="phone"
-        >شماره تماس
+      >شماره تماس
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-select
@@ -117,7 +117,7 @@
     <!-- customer full name -->
     <nz-form-item>
       <nz-form-label [nzRequired]="customerForm.controls.name.hasValidator(Validators.required)" nzFor="name"
-        >نام کامل مشتری
+      >نام کامل مشتری
       </nz-form-label>
       <nz-form-control>
         <input nz-input required name="name" type="text" id="name" formControlName="name" />
@@ -128,7 +128,7 @@
       <nz-form-label
         [nzRequired]="customerForm.controls.cityCustomer.hasValidator(Validators.required)"
         nzFor="cityCustomer"
-        >شهر
+      >شهر
       </nz-form-label>
       <nz-form-control>
         <input nz-input required name="cityCustomer" type="text" id="cityCustomer" formControlName="cityCustomer" />
@@ -139,7 +139,7 @@
       <nz-form-label
         [nzRequired]="customerForm.controls.addressCustomer.hasValidator(Validators.required)"
         nzFor="addressCustomer"
-        >آدرس
+      >آدرس
       </nz-form-label>
       <nz-form-control>
         <textarea
@@ -157,7 +157,7 @@
       <nz-form-label
         [nzRequired]="customerForm.controls.postalCode.hasValidator(Validators.required)"
         nzFor="postalCode"
-        >کد پستی
+      >کد پستی
       </nz-form-label>
       <nz-form-control>
         <input
@@ -216,7 +216,7 @@
     <!-- city --->
     <nz-form-item>
       <nz-form-label [nzRequired]="saleInvoiceForm.controls.city.hasValidator(Validators.required)" nzFor="city"
-        >شهر محل ارسال
+      >شهر محل ارسال
       </nz-form-label>
       <nz-form-control>
         <input nz-input required name="city" type="text" formControlName="city" />
@@ -225,7 +225,7 @@
     <!-- address --->
     <nz-form-item>
       <nz-form-label [nzRequired]="saleInvoiceForm.controls.address.hasValidator(Validators.required)" nzFor="address"
-        >آدرس محل ارسال
+      >آدرس محل ارسال
       </nz-form-label>
       <nz-form-control>
         <textarea
@@ -242,7 +242,7 @@
       <nz-form-label
         [nzRequired]="saleInvoiceForm.controls.description.hasValidator(Validators.required)"
         nzFor="description"
-        >توضیحات
+      >توضیحات
       </nz-form-label>
       <nz-form-control>
         <textarea
@@ -260,7 +260,7 @@
       <nz-form-label
         [nzRequired]="saleInvoiceForm.controls.paymentStatus.hasValidator(Validators.required)"
         nzFor="paymentStatus"
-        >وضعیت پرداخت
+      >وضعیت پرداخت
       </nz-form-label>
       <nz-form-control>
         <nz-radio-group formControlName="paymentStatus">
@@ -275,7 +275,7 @@
       <nz-form-label
         [nzRequired]="saleInvoiceForm.controls.shippingStatus.hasValidator(Validators.required)"
         nzFor="shippingStatus"
-        >وضعیت حمل و نقل
+      >وضعیت حمل و نقل
       </nz-form-label>
       <nz-form-control>
         <nz-radio-group formControlName="shippingStatus">
@@ -290,7 +290,7 @@
       <nz-form-label
         [nzRequired]="saleInvoiceForm.controls.shippingPrice.hasValidator(Validators.required)"
         nzFor="shippingPrice"
-        >هزینه حمل و نقل
+      >هزینه حمل و نقل
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
@@ -308,7 +308,7 @@
     <!-- discount -->
     <nz-form-item>
       <nz-form-label [nzRequired]="saleInvoiceForm.controls.discount.hasValidator(Validators.required)" nzFor="discount"
-        >تخفیف
+      >تخفیف
       </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
@@ -329,7 +329,7 @@
       <nz-form-label
         [nzRequired]="saleInvoiceForm.controls.refNumber.hasValidator(Validators.required)"
         nzFor="refNumber"
-        >شماره پیگیری
+      >شماره پیگیری
       </nz-form-label>
       <nz-form-control dir="ltr">
         <input
@@ -440,34 +440,49 @@
   (nzAfterOpen)="previewReceipt()"
 >
   <ng-container *nzModalContent>
-    <div id="receipt" #receipt>
-      <h1>با تشکر از انتخاب شما</h1>
-      <div class="flex justify-between mb-2">
-        <span class="text-xs">مجموع سفارشات:</span>
-        <div class="mx-2 inline-block">
-          <span class="font-mono">{{ totalOrderPrice() | number }}</span>
+    <div class="bg-gray-800 text-gray-300 rounded-lg max-w-md w-full p-6" #receipt>
+      <h1 class="text-xl font-bold text-center">رسید خرید</h1>
+      <div class="mt-8">
+        <!-- Date and Time -->
+        <div class="flex justify-between">
+          <span>تاریخ:</span>
+          <span class="font-medium">{{ dateFormatter.format(today) }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>ساعت:</span>
+          <span class="font-medium">{{ timeFormatter.format(today) }}</span>
+        </div>
+
+        <hr class="my-4 border-gray-600">
+
+        <!-- Order Summary -->
+        <div>
+          <span class="me-6">مجموع سفارشات:</span>
+          <span>{{ totalOrderPrice() | number }}</span>
           <currency-wrapper></currency-wrapper>
         </div>
-      </div>
-      <div class="flex justify-between mb-2">
-        <span class="text-xs">هزینه ارسال:</span>
-        <div class="mx-2 inline-block">
-          <span class="font-mono">{{ shippingPrice() | number }}</span>
+        <div>
+          <span class="me-6">هزینه ارسال:</span>
+          <span>{{ shippingPrice() | number }}</span>
           <currency-wrapper></currency-wrapper>
         </div>
-      </div>
-      <div class="flex justify-between mb-2">
-        <span class="text-xs">تخفیف:</span>
-        <div class="mx-2 inline-block">
-          <span class="font-mono">{{ discount() | number }}</span>
+        <div>
+          <span class="me-6">تخفیف:</span>
+          <span>{{ discount() | number }}</span>
           <currency-wrapper></currency-wrapper>
         </div>
-      </div>
-      <div class="flex justify-between mb-2">
-        <span class="text-xs">هزینه نهایی:</span>
-        <div class="mx-2 inline-block">
-          <span class="font-mono">{{ customerPayment() | number }}</span>
+        <div>
+          <span class="me-6">هزینه نهایی:</span>
+          <span>{{ customerPayment() | number }}</span>
           <currency-wrapper></currency-wrapper>
+        </div>
+
+        <hr class="my-4 border-gray-600">
+
+        <!-- Thank You Note -->
+        <div class="text-center">
+          <p>با تشکر از خرید شما</p>
+          <img src="/images/logo.png" width="100" alt="logo" class="inline-block m-3">
         </div>
       </div>
     </div>

@@ -36,8 +36,7 @@ import {
 } from '@shared/component/product-image-container/product-image-container.component';
 import { FilterIndex } from '@shared/entity/common.entity';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import html2canvas from 'html2canvas';
-import { colors } from '@colors';
+import { ReceiptService } from '@shared/service/receipt-service';
 
 @Component({
   selector: 'sale-invoice',
@@ -67,6 +66,7 @@ import { colors } from '@colors';
     ProductImageContainerComponent
   ],
   standalone: true,
+  providers: [ReceiptService],
   templateUrl: './sale-invoice.component.html'
 })
 export class SaleInvoiceComponent implements OnInit {
@@ -77,8 +77,17 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);
   private readonly inventoryApi = inject(InventoryApi);
+  private readonly receiptService = inject(ReceiptService);
   private readonly router = inject(Router);
   protected readonly Validators = Validators;
+  readonly today = new Date();
+  dateFormatter = new Intl.DateTimeFormat('fa-IR', {
+    dateStyle: 'full'
+  });
+
+  timeFormatter = new Intl.DateTimeFormat('fa-IR', {
+    timeStyle: 'short'
+  });
 
   constructor() {
     this.checkUpdateMode();
@@ -187,21 +196,9 @@ export class SaleInvoiceComponent implements OnInit {
     }
   }
 
-  previewReceipt() {
+  async previewReceipt() {
     const element = this.receipt.nativeElement;
-    html2canvas(element, { backgroundColor: colors.gray_8, logging: true })
-      .then(canvas => {
-        this.canvas.nativeElement.src = canvas.toDataURL();
-        this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
-        this.downloadLink.nativeElement.download = 'marble-diagram.png';
-        this.downloadLink.nativeElement.click();
-      })
-      .catch(err => {
-        console.error(err);
-      })
-      .finally(() => {
-        this.isPreviewReceiptModalVisible.set(false);
-      });
+    await this.receiptService.shareReceipt(element, 'Receipt', 'Receipt', () => this.isPreviewReceiptModalVisible.set(false))
   }
 
   submitOrderForm() {
