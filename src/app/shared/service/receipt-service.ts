@@ -45,7 +45,7 @@ export class ReceiptService {
 
     try {
       const blob = await window.fetch(data).then(res => res.blob());
-      const file = new File([blob], 'heylee-order-receipt.png', { type: 'image/*' });
+      const file = new File([blob], 'heylee-order-receipt', { type: 'image/*' });
       const shareData: ShareData = {
         text: 'جزئیات سفارش خرید شما از فروشگاه هیلی',
         files: [file]
