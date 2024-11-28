@@ -28,7 +28,7 @@ export class ReceiptService {
         allowTaint: false
       });
       if (canvasElement) {
-        return canvasElement.toDataURL();
+        return canvasElement.toDataURL('image/png', 1);
       }
       console.error('Canvas generation returned an invalid result.');
     } catch (error) {
@@ -40,7 +40,7 @@ export class ReceiptService {
   /**
    * Shares a file using the Web Share API.
    * @param data The data URL of the file to share.
-   * @throws Error if navigator.share is not supported or the sharing fails.
+   * @throws Error if `navigator.share` is not supported or the sharing fails.
    */
   protected async share(data: string): Promise<void> {
     if (!navigator.share) {
