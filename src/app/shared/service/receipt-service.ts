@@ -1,84 +1,110 @@
-import { inject, Injectable } from '@angular/core';
-import html2canvas from 'html2canvas';
+import { Injectable } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import html2canvas from 'html2canvas';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReceiptService {
-  private readonly nzMessageService = inject(NzMessageService);
+  constructor(private message: NzMessageService) {}
 
   /**
-   * Converts an HTML element to a data URL using html2canvas.
-   * @param element The HTMLElement to convert.
-   * @returns A Promise resolving to the data URL of the rendered element.
-   * @throws Error if the element is null or conversion fails.
+   * Captures the ReceiptComponent as an image and shares it.
+   * @param receiptElement The DOM element of the ReceiptComponent.
    */
-  protected async convertToDataURL(element: HTMLElement) {
-    if (!element) {
-      throw new Error('Element provided for conversion is null or undefined.');
+  async shareReceipt(receiptElement: HTMLElement) {
+    await this.replaceImagesWithDataURIs(receiptElement);
+
+    if (!this.isShareAvailable()) {
+      this.message.error('امکان اشتراک‌گذاری در این مرورگر وجود ندارد.');
+      return;
     }
 
     try {
-      const canvasElement = await html2canvas(element, {
-        backgroundColor: null,
-        logging: true,
-        useCORS: true,
-        scale: 2,
-        allowTaint: false
-      });
-      return canvasElement.toDataURL();
-    } catch (error) {
-      throw new Error('Failed to convert element to a data URL.');
-    }
-  }
+      // Capture the receipt element as an image
+      const canvas = await html2canvas(receiptElement, { useCORS: true });
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
 
-  /**
-   * Shares a file using the Web Share API.
-   * @param data The data URL of the file to share.
-   * @throws Error if `navigator.share` is not supported or the sharing fails.
-   */
-  protected async share(data: string): Promise<void> {
-    if (!navigator.share) {
-      throw new Error('Web Share API is not supported.');
-    }
+      if (!blob) {
+        this.message.error('خطا در ایجاد تصویر رسید.');
+        return;
+      }
 
-    try {
-      const blob = await window.fetch(data).then(res => res.blob());
-      const file = new File([blob], 'heylee-order-receipt', { type: 'image/*' });
+      const file = new File([blob], 'receipt.png', { type: 'image/png' });
       const shareData: ShareData = {
-        text: 'جزئیات سفارش خرید شما از فروشگاه هیلی',
-        files: [file]
+        files: [file],
+        title: 'رسید خرید',
+        text: 'رسید خرید شما'
       };
 
-      const allSupported = Object.entries(shareData).every(([key, value]) => {
-        console.warn({ [key]: value });
-        return navigator.canShare({ [key]: value });
-      });
-
-      if (allSupported) {
-        await navigator.share(shareData);
+      if (!this.canShareData(shareData)) {
+        this.message.error('امکان اشتراک‌گذاری این داده‌ها وجود ندارد.');
+        return;
       }
-    } catch (error) {
-      console.error('Error during sharing:', error);
-      throw new Error('Sharing the receipt failed.');
+
+      await navigator.share(shareData);
+      this.message.success('رسید با موفقیت به اشتراک گذاشته شد.');
+    } catch (e) {
+      const error = e as Error;
+      if (error.name === 'AbortError') {
+        // User canceled the share action
+        this.message.info('اشتراک‌گذاری لغو شد.');
+      } else {
+        this.message.error('خطا در اشتراک‌گذاری رسید.');
+        console.error('Error sharing receipt:', error);
+      }
     }
   }
 
-  /**
-   * Generates and shares a receipt from an HTML element.
-   * @param element The HTMLElement to convert and share.
-   */
-  async shareReceipt(element: HTMLElement) {
-    if (!element) {
-      throw new Error('Receipt element is missing.');
+  private async replaceImagesWithDataURIs(element: HTMLElement) {
+    const images = element.querySelectorAll('img');
+    const promises = Array.from(images).map(async (img) => {
+      try {
+        const dataURL = await this.convertImageToDataURL(img.src);
+        img.src = dataURL;
+      } catch (error) {
+        console.error('Error converting image to data URL:', error);
+        // Optionally handle errors, e.g., remove the image or show a placeholder
+      }
+    });
+    await Promise.all(promises);
+  }
+
+  private async convertImageToDataURL(url: string): Promise<string> {
+    const response = await fetch(url, { mode: 'cors' });
+    if (!response.ok) {
+      throw new Error(`Failed to load image: ${url}`);
     }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  /**
+   * Checks if the Web Share API is available in the browser.
+   */
+  private isShareAvailable(): boolean {
+    return !!navigator.share;
+  }
+
+  /**
+   * Checks if the provided share data can be shared by the browser.
+   * @param shareData The data intended to be shared.
+   */
+  private canShareData(shareData: ShareData): boolean {
+    if (!navigator.canShare) {
+      // If canShare is not available, assume basic data can be shared
+      return true;
+    }
+
     try {
-      const dataURL = await this.convertToDataURL(element);
-      await this.share(dataURL);
+      return navigator.canShare(shareData);
     } catch (error) {
-      console.error('Error:', error);
-      this.nzMessageService.error('خطا در تولید یا به اشتراک گذاری رسید رخ داد!');
+      return false;
     }
   }
 }

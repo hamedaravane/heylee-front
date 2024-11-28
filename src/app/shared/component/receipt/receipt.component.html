@@ -11,7 +11,7 @@
 
   <!-- Customer Info -->
   <div class="flex p-4 justify-between items-center">
-    <span class="text-gray-800"><strong>{{customerName}}</strong></span>
+    <span class="text-gray-800"><strong>{{ customerName }}</strong></span>
     <span class="text-sm text-gray-700 mt-2">{{ formatter.format(today) }}</span>
   </div>
 
@@ -30,20 +30,26 @@
         @for (item of selectedProducts; track $index) {
           <tr class="border-b">
             <td class="py-2">
-              <product-image-container [imageSrc]="item.product.image"></product-image-container>
+              <img [src]="item.product.image"
+                   width="46"
+                   height="46"
+                   class="max-h-12 inline-block object-cover overflow-clip rounded-md border border-solid border-gray-400"
+                   alt="">
             </td>
             <td class="py-2">
-              <strong class="text-xs text-gray-700">{{item.product.name}}</strong><br>
+              <strong class="text-xs text-gray-700">{{ item.product.name }}</strong><br>
               <div class="text-xs text-gray-500">
                 <span>تعداد: </span>
-                <span>{{item.selectedQuantity}} | </span>
+                <span>{{ item.selectedQuantity }} | </span>
                 <span>رنگ: </span>
-                <span> {{item.color.label}} | </span>
+                <span> {{ item.color.label }} | </span>
                 <span>سایز: </span>
-                <span> {{item.size.label}}</span>
+                <span> {{ item.size.label }}</span>
               </div>
             </td>
-            <td class="py-2 text-sm text-gray-800 text-end">{{item.sellingUnitPrice | number}} <currency-wrapper></currency-wrapper></td>
+            <td class="py-2 text-sm text-gray-800 text-end">{{ item.sellingUnitPrice | number }}
+              <currency-wrapper></currency-wrapper>
+            </td>
           </tr>
         }
       </tbody>
@@ -54,21 +60,25 @@
   <div class="p-4">
     <div class="flex justify-between text-gray-700 mb-2">
       <span>مجموع:</span>
-      <span>{{ totalOrderPrice | number }} <currency-wrapper></currency-wrapper></span>
+      <span>{{ totalOrderPrice | number }}
+        <currency-wrapper></currency-wrapper></span>
     </div>
     <div class="flex justify-between text-gray-700 mb-2">
       <span>هزینه ارسال:</span>
-      <span>{{ shippingPrice | number }} <currency-wrapper></currency-wrapper></span>
+      <span>{{ shippingPrice | number }}
+        <currency-wrapper></currency-wrapper></span>
     </div>
     @if (discount > 0) {
       <div class="flex justify-between text-gray-700 mb-2">
         <span>تخفیف:</span>
-        <span>{{ discount | number }} <currency-wrapper></currency-wrapper></span>
+        <span>{{ discount | number }}
+          <currency-wrapper></currency-wrapper></span>
       </div>
     }
     <div class="flex justify-between text-gray-900 font-bold border-t border-gray-300 pt-2">
       <span>جمع کل:</span>
-      <span>{{ customerPayment | number }} <currency-wrapper></currency-wrapper></span>
+      <span>{{ customerPayment | number }}
+        <currency-wrapper></currency-wrapper></span>
     </div>
   </div>
 
@@ -76,7 +86,7 @@
   <div class="p-4 bg-gray-50 border-t border-gray-200">
     <div class="mb-3">
       <h3 class="text-sm font-semibold text-gray-700">آدرس ارسال:</h3>
-      <p class="text-sm text-gray-600">{{address}}</p>
+      <p class="text-sm text-gray-600">{{ address }}</p>
     </div>
   </div>
 

@@ -3,11 +3,12 @@ import { ProductImageContainerComponent } from '@shared/component/product-image-
 import { DecimalPipe } from '@angular/common';
 import { StockItemSelection } from '@inventory/entity/inventory.entity';
 import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
+import { NzImageDirective } from 'ng-zorro-antd/image';
 
 @Component({
   selector: 'receipt',
   templateUrl: './receipt.component.html',
-  imports: [ProductImageContainerComponent, DecimalPipe, CurrencyComponent],
+  imports: [ProductImageContainerComponent, DecimalPipe, CurrencyComponent, NzImageDirective],
   standalone: true
 })
 export class ReceiptComponent {
