@@ -14,6 +14,7 @@ import { fallbackImageBase64 } from '@shared/constant/fallbackImage';
     [nzDisablePreview]="false"
     width="46"
     height="46"
+    crossorigin="anonymous"
     class="max-h-12 inline-block object-cover overflow-clip rounded-md border border-solid border-gray-400"
     alt=""
   />`
