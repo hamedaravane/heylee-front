@@ -27,7 +27,7 @@ export class ReceiptService {
         scale: 2,
         allowTaint: false
       });
-      return canvasElement.toDataURL('image/png', 1);
+      return canvasElement.toDataURL();
     } catch (error) {
       throw new Error('Failed to convert element to a data URL.');
     }
