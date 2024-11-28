@@ -14,7 +14,7 @@ export class ReceiptService {
    * @returns A Promise resolving to the data URL of the rendered element.
    * @throws Error if the element is null or conversion fails.
    */
-  protected async convertToDataURL(element: HTMLElement): Promise<string> {
+  protected async convertToDataURL(element: HTMLElement) {
     if (!element) {
       throw new Error('Element provided for conversion is null or undefined.');
     }
@@ -27,12 +27,8 @@ export class ReceiptService {
         scale: 2,
         allowTaint: false
       });
-      if (canvasElement) {
-        return canvasElement.toDataURL('image/png', 1);
-      }
-      console.error('Canvas generation returned an invalid result.');
+      return canvasElement.toDataURL('image/png', 1);
     } catch (error) {
-      console.error('Error during HTML to canvas conversion:', error);
       throw new Error('Failed to convert element to a data URL.');
     }
   }
@@ -44,7 +40,6 @@ export class ReceiptService {
    */
   protected async share(data: string): Promise<void> {
     if (!navigator.share) {
-      this.nzMessageService.error('Sharing is not supported in this browser.');
       throw new Error('Web Share API is not supported.');
     }
 
@@ -61,7 +56,7 @@ export class ReceiptService {
         return navigator.canShare({ [key]: value });
       });
 
-      if (allSupported && navigator.share) {
+      if (allSupported) {
         await navigator.share(shareData);
       }
     } catch (error) {
@@ -74,16 +69,16 @@ export class ReceiptService {
    * Generates and shares a receipt from an HTML element.
    * @param element The HTMLElement to convert and share.
    */
-  async shareReceipt(element: HTMLElement): Promise<void> {
+  async shareReceipt(element: HTMLElement) {
     if (!element) {
-      this.nzMessageService.error('Receipt element is missing.');
+      throw new Error('Receipt element is missing.');
     }
     try {
       const dataURL = await this.convertToDataURL(element);
       await this.share(dataURL);
     } catch (error) {
-      console.error('Error in shareReceipt:', error);
-      this.nzMessageService.error('An error occurred while generating or sharing the receipt.');
+      console.error('Error:', error);
+      this.nzMessageService.error('خطا در تولید یا به اشتراک گذاری رسید رخ داد!');
     }
   }
 }
