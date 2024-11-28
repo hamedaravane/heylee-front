@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ReceiptService {
   private readonly nzMessageService = inject(NzMessageService);
@@ -20,11 +20,17 @@ export class ReceiptService {
     }
 
     try {
-      const canvasElement = await html2canvas(element, { backgroundColor: null, logging: true });
+      const canvasElement = await html2canvas(element, {
+        backgroundColor: null,
+        logging: true,
+        useCORS: true,
+        scale: 2,
+        allowTaint: false
+      });
       if (canvasElement) {
         return canvasElement.toDataURL();
       }
-      throw new Error('Canvas generation returned an invalid result.');
+      console.error('Canvas generation returned an invalid result.');
     } catch (error) {
       console.error('Error during HTML to canvas conversion:', error);
       throw new Error('Failed to convert element to a data URL.');
@@ -34,31 +40,32 @@ export class ReceiptService {
   /**
    * Shares a file using the Web Share API.
    * @param data The data URL of the file to share.
-   * @param title Optional title for the shared data.
-   * @param text Optional text accompanying the shared data.
    * @throws Error if navigator.share is not supported or the sharing fails.
    */
-  protected async share(data: string, title?: string, text?: string): Promise<void> {
+  protected async share(data: string): Promise<void> {
     if (!navigator.share) {
       this.nzMessageService.error('Sharing is not supported in this browser.');
       throw new Error('Web Share API is not supported.');
     }
 
     try {
-      const blob = await fetch(data).then((res) => res.blob()); // Convert data URL to blob
-      const file = new File([blob], 'receipt.png', { type: 'image/png' });
+      const blob = new Blob([data]);
+      const file = new File([blob], 'heylee-receipt.png', { type: 'image/png' });
       const shareData: ShareData = {
-        title: title || 'سفارش خرید شما',
-        text: text || 'با تشکر از خرید شما',
-        files: [file],
-        url: 'https://www.instagram.com/heylee.closet/', // Optional URL
+        text: 'جزئیات سفارش خرید شما از فروشگاه هیلی',
+        files: [file]
       };
 
-      await navigator.share(shareData);
-      this.nzMessageService.success('Receipt shared successfully.');
+      const allSupported = Object.entries(shareData).every(([key, value]) => {
+        console.warn({ [key]: value });
+        return navigator.canShare({ [key]: value });
+      });
+
+      if (allSupported && navigator.share) {
+        await navigator.share(shareData);
+      }
     } catch (error) {
       console.error('Error during sharing:', error);
-      this.nzMessageService.error('Failed to share the receipt.');
       throw new Error('Sharing the receipt failed.');
     }
   }
@@ -66,24 +73,17 @@ export class ReceiptService {
   /**
    * Generates and shares a receipt from an HTML element.
    * @param element The HTMLElement to convert and share.
-   * @param title Optional title for the shared data.
-   * @param text Optional text accompanying the shared data.
-   * @param cb Optional callback to execute after operation.
    */
-  async shareReceipt(element: HTMLElement, title?: string, text?: string, cb?: () => void): Promise<void> {
+  async shareReceipt(element: HTMLElement): Promise<void> {
+    if (!element) {
+      this.nzMessageService.error('Receipt element is missing.');
+    }
     try {
-      if (!element) {
-        this.nzMessageService.error('Receipt element is missing.');
-        throw new Error('Element is required for sharing a receipt.');
-      }
-
       const dataURL = await this.convertToDataURL(element);
-      await this.share(dataURL, title, text);
+      await this.share(dataURL);
     } catch (error) {
       console.error('Error in shareReceipt:', error);
       this.nzMessageService.error('An error occurred while generating or sharing the receipt.');
-    } finally {
-      if (cb) cb();
     }
   }
 }

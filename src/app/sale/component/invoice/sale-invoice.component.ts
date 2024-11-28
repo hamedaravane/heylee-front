@@ -1,14 +1,4 @@
-import {
-  Component,
-  ComponentRef,
-  computed,
-  DestroyRef,
-  ElementRef,
-  inject,
-  OnInit,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -199,9 +189,8 @@ export class SaleInvoiceComponent implements OnInit {
 
   async previewReceipt() {
     const element = this.receipt.nativeElement;
-    await this.receiptService.shareReceipt(element, 'رسید سفارش شما', undefined, () =>
-      this.isPreviewReceiptModalVisible.set(false)
-    );
+    await this.receiptService.shareReceipt(element);
+    this.isPreviewReceiptModalVisible.set(false);
   }
 
   submitOrderForm() {
