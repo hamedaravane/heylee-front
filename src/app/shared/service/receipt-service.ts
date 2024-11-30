@@ -13,7 +13,6 @@ export class ReceiptService {
    * @param receiptElement The DOM element of the ReceiptComponent.
    */
   async shareReceipt(receiptElement: HTMLElement) {
-    await this.replaceImagesWithDataURIs(receiptElement);
 
     if (!this.isShareAvailable()) {
       this.message.error('امکان اشتراک‌گذاری در این مرورگر وجود ندارد.');
@@ -54,34 +53,6 @@ export class ReceiptService {
         console.error('Error sharing receipt:', error);
       }
     }
-  }
-
-  private async replaceImagesWithDataURIs(element: HTMLElement) {
-    const images = element.querySelectorAll('img');
-    const promises = Array.from(images).map(async (img) => {
-      try {
-        const dataURL = await this.convertImageToDataURL(img.src);
-        img.src = dataURL;
-      } catch (error) {
-        console.error('Error converting image to data URL:', error);
-        // Optionally handle errors, e.g., remove the image or show a placeholder
-      }
-    });
-    await Promise.all(promises);
-  }
-
-  private async convertImageToDataURL(url: string): Promise<string> {
-    const response = await fetch(url, { mode: 'cors' });
-    if (!response.ok) {
-      throw new Error(`Failed to load image: ${url}`);
-    }
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
   }
 
   /**
