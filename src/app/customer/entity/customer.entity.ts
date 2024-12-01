@@ -24,8 +24,8 @@ export interface CustomerDto {
   created_at: string | null;
 }
 
-export type CreateCustomerDto = Omit<CustomerDto, 'id' | 'created_at'>;
-export type CreateCustomer = Omit<Customer, 'id' | 'createdAt'>;
+export type FromCustomerDto = Omit<CustomerDto, 'id' | 'created_at' | 'cashback_balance'>;
+export type FormCustomer = Omit<Customer, 'id' | 'createdAt' | 'cashbackBalance'>;
 
 export function mapCustomerDtoToCustomer(dto: CustomerDto): Customer {
   return {

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { CustomerFacade } from '@customer/data-access/customer.facade';
-import { CreateCustomer, CustomerDto } from '@customer/entity/customer.entity';
+import { CustomerDto, FormCustomer } from '@customer/entity/customer.entity';
 import { firstValueFrom } from 'rxjs';
 import { FilterIndex } from '@shared/entity/common.entity';
 
@@ -25,7 +25,7 @@ export class CustomerApi {
     return this.customerFacade.customersIndex$;
   }
 
-  async createCustomer(customer: CreateCustomer) {
+  async createCustomer(customer: FormCustomer) {
     return this.customerFacade.createCustomer(customer).then(() => {
       return firstValueFrom(this.customerFacade.customer$);
     });

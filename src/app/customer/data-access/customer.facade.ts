@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { CustomerInfra } from '../infrastructure/customer.infra';
 import { BehaviorSubject, filter, firstValueFrom, Subject } from 'rxjs';
 import { IndexResponse } from '@shared/entity/server-response.entity';
-import { CreateCustomer, CreateCustomerDto, Customer, CustomerDto } from '../entity/customer.entity';
+import { Customer, CustomerDto, FormCustomer, FromCustomerDto } from '../entity/customer.entity';
 import { toSnakeCase } from '@shared/entity/utility.entity';
 import { FilterIndex } from '@shared/entity/common.entity';
 import { BaseFacade } from '@shared/service/base.facade';
@@ -32,8 +32,8 @@ export class CustomerFacade extends BaseFacade {
     );
   }
 
-  async createCustomer(customer: CreateCustomer): Promise<void> {
-    const dto: CreateCustomerDto = toSnakeCase(customer);
+  async createCustomer(customer: FormCustomer): Promise<void> {
+    const dto: FromCustomerDto = toSnakeCase(customer);
     await this.loadEntity(
       this.customerSubject,
       () => firstValueFrom(this.customerInfra.createCustomer(dto)),
@@ -41,8 +41,8 @@ export class CustomerFacade extends BaseFacade {
     );
   }
 
-  async editCustomer(id: number, customer: CreateCustomer) {
-    const dto: CreateCustomerDto = toSnakeCase(customer);
+  async editCustomer(id: number, customer: FormCustomer) {
+    const dto: FromCustomerDto = toSnakeCase(customer);
     await this.loadEntity(
       this.customerSubject,
       () => firstValueFrom(this.customerInfra.updateCustomer(id, dto)),

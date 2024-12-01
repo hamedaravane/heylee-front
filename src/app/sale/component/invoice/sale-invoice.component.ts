@@ -70,8 +70,6 @@ import { ReceiptComponent } from '@shared/component/receipt/receipt.component';
 })
 export class SaleInvoiceComponent implements OnInit {
   @ViewChild('receipt') receipt!: ElementRef<HTMLDivElement>;
-  @ViewChild('canvas') canvas!: ElementRef<HTMLImageElement>;
-  @ViewChild('downloadLink') downloadLink!: ElementRef<HTMLAnchorElement>;
   private readonly destroyRef = inject(DestroyRef);
   private readonly saleFacade = inject(SaleFacade);
   private readonly customerApi = inject(CustomerApi);

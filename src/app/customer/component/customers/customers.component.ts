@@ -8,9 +8,9 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { RouterLink } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CustomerFacade } from '../../data-access/customer.facade';
-import { CreateCustomer, Customer, CustomerDto } from '../../entity/customer.entity';
+import { Customer, CustomerDto } from '../../entity/customer.entity';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
 import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
@@ -20,6 +20,7 @@ import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.c
 import { AuthApi } from '@auth/api/auth.api';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { CustomerFormComponent } from '@customer/component/customer-from/customer-form.component';
 
 @Component({
   standalone: true,
@@ -43,7 +44,8 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
     NgTemplateOutlet,
     PhoneFormatPipe,
     DecimalPipe,
-    CurrencyComponent
+    CurrencyComponent,
+    CustomerFormComponent
   ]
 })
 export class CustomersComponent implements OnInit {
@@ -55,7 +57,10 @@ export class CustomersComponent implements OnInit {
   loadingState = false;
   isAddCustomerVisible = false;
   isEditCustomerVisible = false;
-  selectedCustomerId: number | null = null;
+  isCreateFormValid = false;
+  isEditFormValid = false;
+  selectedCustomer: Customer | null = null;
+  formValue: Customer | null = null;
   searchByOptions: { label: string; value: keyof CustomerDto }[] = [
     { label: 'نام مشتری', value: 'name' },
     { label: 'شماره تماس', value: 'phone' },
@@ -66,16 +71,6 @@ export class CustomersComponent implements OnInit {
   filterForm = new FormGroup({
     searchBy: new FormControl<keyof CustomerDto>('name'),
     searchValue: new FormControl<string>('')
-  });
-
-  createCustomerForm = new FormGroup({
-    name: new FormControl<string | null>(null, Validators.required),
-    address: new FormControl<string | null>(null, Validators.required),
-    phone: new FormControl<string | null>(null, Validators.required),
-    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
-    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
-    city: new FormControl<string | null>(null, Validators.required),
-    postalCode: new FormControl<string | null>(null)
   });
 
   ngOnInit() {
@@ -95,44 +90,38 @@ export class CustomersComponent implements OnInit {
   }
 
   selectCustomerToEdit(customer: Customer) {
-    this.selectedCustomerId = customer.id;
-    this.createCustomerForm.setValue({
-      name: customer.name,
-      phone: customer.phone,
-      address: customer.address,
-      postalCode: customer.postalCode,
-      city: customer.city,
-      instagram: customer.instagram,
-      telegram: customer.telegram
-    });
+    this.selectedCustomer = customer;
     this.isEditCustomerVisible = true;
   }
 
+  handleFormValue(customer: Customer) {
+    this.formValue = customer;
+  }
+
   editCustomer() {
-    const form = this.createCustomerForm.getRawValue() as CreateCustomer;
-    if (this.selectedCustomerId) {
-      this.customerFacade.editCustomer(this.selectedCustomerId, form).then(() => {
-        this.closeAddCustomer();
+    if (this.selectedCustomer && this.formValue) {
+      this.customerFacade.editCustomer(this.selectedCustomer.id, this.formValue).then(() => {
+        this.closeCustomerDrawer();
       });
     }
   }
 
   createCustomer() {
-    const form = this.createCustomerForm.getRawValue() as CreateCustomer;
-    this.customerFacade.createCustomer(form).then(() => {
-      this.closeAddCustomer();
-    });
+    if (this.formValue) {
+      this.customerFacade.createCustomer(this.formValue).then(() => {
+        this.closeCustomerDrawer();
+      });
+    }
   }
 
   deleteCustomer(id: number) {
     this.customerFacade.deleteCustomer(id).then(() => {
-      this.closeAddCustomer();
+      this.closeCustomerDrawer();
     });
   }
 
-  closeAddCustomer() {
+  closeCustomerDrawer() {
     this.isAddCustomerVisible = false;
     this.isEditCustomerVisible = false;
-    this.createCustomerForm.reset();
   }
 }

@@ -13,7 +13,6 @@ export class ReceiptService {
    * @param receiptElement The DOM element of the ReceiptComponent.
    */
   async shareReceipt(receiptElement: HTMLElement) {
-
     if (!this.isShareAvailable()) {
       this.message.error('امکان اشتراک‌گذاری در این مرورگر وجود ندارد.');
       return;

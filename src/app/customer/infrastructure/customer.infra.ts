@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
-  CreateCustomerDto,
   Customer,
   CustomerDto,
+  FromCustomerDto,
   mapCustomerDtoToCustomer,
   mapCustomerToDto
 } from '../entity/customer.entity';
@@ -17,8 +17,8 @@ import { BaseInfra } from '@shared/service/base.infra';
 export class CustomerInfra extends BaseInfra {
   private readonly endpoint = 'customer';
 
-  createCustomer(customer: CreateCustomerDto): Observable<Customer> {
-    return this.createEntity<CreateCustomerDto, CustomerDto, Customer>(
+  createCustomer(customer: FromCustomerDto): Observable<Customer> {
+    return this.createEntity<FromCustomerDto, CustomerDto, Customer>(
       this.endpoint,
       customer,
       mapCustomerDtoToCustomer,
@@ -26,8 +26,8 @@ export class CustomerInfra extends BaseInfra {
     );
   }
 
-  updateCustomer(id: number, customer: CreateCustomerDto): Observable<Customer> {
-    return this.updateEntity<CreateCustomerDto, CustomerDto, Customer>(
+  updateCustomer(id: number, customer: FromCustomerDto): Observable<Customer> {
+    return this.updateEntity<FromCustomerDto, CustomerDto, Customer>(
       this.endpoint,
       id,
       customer,

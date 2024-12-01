@@ -1,7 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import { ProductImageContainerComponent } from '@shared/component/product-image-container/product-image-container.component';
 import { DecimalPipe } from '@angular/common';
 import { StockItemSelection } from '@inventory/entity/inventory.entity';
 import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';

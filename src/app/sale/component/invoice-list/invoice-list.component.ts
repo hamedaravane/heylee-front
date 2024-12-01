@@ -15,9 +15,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { InventoryApi } from '@inventory/api/inventory.api';
 import { Router, RouterLink } from '@angular/router';
-import {
-  ProductImageContainerComponent
-} from '@shared/component/product-image-container/product-image-container.component';
+import { ProductImageContainerComponent } from '@shared/component/product-image-container/product-image-container.component';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
