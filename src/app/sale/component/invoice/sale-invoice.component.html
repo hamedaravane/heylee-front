@@ -32,57 +32,7 @@
 </card-container>
 
 <page-container class="mb-4">
-  <nz-input-group [nzSuffix]="suffixIconSearch">
-    <input
-      nz-input
-      type="search"
-      pattern="^[a-zA-Z0-9]{1,12}$"
-      maxlength="12"
-      [(ngModel)]="searchText"
-      placeholder="جستجو در کد محصولات"
-    />
-  </nz-input-group>
-  <nz-collapse class="mt-4">
-    <nz-collapse-panel nzHeader="لیست همه محصولات موجود" nzActive="false">
-      @for (product of availableProducts | filterProductsByCode: searchText; track $index) {
-        <card-container>
-          <div class="flex justify-between gap-4">
-            <product-image-container [imageSrc]="product.product.image"></product-image-container>
-            <div class="grow">
-              <div class="text-xs max-w-sm">
-                <span class="line-clamp-1">{{ product.product.name }}</span>
-                <span class="line-clamp-1 font-mono">{{ product.product.code }}</span>
-                <div class="flex justify-between">
-                  <span class="line-clamp-1">{{ product.color.label }}</span>
-                  <span class="line-clamp-1 font-mono">{{ product.size.label }}</span>
-                  <span class="line-clamp-1 font-mono">{{ product.availableQuantity }}</span>
-                </div>
-                <div>
-                  <span class="font-mono">{{ product.sellingUnitPrice | number }}</span>
-                  <currency-wrapper></currency-wrapper>
-                </div>
-              </div>
-            </div>
-            <div>
-              <button
-                [nzLoading]="loading()"
-                class="leading-none"
-                type="button"
-                nz-button
-                nzType="primary"
-                nzSize="small"
-                (click)="addItem(product)"
-              >
-                <i class="fa-solid fa-plus fa-sm leading-tight"></i>
-              </button>
-            </div>
-          </div>
-        </card-container>
-      } @empty {
-        <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
-      }
-    </nz-collapse-panel>
-  </nz-collapse>
+  <available-items></available-items>
 </page-container>
 
 <page-container>
@@ -97,18 +47,14 @@
   <form nz-form nzLabelAlign="right" nzLayout="vertical" (ngSubmit)="submitOrderForm()" [formGroup]="saleInvoiceForm">
     <!-- city --->
     <nz-form-item>
-      <nz-form-label [nzRequired]="saleInvoiceForm.controls.city.hasValidator(Validators.required)" nzFor="city"
-        >شهر محل ارسال
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="city">شهر محل ارسال </nz-form-label>
       <nz-form-control>
         <input nz-input required name="city" type="text" formControlName="city" />
       </nz-form-control>
     </nz-form-item>
     <!-- address --->
     <nz-form-item>
-      <nz-form-label [nzRequired]="saleInvoiceForm.controls.address.hasValidator(Validators.required)" nzFor="address"
-        >آدرس محل ارسال
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="address">آدرس محل ارسال </nz-form-label>
       <nz-form-control>
         <textarea
           nz-input
@@ -121,11 +67,7 @@
     </nz-form-item>
     <!-- description --->
     <nz-form-item>
-      <nz-form-label
-        [nzRequired]="saleInvoiceForm.controls.description.hasValidator(Validators.required)"
-        nzFor="description"
-        >توضیحات
-      </nz-form-label>
+      <nz-form-label nzFor="description">توضیحات </nz-form-label>
       <nz-form-control>
         <textarea
           nz-input
@@ -139,11 +81,7 @@
     </nz-form-item>
     <!-- payment status --->
     <nz-form-item>
-      <nz-form-label
-        [nzRequired]="saleInvoiceForm.controls.paymentStatus.hasValidator(Validators.required)"
-        nzFor="paymentStatus"
-        >وضعیت پرداخت
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="paymentStatus">وضعیت پرداخت </nz-form-label>
       <nz-form-control>
         <nz-radio-group formControlName="paymentStatus">
           @for (paymentStatus of paymentStatusOptions; track $index) {
@@ -154,11 +92,7 @@
     </nz-form-item>
     <!-- shipping status -->
     <nz-form-item>
-      <nz-form-label
-        [nzRequired]="saleInvoiceForm.controls.shippingStatus.hasValidator(Validators.required)"
-        nzFor="shippingStatus"
-        >وضعیت حمل و نقل
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="shippingStatus">وضعیت حمل و نقل </nz-form-label>
       <nz-form-control>
         <nz-radio-group formControlName="shippingStatus">
           @for (shippingStatus of shippingStatusOptions; track $index) {
@@ -169,11 +103,7 @@
     </nz-form-item>
     <!-- shipping price -->
     <nz-form-item>
-      <nz-form-label
-        [nzRequired]="saleInvoiceForm.controls.shippingPrice.hasValidator(Validators.required)"
-        nzFor="shippingPrice"
-        >هزینه حمل و نقل
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="shippingPrice">هزینه حمل و نقل </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
           <input
@@ -189,9 +119,7 @@
     </nz-form-item>
     <!-- discount -->
     <nz-form-item>
-      <nz-form-label [nzRequired]="saleInvoiceForm.controls.discount.hasValidator(Validators.required)" nzFor="discount"
-        >تخفیف
-      </nz-form-label>
+      <nz-form-label nzFor="discount">تخفیف </nz-form-label>
       <nz-form-control dir="ltr">
         <nz-input-group nzAddOnBefore="ریال">
           <input
@@ -208,11 +136,7 @@
     </nz-form-item>
     <!-- ref number -->
     <nz-form-item>
-      <nz-form-label
-        [nzRequired]="saleInvoiceForm.controls.refNumber.hasValidator(Validators.required)"
-        nzFor="refNumber"
-        >شماره پیگیری
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="refNumber">شماره پیگیری </nz-form-label>
       <nz-form-control dir="ltr">
         <input
           class="font-mono"
@@ -227,11 +151,9 @@
     </nz-form-item>
     <!-- items -->
     <nz-form-item>
-      <nz-form-label [nzRequired]="saleInvoiceForm.controls.items.hasValidator(Validators.required)" nzFor="items">
-        سفارشات
-      </nz-form-label>
+      <nz-form-label nzRequired nzFor="items"> سفارشات </nz-form-label>
       <nz-form-control>
-        <ng-container *ngTemplateOutlet="selectedProductsTemplate"></ng-container>
+        <selected-items></selected-items>
       </nz-form-control>
     </nz-form-item>
     <!-- submit -->
@@ -262,57 +184,6 @@
   </form>
 </page-container>
 
-<ng-template #suffixIconSearch>
-  <i class="fa-solid fa-search text-gray-500"></i>
-</ng-template>
-
-<ng-template #selectedProductsTemplate>
-  @for (selectedProduct of selectedProducts; track $index) {
-    <card-container class="mb-2 last:mb-0">
-      <div class="grid grid-cols-12 gap-4">
-        <div
-          class="col-span-3 h-12 w-12 text-center content-center inline-block overflow-clip border border-solid border-gray-600"
-        >
-          @if (selectedProduct.product.image) {
-            <img [src]="selectedProduct.product.image" class="w-12 h-full object-cover" alt="product image" />
-          } @else {
-            <i class="fa-solid fa-image fa-xl text-gray-400"></i>
-          }
-        </div>
-        <div class="col-span-8">
-          <div class="grid grid-cols-2 grid-rows-3 text-start w-full text-xs">
-            <span class="line-clamp-1">{{ selectedProduct.product.name }}</span>
-            <span class="line-clamp-1 font-mono">{{ selectedProduct.product.code }}</span>
-            <span class="line-clamp-1">{{ selectedProduct.color.label }}</span>
-            <span class="line-clamp-1 font-mono">{{ selectedProduct.size.label }}</span>
-            <div class="line-clamp-1 col-span-1">
-              <span class="font-mono">{{ selectedProduct.sellingUnitPrice | number }}</span>
-              <currency-wrapper></currency-wrapper>
-            </div>
-            <span class="line-clamp-1 font-mono">{{ selectedProduct.selectedQuantity }}</span>
-          </div>
-        </div>
-        <div class="col-span-1 justify-self-end self-center">
-          <button
-            [nzLoading]="loading()"
-            class="leading-none"
-            nz-button
-            nzType="primary"
-            type="button"
-            nzDanger
-            nzSize="small"
-            (click)="removeItem(selectedProduct)"
-          >
-            <i class="fa-solid fa-trash fa-sm leading-tight"></i>
-          </button>
-        </div>
-      </div>
-    </card-container>
-  } @empty {
-    <nz-empty nzNotFoundContent="کالایی یافت نشد"></nz-empty>
-  }
-</ng-template>
-
 <nz-modal
   nzTitle="پیش نمایش فاکتور مشتری"
   [nzFooter]="null"
@@ -322,16 +193,16 @@
   (nzAfterOpen)="previewReceipt()"
 >
   <ng-container *nzModalContent>
-    <div #receipt>
-      <receipt
-        [address]="saleInvoiceForm.controls.address.value!"
-        [customerName]="customerFormValue?.name || ''"
-        [customerPayment]="customerPayment()"
-        [discount]="discount()"
-        [selectedProducts]="selectedProducts"
-        [shippingPrice]="shippingPrice()"
-        [totalOrderPrice]="totalOrderPrice()"
-      ></receipt>
-    </div>
+<!--    <div #receipt>-->
+<!--      <receipt-->
+<!--        [address]="saleInvoiceForm.controls.address.value!"-->
+<!--        [customerName]="customerFormValue?.name || ''"-->
+<!--        [customerPayment]="customerPayment()"-->
+<!--        [discount]="discount()"-->
+<!--        [selectedProducts]="selectedProducts"-->
+<!--        [shippingPrice]="shippingPrice()"-->
+<!--        [totalOrderPrice]="totalOrderPrice()"-->
+<!--      ></receipt>-->
+<!--    </div>-->
   </ng-container>
 </nz-modal>
