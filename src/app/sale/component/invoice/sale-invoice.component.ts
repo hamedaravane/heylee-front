@@ -88,7 +88,7 @@ export class SaleInvoiceComponent implements OnInit {
     customerId: new FormControl<number>(NaN, { nonNullable: true, validators: Validators.required }),
     city: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
     address: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    description: new FormControl<string>(''),
+    description: new FormControl<string>({ value: '', disabled: false }, [Validators.nullValidator]),
     paymentStatus: new FormControl<'paid' | 'unpaid' | 'partially-paid'>('paid', {
       nonNullable: true,
       validators: Validators.required
