@@ -5,10 +5,11 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { map, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CustomerFacade } from '@customer/data-access/customer.facade';
 import { AsyncPipe } from '@angular/common';
+import { BidiModule } from '@angular/cdk/bidi';
 
 @Component({
   standalone: true,
@@ -121,7 +122,7 @@ import { AsyncPipe } from '@angular/common';
       </nz-form-control>
     </nz-form-item>
   </form>`,
-  imports: [NzFormModule, NzAlertModule, NzInputModule, NzSelectModule, ReactiveFormsModule, AsyncPipe]
+  imports: [NzFormModule, NzAlertModule, NzInputModule, NzSelectModule, ReactiveFormsModule, AsyncPipe, BidiModule]
 })
 export class CustomerFormComponent implements AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
@@ -131,7 +132,6 @@ export class CustomerFormComponent implements AfterViewInit, OnDestroy {
   @Input() selectedCustomer: Customer | null = null;
   @Output() formValue = new EventEmitter<Customer>();
   @Output() formValidity = new EventEmitter<boolean>();
-  @Output() phoneSearch = new EventEmitter<string>();
 
   customerForm = new FormGroup({
     id: new FormControl<number>({ value: NaN, disabled: true }, { nonNullable: true }),
@@ -176,17 +176,17 @@ export class CustomerFormComponent implements AfterViewInit, OnDestroy {
     if (this.selectedCustomer) {
       this.customerForm.patchValue(this.selectedCustomer);
       this.formValidity.emit(this.customerForm.valid);
-      this.formValue.emit(this.customerForm.value as Customer);
+      this.formValue.emit(this.customerForm.getRawValue());
     }
     this.customerForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.formValue.emit(this.customerForm.value as Customer);
+      this.formValue.emit(this.customerForm.getRawValue());
     });
     this.customerForm.controls.phone.valueChanges
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
           this.formValidity.emit(this.customerForm.valid);
-          this.formValue.emit(this.customerForm.value as Customer);
+          this.formValue.emit(this.customerForm.getRawValue());
         })
       )
       .pipe(
@@ -215,7 +215,9 @@ export class CustomerFormComponent implements AfterViewInit, OnDestroy {
   }
 
   onPhoneSearch($event: string) {
-    this.phoneSearch.emit($event);
+    of($event)
+      .pipe(distinctUntilChanged(), debounceTime(1000))
+      .subscribe(value => this.customerFacade.loadCustomers(1, [{ prop: 'phone', operator: 'like', value }]));
   }
 
   ngOnDestroy() {

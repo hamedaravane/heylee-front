@@ -170,7 +170,11 @@
   (nzOnClose)="closeCustomerDrawer()"
 >
   <ng-container *nzDrawerContent>
-    <customer-form (formValidity)="isEditFormValid = $event" (formValue)="handleFormValue($event)" [selectedCustomer]="selectedCustomer"></customer-form>
+    <customer-form
+      (formValidity)="isEditFormValid = $event"
+      (formValue)="handleFormValue($event)"
+      [selectedCustomer]="selectedCustomer"
+    ></customer-form>
   </ng-container>
 </nz-drawer>
 

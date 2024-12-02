@@ -13,7 +13,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CardContainerComponent } from '@shared/component/card-container/card-container.component';
 import { PageContainerComponent } from '@shared/component/page-container/page-container.component';
-import { Customer, CustomerDto } from '@customer/entity/customer.entity';
+import { Customer } from '@customer/entity/customer.entity';
 import { CustomerApi } from '@customer/api/customer.api';
 import { InventoryApi } from '@inventory/api/inventory.api';
 import {
@@ -23,7 +23,7 @@ import {
   salesItemToStockItemSelection
 } from '@sale/entity/invoice.entity';
 import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
-import { debounceTime, distinctUntilChanged, filter, of } from 'rxjs';
+import { filter } from 'rxjs';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { selectedProductToInvoiceItem, StockItemSelection } from '@inventory/entity/inventory.entity';
@@ -32,10 +32,10 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { ProductImageContainerComponent } from '@shared/component/product-image-container/product-image-container.component';
-import { FilterIndex } from '@shared/entity/common.entity';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ReceiptService } from '@shared/service/receipt-service';
 import { ReceiptComponent } from '@shared/component/receipt/receipt.component';
+import { CustomerFormComponent } from '@customer/component/customer-from/customer-form.component';
 
 @Component({
   selector: 'sale-invoice',
@@ -62,7 +62,8 @@ import { ReceiptComponent } from '@shared/component/receipt/receipt.component';
     PageContainerComponent,
     CurrencyComponent,
     ProductImageContainerComponent,
-    ReceiptComponent
+    ReceiptComponent,
+    CustomerFormComponent
   ],
   standalone: true,
   providers: [ReceiptService],
@@ -97,29 +98,28 @@ export class SaleInvoiceComponent implements OnInit {
   discount = signal(0);
   isPreviewReceiptModalVisible = signal(false);
   saleInvoiceForm = new FormGroup({
-    customerId: new FormControl<number | null>(null, Validators.required),
-    city: new FormControl<string | null>(null, Validators.required),
-    address: new FormControl<string | null>(null, Validators.required),
-    description: new FormControl<string | null>(null),
-    paymentStatus: new FormControl<'paid' | 'unpaid' | 'partially-paid'>('paid', Validators.required),
-    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>(
-      'ready-to-ship',
-      Validators.required
-    ),
-    shippingPrice: new FormControl<number | null>(null, Validators.required),
+    customerId: new FormControl<number>(NaN, { nonNullable: true, validators: Validators.required }),
+    city: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    address: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    description: new FormControl<string>(''),
+    paymentStatus: new FormControl<'paid' | 'unpaid' | 'partially-paid'>('paid', {
+      nonNullable: true,
+      validators: Validators.required
+    }),
+    shippingStatus: new FormControl<'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold'>('ready-to-ship', {
+      nonNullable: true,
+      validators: Validators.required
+    }),
+    shippingPrice: new FormControl<number>(500_000, { nonNullable: true, validators: Validators.required }),
     discount: new FormControl<number | null>(0, [Validators.min(0)]),
     refNumber: new FormControl<string | null>(null),
-    items: new FormControl<InvoiceItem[] | null>(null, Validators.required)
+    items: new FormControl<InvoiceItem[]>([], {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1)]
+    })
   });
-  customerForm = new FormGroup({
-    name: new FormControl<string | null>(null, Validators.required),
-    phone: new FormControl<string | null>(null, Validators.required),
-    postalCode: new FormControl<string | null>(null),
-    telegram: new FormControl<string | null>(null, [Validators.minLength(5), Validators.maxLength(32)]),
-    instagram: new FormControl<string | null>(null, [Validators.minLength(1), Validators.maxLength(30)]),
-    cityCustomer: new FormControl<string | null>(null, Validators.required),
-    addressCustomer: new FormControl<string | null>(null, Validators.required)
-  });
+  isCustomerFormValid = false;
+  customerFormValue: Customer | null = null;
 
   ngOnInit() {
     this.loadCustomers().then();
@@ -141,15 +141,6 @@ export class SaleInvoiceComponent implements OnInit {
     this.customerApi.customers$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(customers => (this.customers = customers.items));
-  }
-
-  onPhoneSearch(e: string) {
-    of(e)
-      .pipe(debounceTime(2000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        const filter: FilterIndex<CustomerDto>[] = [{ prop: 'phone', operator: 'like', value: e }];
-        this.customerApi.loadCustomers(1, filter).then();
-      });
   }
 
   addItem(item: StockItemSelection, quantity: number = 1): void {
@@ -195,7 +186,6 @@ export class SaleInvoiceComponent implements OnInit {
     if (this.saleInvoiceForm.valid) {
       this.saleFacade.createSaleInvoice(this.extractDataFromInvoiceForm()).then(() => {
         this.saleInvoiceForm.reset();
-        this.customerForm.reset();
       });
     }
   }
@@ -258,16 +248,6 @@ export class SaleInvoiceComponent implements OnInit {
 
   private fillFormsToUpdate() {
     if (this.invoiceToUpdate) {
-      this.customerForm.setValue({
-        name: this.invoiceToUpdate.customer.name,
-        phone: this.invoiceToUpdate.customer.phone,
-        postalCode: this.invoiceToUpdate.customer.postalCode,
-        telegram: this.invoiceToUpdate.customer.telegram,
-        instagram: this.invoiceToUpdate.customer.instagram,
-        cityCustomer: this.invoiceToUpdate.customer.city,
-        addressCustomer: this.invoiceToUpdate.customer.address
-      });
-      this.customerForm.disable();
       this.saleInvoiceForm.setValue({
         customerId: this.invoiceToUpdate.customerId,
         city: this.invoiceToUpdate.city,
@@ -293,35 +273,10 @@ export class SaleInvoiceComponent implements OnInit {
   }
 
   private setupFormListeners(): void {
-    this.onPhoneControlChange();
     this.onShippingPriceChange();
     this.onDiscountControlChange();
     this.onItemsControlChange();
     // this.onPaymentStatusChange();
-  }
-
-  private onPhoneControlChange() {
-    this.customerForm.controls.phone.valueChanges
-      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef), filter(Boolean))
-      .subscribe(phoneValue => {
-        const customer = this.customers?.find(c => c.phone === phoneValue);
-        if (customer) {
-          this.saleInvoiceForm.controls.customerId.setValue(customer.id);
-          this.customerForm.setValue({
-            name: customer.name,
-            phone: customer.phone,
-            postalCode: customer.postalCode,
-            telegram: customer.telegram,
-            instagram: customer.instagram,
-            cityCustomer: customer.city,
-            addressCustomer: customer.address
-          });
-          this.saleInvoiceForm.controls.city.setValue(customer.city);
-          this.saleInvoiceForm.controls.address.setValue(customer.address);
-          this.customerForm.disable();
-          this.customerForm.controls.phone.enable();
-        }
-      });
   }
 
   private onItemsControlChange() {
@@ -378,5 +333,12 @@ export class SaleInvoiceComponent implements OnInit {
             break;
         }
       });
+  }
+
+  handleCustomerForm($event: Customer) {
+    this.customerFormValue = $event;
+    this.saleInvoiceForm.controls.customerId.setValue($event.id);
+    this.saleInvoiceForm.controls.city.setValue($event.city);
+    this.saleInvoiceForm.controls.address.setValue($event.address);
   }
 }
