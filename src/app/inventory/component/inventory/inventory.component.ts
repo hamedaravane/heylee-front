@@ -19,6 +19,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { distinctUntilChanged, map } from 'rxjs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'inventory-inventory',
@@ -39,8 +41,10 @@ import { distinctUntilChanged, map } from 'rxjs';
     NzSelectModule,
     NzInputModule,
     NzFlexModule,
+    NzButtonModule,
     CurrencyComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   standalone: true
 })

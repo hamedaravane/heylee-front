@@ -43,6 +43,12 @@ export const mainRoutes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'inventory/story-creator',
+        loadComponent: () =>
+          import('@inventory/component/create-story/create-story.component').then(c => c.CreateStoryComponent),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'supplier',
         loadComponent: () =>
           import('../supplier/component/suppliers/suppliers.component').then(c => c.SuppliersComponent),

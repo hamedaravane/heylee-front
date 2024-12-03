@@ -1,0 +1,64 @@
+<div
+  #storyElement
+  style="aspect-ratio: 9 / 16; background-image: url('/images/bg-pattern.svg')"
+  class="max-w-xs mx-auto text-center mt-2 bg-white px-8 py-16"
+>
+  <div class="w-64 p-4 bg-gradient-to-bl shadow from-purple-200 to-sky-200 mx-auto text-center rounded-xl">
+    <img
+      *ngIf="stockItem.image"
+      [src]="base64Image()"
+      alt="Product Image"
+      class="w-40 rounded-xl inline-block my-3 border-2 border-solid border-gray-100"
+    />
+    <div>
+      <h1 class="font-bold my-1 text-gray-700">{{ stockItem.name }}</h1>
+      <div class="font-bold my-1 text-gray-700">
+        <span>رنگ </span>
+        <span *ngFor="let color of stockItem.colors">
+          {{ color.label }}
+        </span>
+      </div>
+
+      <div class="font-bold my-1 text-gray-700">
+        <span>سایزهای موجود </span>
+        <span
+          *ngFor="let color of stockItem.colors"
+          class="first:me-4"
+        >
+          <span *ngFor="let size of color.sizes">
+            {{ size.label }}
+          </span>
+        </span>
+      </div>
+
+      <div class="text-gray-50">
+        <span class="font-mono">{{ stockItem.code }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="inline-block px-2 py-0.5 my-3 rounded-md text-xl font-bold bg-emerald-100 text-gray-600">
+        <span class="align-middle">
+          {{ discountedPrice || (stockItem.sellingUnitPrice / 10) | number }}
+        </span>
+    <span class="mx-1 opacity-60 align-middle" style="font-size: 0.6rem">تومان</span>
+  </div>
+
+  <div *ngIf="marketingDescription" class="text-lg italic text-gray-500">
+    "{{ marketingDescription }}"
+  </div>
+  <div
+    *ngIf="discountPercentage"
+    class="absolute top-8 left-8 bg-red-500 text-white py-2 px-4 rounded-full"
+  >
+    {{ discountPercentage }}% OFF
+  </div>
+</div>
+
+<button
+  (click)="downloadStory()"
+  nz-button nzType="primary"
+>
+  Generate Story
+</button>

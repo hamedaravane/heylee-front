@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "https://heylee.liara.run",
+    "secure": false
+  }
+}
