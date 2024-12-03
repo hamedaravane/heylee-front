@@ -1,4 +1,12 @@
 @font-face {
+  font-family: 'Candice';
+  src: url('../../public/fonts/candice/Candice-Regular.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+  font-feature-settings: 'ss01';
+}
+@font-face {
   font-family: 'Vazirmatn';
   src: url('../../public/fonts/vazirmatn/webfonts/Vazirmatn-Thin.woff2') format('woff2');
   font-weight: 100;
