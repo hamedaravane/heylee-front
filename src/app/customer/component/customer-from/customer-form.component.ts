@@ -3,13 +3,13 @@ import { AfterViewInit, Component, DestroyRef, EventEmitter, inject, Input, OnDe
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { debounceTime, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CustomerFacade } from '@customer/data-access/customer.facade';
 import { AsyncPipe } from '@angular/common';
 import { BidiModule } from '@angular/cdk/bidi';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 
 @Component({
   standalone: true,
@@ -19,23 +19,25 @@ import { BidiModule } from '@angular/cdk/bidi';
     <nz-form-item>
       <nz-form-label [nzRequired]="true" nzFor="phone">شماره تماس</nz-form-label>
       <nz-form-control dir="ltr">
-        <nz-select
+        <input
+          nz-input
           formControlName="phone"
           required
           type="tel"
           inputmode="numeric"
           id="phone"
-          nzServerSearch
-          (nzOnSearch)="onPhoneSearch($event)"
-          nzPlaceHolder="بدون صفر"
-          nzShowSearch
-        >
+          [nzAutocomplete]="auto"
+          placeholder="بدون صفر"
+        />
+        <nz-autocomplete #auto>
           @if (customers$ | async; as customers) {
             @for (customer of customers; track customer.id) {
-              <nz-option [nzValue]="customer.phone" [nzLabel]="customer.phone"></nz-option>
+              <nz-auto-option dir="ltr" [nzValue]="customer.phone" [nzLabel]="customer.phone">
+                {{ customer.phone }}
+              </nz-auto-option>
             }
           }
-        </nz-select>
+        </nz-autocomplete>
       </nz-form-control>
     </nz-form-item>
     <!-- customer full name -->
@@ -122,7 +124,15 @@ import { BidiModule } from '@angular/cdk/bidi';
       </nz-form-control>
     </nz-form-item>
   </form>`,
-  imports: [NzFormModule, NzAlertModule, NzInputModule, NzSelectModule, ReactiveFormsModule, AsyncPipe, BidiModule]
+  imports: [
+    NzFormModule,
+    NzAutocompleteModule,
+    NzAlertModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    AsyncPipe,
+    BidiModule
+  ]
 })
 export class CustomerFormComponent implements AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
@@ -191,6 +201,7 @@ export class CustomerFormComponent implements AfterViewInit, OnDestroy {
       )
       .pipe(
         switchMap((phoneValue: string) => {
+          this.onPhoneSearch(phoneValue);
           return this.customers$.pipe(map(customers => customers.find(c => c.phone === phoneValue)));
         })
       )
