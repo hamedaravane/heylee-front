@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import html2canvas from 'html2canvas';
 import { FormsModule } from '@angular/forms';
 import { GroupedStockItem } from '@inventory/entity/inventory.entity';
@@ -6,7 +6,6 @@ import { colors } from '@colors';
 import { CurrencyPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { ImageConversionService } from '@shared/service/image-conversion.service';
 
 @Component({
   standalone: true,
@@ -16,9 +15,7 @@ import { ImageConversionService } from '@shared/service/image-conversion.service
 })
 export class CreateStoryComponent implements OnInit {
   @ViewChild('storyElement') storyElement!: ElementRef<HTMLDivElement>;
-  private readonly imageConversionService = inject(ImageConversionService);
   stockItem: GroupedStockItem = history.state.stockItem;
-  base64Image = signal(this.stockItem.image);
   discountPercentage = 0;
   marketingDescription = '';
 
