@@ -38,7 +38,6 @@ export class CreateStoryComponent implements OnInit {
           backgroundColor: null,
           imageTimeout: 6000,
           logging: true,
-          proxy: '/heylee',
           scale: 5
         }).then(canvas => {
           const link = document.createElement('a');
