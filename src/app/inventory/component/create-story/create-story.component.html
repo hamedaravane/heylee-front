@@ -1,3 +1,17 @@
+<form nz-form [formGroup]="storyGeneratorForm">
+  <nz-form-item>
+    <nz-form-label>نرخ تخفیف</nz-form-label>
+    <nz-form-control>
+      <nz-slider nzMin="0" nzMax="100" nzStep="1" formControlName="discountPercentage"></nz-slider>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>توضیحات</nz-form-label>
+    <nz-form-control>
+      <textarea formControlName="marketingDescription" nz-input maxlength="50"></textarea>
+    </nz-form-control>
+  </nz-form-item>
+</form>
 <div
   #storyElement
   style="height: 590px; background-image: url('/images/bg-pattern.jpg')"
@@ -5,35 +19,27 @@
 >
   <div class="h-6"></div>
   <h1 style="font-family: Candice, serif" class="text-rose-600 text-3xl">HeyLee</h1>
-  <div class="h-6"></div>
+  <div class="h-5"></div>
   <div class="w-64 py-2 bg-gradient-to-bl shadow from-purple-200 to-sky-200 mx-auto text-center rounded-xl">
-    <img
-      *ngIf="stockItem.image"
-      [src]="stockItem.image"
-      alt="Product Image"
-      class="w-40 rounded-xl inline-block my-3 border-2 border-solid border-gray-100"
+    <img [src]="stockItem.image"
+         alt="Product Image"
+         class="w-40 rounded-xl inline-block my-3 border-2 border-solid border-gray-100"
     />
     <div>
       <h1 class="font-bold my-1 text-gray-700">{{ stockItem.name }}</h1>
       <div class="font-bold my-1 text-gray-700">
-        <span class="text-cyan-600">رنگ‌ها </span>
+        <span class="text-cyan-600">رنگ‌ها: </span>
         @for (color of stockItem.colors; track $index) {
-          <span>
-            {{ color.label }}
-          </span>
+          <span>{{ color.label }}</span>
+          <span class="last:hidden">، </span>
         }
       </div>
 
       <div class="font-bold my-1 text-gray-700">
-        <span class="text-cyan-600">سایزها </span>
-        @for (color of stockItem.colors; track $index) {
-          <span class="first:me-4">
-            @for (size of color.sizes; track $index) {
-              <span>
-                {{ size.label }}
-              </span>
-            }
-          </span>
+        <span class="text-cyan-600">سایزها: </span>
+        @for (size of allSizes; track $index) {
+          <span>{{ size }}</span>
+          <span class="last:hidden">، </span>
         }
       </div>
 
@@ -42,29 +48,52 @@
       </div>
     </div>
   </div>
-  <div class="h-6"></div>
-  <div
-    class="inline-block text-2xl font-bold text-gray-600">
-        <span class="align-middle">
-          {{ discountedPrice || (stockItem.sellingUnitPrice / 10) | number }}
-        </span>
-    <span class="mx-1 opacity-70" style="font-size: 0.6rem">تومان</span>
+  <div class="h-4"></div>
+  <div class="text-gray-600">
+    @if (storyGeneratorForm.get('discountPercentage')!.value > 0) {
+      <div class="font-bold text-2xl">
+        <span>فقط </span>
+        {{ discountedPrice | number }}
+        <span class="mx-1 opacity-70" style="font-size: 0.6rem">تومان</span>
+      </div>
+      <div class="inline-block relative text-sm text-rose-500 opacity-75">
+        {{ (stockItem.sellingUnitPrice / 10) | number }}
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+    } @else {
+      <span class="font-bold text-2xl">
+        {{ (stockItem.sellingUnitPrice / 10) | number }}
+      </span>
+      <span class="mx-1 opacity-70" style="font-size: 0.6rem">تومان</span>
+    }
   </div>
 
-  <div *ngIf="marketingDescription" class="text-lg italic text-gray-500">
-    "{{ marketingDescription }}"
-  </div>
-  <div
-    *ngIf="discountPercentage"
-    class="absolute top-8 left-8 bg-red-500 text-white py-2 px-4 rounded-full"
-  >
-    {{ discountPercentage }}% OFF
+  @if (storyGeneratorForm.get('discountPercentage')!.value > 0) {
+    <div dir="ltr" class="absolute font-bold top-28 left-14 bg-rose-500 h-7 w-20 -rotate-45 text-white rounded-lg">
+      <span class="leading-none">
+        {{ storyGeneratorForm.get('discountPercentage')?.value }}% OFF
+      </span>
+    </div>
+  }
+  <div class="text-lg italic text-gray-500">
+    {{ storyGeneratorForm.get('marketingDescription')?.value }}
   </div>
 </div>
 
-<button
-  (click)="downloadStory()"
-  nz-button nzType="primary"
->
-  Generate Story
-</button>
+<div class="text-center mt-4">
+  <button
+    (click)="downloadStory()"
+    nz-button nzType="default" type="button"
+    class="me-4"
+  >
+    <span>دانلود</span>
+    <i class="fa-solid fa-download ms-2"></i>
+  </button>
+  <button
+    (click)="shareStory()"
+    nz-button nzType="primary" type="button"
+  >
+    <span>اشتراک گذاری</span>
+    <i class="fa-solid fa-share ms-2"></i>
+  </button>
+</div>
