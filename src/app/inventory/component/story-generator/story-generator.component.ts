@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { GroupedStockItem } from '@inventory/entity/inventory.entity';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BaseFabricObject, Canvas, FabricImage, FabricText, Rect } from 'fabric';
+import { BaseFabricObject, Canvas, FabricImage, FabricText, Gradient, Rect } from 'fabric';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { colors as COLOR } from '@colors';
 
 @Component({
   standalone: true,
@@ -23,7 +24,7 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
         </nz-form-control>
       </nz-form-item>
     </form>
-    <canvas class="scale-50" #storyCanvas></canvas>
+    <canvas #storyCanvas></canvas>
     <div class="text-center mt-4">
       <button (click)="downloadStory()" nz-button nzType="default" type="button" class="me-4">
         <span>دانلود</span>
@@ -72,6 +73,31 @@ export class StoryGeneratorComponent implements AfterViewInit {
       backgroundColor: '#ffffff'
     });
 
+    const {
+      titleTop,
+      productBgTop,
+      imgTop,
+      productNameTop,
+      productColorsTop,
+      productSizesTop,
+      productCodeTop,
+      priceTextTop,
+      discountBgTop,
+      discountTextTop,
+      marketingTextTop
+    } = {
+      titleTop: 200,
+      productBgTop: 350,
+      imgTop: 400,
+      productNameTop: 1120,
+      productColorsTop: 1190,
+      productSizesTop: 1250,
+      productCodeTop: 1310,
+      priceTextTop: 1390,
+      discountBgTop: 400,
+      discountTextTop: 400,
+      marketingTextTop: 1200
+    };
     const { name, image, sellingUnitPrice, code, colors } = this.stockItem;
     const discountPercentage = this.storyGeneratorForm.controls.discountPercentage.value;
     const marketingDescription = this.storyGeneratorForm.controls.marketingDescription.value;
@@ -79,10 +105,14 @@ export class StoryGeneratorComponent implements AfterViewInit {
     BaseFabricObject.ownDefaults.originX = 'center';
 
     // Add background pattern as an image
-    FabricImage.fromURL('/images/bg-pattern.jpg')
+    FabricImage.fromURL('/images/bg-pattern.png')
       .then(img => {
-        img.scaleToWidth(canvas.width);
-        img.scaleToHeight(canvas.height);
+        img.set({
+          width: 1080,
+          height: 1920,
+          top: 0,
+          left: canvas.width / 2
+        });
         canvas.backgroundImage = img;
         canvas.renderAll();
       })
@@ -90,7 +120,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
 
     // Add title
     const title = new FabricText('HeyLee', {
-      top: 250,
+      top: titleTop,
       left: canvas.width / 2,
       fontSize: 80,
       fontFamily: 'Candice',
@@ -100,11 +130,22 @@ export class StoryGeneratorComponent implements AfterViewInit {
 
     // Add product container
     const productBg = new Rect({
-      top: 450,
+      top: productBgTop,
       left: canvas.width / 2,
-      width: 500,
-      height: 800,
-      fill: 'linear-gradient(to bottom left, #cbd5e1, #93c5fd)',
+      width: 700,
+      height: 1000,
+      fill: new Gradient<'linear'>({
+        coords: {
+          x1: 0,
+          y1: 0,
+          x2: canvas.width,
+          y2: canvas.height
+        },
+        colorStops: [
+          { offset: 0, color: COLOR.indigo_3 },
+          { offset: 0.6, color: COLOR.emerald_3 }
+        ]
+      }),
       rx: 30,
       ry: 30
     });
@@ -113,21 +154,20 @@ export class StoryGeneratorComponent implements AfterViewInit {
     // Add product image
     FabricImage.fromURL(image || '')
       .then(img => {
-        img.scaleToWidth(500);
-        img.scaleToHeight(500);
         img.set({
-          top: 300,
-          left: canvas.width / 2,
-          clipPath: new Rect({ width: 500, height: 500 })
+          height: 700,
+          top: imgTop,
+          rx: 100,
+          ry: 100,
+          left: canvas.width / 2
         });
         canvas.add(img);
-        canvas.renderAll();
       })
       .catch(err => console.error('Error loading product image', err));
 
     // Add product details
     const productName = new FabricText(name, {
-      top: 800,
+      top: productNameTop,
       left: canvas.width / 2,
       fontSize: 50,
       fontFamily: 'Vazirmatn',
@@ -136,7 +176,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     canvas.add(productName);
 
     const productColors = new FabricText(`رنگ‌ها: ${colors.map(color => color.label).join('، ')}`, {
-      top: 880,
+      top: productColorsTop,
       left: canvas.width / 2,
       fontSize: 40,
       fontFamily: 'Vazirmatn',
@@ -145,7 +185,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     canvas.add(productColors);
 
     const productSizes = new FabricText(`سایزها: ${Array.from(this.allSizes).join('، ')}`, {
-      top: 940,
+      top: productSizesTop,
       left: canvas.width / 2,
       fontSize: 40,
       fontFamily: 'Vazirmatn',
@@ -154,7 +194,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     canvas.add(productSizes);
 
     const productCode = new FabricText(code, {
-      top: 1000,
+      top: productCodeTop,
       left: canvas.width / 2,
       fontSize: 30,
       fontFamily: 'monospace',
@@ -166,7 +206,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     const priceText = new FabricText(
       discountPercentage > 0 ? `فقط ${this.discountedPrice} تومان` : `${sellingUnitPrice / 10} تومان`,
       {
-        top: 1100,
+        top: priceTextTop,
         left: canvas.width / 2,
         fontSize: 60,
         fontFamily: 'Vazirmatn',
@@ -179,7 +219,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     // Add discount badge (if applicable)
     if (discountPercentage > 0) {
       const discountBg = new Rect({
-        top: 300,
+        top: discountBgTop,
         left: 800,
         width: 160,
         height: 40,
@@ -191,9 +231,10 @@ export class StoryGeneratorComponent implements AfterViewInit {
       canvas.add(discountBg);
 
       const discountText = new FabricText(`${discountPercentage}% OFF`, {
-        top: 285,
+        top: discountTextTop,
         left: 810,
         fontSize: 30,
+        fontWeight: 'bold',
         fontFamily: 'Vazirmatn',
         fill: '#ffffff',
         angle: -45
@@ -202,7 +243,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     }
 
     const marketingText = new FabricText(marketingDescription || '', {
-      top: 1300,
+      top: marketingTextTop,
       left: canvas.width / 2,
       fontSize: 50,
       fontFamily: 'Vazirmatn',
