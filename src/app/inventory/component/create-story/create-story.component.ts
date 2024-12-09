@@ -2,8 +2,7 @@ import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core'
 import html2canvas from 'html2canvas';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GroupedStockItem } from '@inventory/entity/inventory.entity';
-import { CurrencyPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
-import { CurrencyComponent } from '@shared/component/currency-wrapper/currency.component';
+import { DecimalPipe } from '@angular/common';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
@@ -22,11 +21,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzInputModule,
     NzSliderModule,
     NzFormModule,
-    CurrencyPipe,
-    NgIf,
-    NgForOf,
     DecimalPipe,
-    CurrencyComponent,
     ReactiveFormsModule
   ]
 })

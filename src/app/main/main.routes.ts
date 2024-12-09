@@ -45,7 +45,7 @@ export const mainRoutes: Routes = [
       {
         path: 'inventory/story-creator',
         loadComponent: () =>
-          import('@inventory/component/create-story/create-story.component').then(c => c.CreateStoryComponent),
+          import('@inventory/component/story-generator/story-generator.component').then(c => c.StoryGeneratorComponent),
         canActivate: [AuthGuard]
       },
       {
