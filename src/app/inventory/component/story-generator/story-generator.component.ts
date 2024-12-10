@@ -1,21 +1,19 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, inject, ViewChild } from '@angular/core';
 import { GroupedStockItem } from '@inventory/entity/inventory.entity';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BaseFabricObject, Canvas, FabricImage, FabricText, Gradient, Rect } from 'fabric';
+import { BaseFabricObject, Canvas, FabricImage, FabricText, Rect, Textbox } from 'fabric';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { colors as COLOR } from '@colors';
-import { distinctUntilChanged, map } from 'rxjs';
+import { distinctUntilChanged, fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 function toPersianDigitWithSeparator(number: number): string {
   const formattedNumber = number.toLocaleString('en-US');
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-  return formattedNumber
-    .replace(/\d/g, (digit) => persianDigits[parseInt(digit, 10)])
-    .replace('.', ',');
+  return formattedNumber.replace(/\d/g, digit => persianDigits[parseInt(digit, 10)]).replace('.', ',');
 }
 
 const CONSTANTS = {
@@ -23,18 +21,20 @@ const CONSTANTS = {
   canvasHeight: 1920,
   titleTop: 200,
   productBgTop: 350,
-  productBgWidth: 700,
+  productBgWidth: 800,
   productBgHeight: 1100,
   productImageTop: 400,
+  productImageWidth: 600,
+  productImageHeight: 700,
   productNameTop: 1140,
-  productColorsTop: 1240,
+  productColorsTop: 1230,
   productSizesTop: 1300,
   productCodeTop: 1380,
   priceTextTop: 1490,
   discountBgTop: 400,
   discountTextTop: 400,
   marketingTextTop: 1400
-}
+};
 
 @Component({
   standalone: true,
@@ -52,7 +52,9 @@ const CONSTANTS = {
         </nz-form-control>
       </nz-form-item>
     </form>
-    <canvas #storyCanvas></canvas>
+    <div class="absolute hidden -top-full -left-full">
+      <canvas #storyCanvas></canvas>
+    </div>
     <div class="text-center mt-4">
       <button (click)="downloadStory()" nz-button nzType="default" type="button" class="me-4">
         <span>دانلود</span>
@@ -78,24 +80,18 @@ export class StoryGeneratorComponent implements AfterViewInit {
   allSizes = new Set(this.stockItem.colors.flatMap(c => c.sizes.map(s => s.label)));
 
   ngAfterViewInit() {
-    const candiceFont = new FontFace('Candice', 'url(/media/Candice-Regular.woff2)');
+    this.generateCanvas();
 
-    candiceFont
-      .load()
-      .then(loadedFont => {
-        (document.fonts as any).add(loadedFont);
-        this.generateCanvas();
-      })
-      .catch(err => console.error('Failed to load Candice font:', err));
-
-    // Listen to form changes and regenerate the canvas
-    this.storyGeneratorForm.valueChanges
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        distinctUntilChanged(),
-      )
+    fromEvent(document.fonts as any, 'loadingdone')
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.regenerateCanvas(); // Clear the canvas
+        this.regenerateCanvas();
+      });
+
+    this.storyGeneratorForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
+      .subscribe(() => {
+        this.regenerateCanvas();
       });
   }
 
@@ -137,57 +133,41 @@ export class StoryGeneratorComponent implements AfterViewInit {
       })
       .catch(err => console.error('Error loading background image', err));
 
-    // Add title
-    const title = new FabricText('HeyLee', {
+    const title = new Textbox('HeyLee', {
       top: CONSTANTS.titleTop,
       left: canvas.width / 2,
-      fontSize: 80,
+      width: 600,
+      textAlign: 'center',
+      fontSize: 92,
       fontFamily: 'Candice',
+      borderColor: COLOR.pink_1,
       fill: '#e11d48'
     });
     canvas.add(title);
 
-    // Add product container
     const productBg = new Rect({
       top: CONSTANTS.productBgTop,
       left: canvas.width / 2,
       width: CONSTANTS.productBgWidth,
       height: CONSTANTS.productBgHeight,
-      fill: new Gradient<'linear'>({
-        coords: {
-          x1: 0,
-          y1: 0,
-          x2: canvas.width,
-          y2: canvas.height
-        },
-        colorStops: [
-          { offset: 0, color: COLOR.rose_3 },
-          { offset: 0.6, color: COLOR.rose_4 }
-        ]
-      }),
-      rx: 30,
-      ry: 30
+      fill: COLOR.rose_4,
+      rx: 50,
+      ry: 50
     });
     canvas.add(productBg);
 
-    const imageBorder = new Rect({
-      height: 704,
-      width: 604,
-      top: CONSTANTS.productImageTop - 2,
-      left: canvas.width / 2,
-      fill: '#ffffff',
-      rx: 30,
-      ry: 30
-    })
-    canvas.add(imageBorder);
-
-    // Add product image
-    FabricImage.fromURL(image || '', {crossOrigin: 'anonymous'})
+    FabricImage.fromURL(image || '', { crossOrigin: 'anonymous' })
       .then(img => {
+        const targetWidth = CONSTANTS.productImageWidth;
+        const targetHeight = CONSTANTS.productImageHeight;
+
+        const scaleFactor = Math.min(targetWidth / img.width, targetHeight / img.height);
+
         img.set({
-          height: 700,
-          top: CONSTANTS.productImageTop,
+          scaleX: scaleFactor,
+          scaleY: scaleFactor,
           left: canvas.width / 2,
+          top: CONSTANTS.productImageTop
         });
         console.log(img.getCrossOrigin());
         img.clipPath = new Rect({
@@ -195,17 +175,36 @@ export class StoryGeneratorComponent implements AfterViewInit {
           left: 0,
           width: img.width,
           height: img.height,
-          rx: 30,
-          ry: 30
+          rx: 45,
+          ry: 45
         });
+        const imageBorder = new Rect({
+          scaleX: scaleFactor,
+          scaleY: scaleFactor,
+          width: img.width,
+          height: img.height,
+          top: CONSTANTS.productImageTop - 5,
+          left: canvas.width / 2,
+          fill: '#ffffff',
+          stroke: 'white',
+          strokeWidth: 10,
+          rx: 45,
+          ry: 45
+        });
+        canvas.add(imageBorder);
         canvas.add(img);
+        canvas.renderAll();
       })
       .catch(err => console.error('Error loading product image', err));
 
-    // Add product details
-    const productName = new FabricText(name, {
+    const productName = new Textbox(name, {
       top: CONSTANTS.productNameTop,
       left: canvas.width / 2,
+      direction: 'rtl',
+      originX: 'center',
+      width: CONSTANTS.productImageWidth,
+      textAlign: 'center',
+      perPixelTargetFind: true,
       fontSize: 50,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
@@ -213,9 +212,14 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(productName);
 
-    const productColors = new FabricText(`رنگ‌ها: ${colors.map(color => color.label).join('، ')}`, {
+    const productColors = new Textbox(`رنگ‌ها: ${colors.map(color => color.label).join('، ')}`, {
       top: CONSTANTS.productColorsTop,
       left: canvas.width / 2,
+      direction: 'rtl',
+      originX: 'center',
+      width: CONSTANTS.productImageWidth,
+      textAlign: 'center',
+      perPixelTargetFind: true,
       fontSize: 40,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
@@ -223,9 +227,14 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(productColors);
 
-    const productSizes = new FabricText(`سایزها: ${Array.from(this.allSizes).join('، ')}`, {
+    const productSizes = new Textbox(`سایزها: ${Array.from(this.allSizes).join('، ')}`, {
       top: CONSTANTS.productSizesTop,
       left: canvas.width / 2,
+      direction: 'rtl',
+      originX: 'center',
+      width: CONSTANTS.productImageWidth,
+      textAlign: 'center',
+      perPixelTargetFind: true,
       fontSize: 40,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
@@ -242,13 +251,17 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(productCode);
 
-    // Add price or discounted price
     const priceText = new FabricText(
-      discountPercentage > 0 ? `فقط ${toPersianDigitWithSeparator(this.discountedPrice)}` : `${toPersianDigitWithSeparator(sellingUnitPrice / 10)}`,
+      discountPercentage > 0
+        ? `فقط ${toPersianDigitWithSeparator(this.discountedPrice)} تومان`
+        : `${toPersianDigitWithSeparator(sellingUnitPrice / 10)} تومان`,
       {
         top: CONSTANTS.priceTextTop,
         left: canvas.width / 2,
-        fontSize: 72,
+        direction: 'rtl',
+        originX: 'center',
+        perPixelTargetFind: true,
+        fontSize: 76,
         fontFamily: 'Vazirmatn',
         fill: '#4b5563',
         fontWeight: 700
@@ -259,6 +272,9 @@ export class StoryGeneratorComponent implements AfterViewInit {
     const marketingText = new FabricText(marketingDescription || '', {
       top: CONSTANTS.marketingTextTop,
       left: canvas.width / 2,
+      direction: 'rtl',
+      originX: 'center',
+      perPixelTargetFind: true,
       fontSize: 50,
       fontFamily: 'Vazirmatn',
       fontStyle: 'italic',
@@ -266,7 +282,6 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(marketingText);
 
-    // Add discount badge (if applicable)
     if (discountPercentage > 0) {
       const discountBg = new Rect({
         top: CONSTANTS.discountBgTop,
@@ -313,8 +328,8 @@ export class StoryGeneratorComponent implements AfterViewInit {
   async shareStory() {
     if (!this.canvas) return;
 
-    const blob = await new Promise<Blob | null>((resolve) =>
-      this.canvas?.toCanvasElement().toBlob((b) => resolve(b), 'image/png')
+    const blob = await new Promise<Blob | null>(resolve =>
+      this.canvas?.toCanvasElement().toBlob(b => resolve(b), 'image/png')
     );
 
     if (!blob) {
@@ -322,13 +337,12 @@ export class StoryGeneratorComponent implements AfterViewInit {
       return;
     }
 
-    // Check if Web Share API is supported
     if (navigator.share) {
       const file = new File([blob], 'product-image.png', { type: 'image/png' });
 
       try {
         await navigator.share({
-          files: [file],
+          files: [file]
         });
         console.log('Canvas image shared successfully');
       } catch (error) {
