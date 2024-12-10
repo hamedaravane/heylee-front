@@ -156,7 +156,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(productBg);
 
-    FabricImage.fromURL(image || '')
+    FabricImage.fromURL(image || '', { crossOrigin: '' })
       .then(img => {
         const targetWidth = CONSTANTS.productImageWidth;
         const targetHeight = CONSTANTS.productImageHeight;
