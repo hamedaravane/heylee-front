@@ -128,8 +128,8 @@ const CONSTANTS = {
         {{ storyGeneratorForm.get('marketingDescription')?.value }}
       </div>
     </div>
-    <div class="absolute hidden -top-full -left-full">
-      <!--    <div>-->
+    <!--    <div class="absolute hidden -top-full -left-full">-->
+    <div>
       <canvas #storyCanvas></canvas>
     </div>
     <div class="text-center mt-4">
@@ -309,15 +309,16 @@ export class StoryGeneratorComponent implements AfterViewInit {
     });
     canvas.add(productCode);
 
-    const priceText = new FabricText(
+    const priceText = new Textbox(
       discountPercentage > 0
         ? `فقط ${toPersianDigitWithSeparator(this.discountedPrice)} تومان`
         : `${toPersianDigitWithSeparator(sellingUnitPrice / 10)} تومان`,
       {
         top: CONSTANTS.priceTextTop,
         left: canvas.width / 2,
+        width: CONSTANTS.productBgWidth,
         direction: 'rtl',
-        originX: 'center',
+        textAlign: 'center',
         perPixelTargetFind: true,
         fontSize: 76,
         fontFamily: 'Vazirmatn',
