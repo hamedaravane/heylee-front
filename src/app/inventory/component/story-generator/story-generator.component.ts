@@ -129,7 +129,7 @@ const CONSTANTS = {
       </div>
     </div>
     <div class="absolute hidden -top-full -left-full">
-      <!--<div>-->
+      <!--    <div>-->
       <canvas #storyCanvas></canvas>
     </div>
     <div class="text-center mt-4">
@@ -204,8 +204,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
       textAlign: 'center',
       fontSize: 52,
       fontFamily: 'Candice',
-      borderColor: CONSTANTS.textColor,
-      fill: '#e11d48'
+      fill: CONSTANTS.textColor
     });
     canvas.add(title);
 
