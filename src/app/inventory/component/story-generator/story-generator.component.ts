@@ -6,9 +6,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
-import { colors as COLOR } from '@colors';
 import { distinctUntilChanged, fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DecimalPipe } from '@angular/common';
 
 function toPersianDigitWithSeparator(number: number): string {
   const formattedNumber = number.toLocaleString('en-US');
@@ -17,20 +17,27 @@ function toPersianDigitWithSeparator(number: number): string {
 }
 
 const CONSTANTS = {
+  canvasBgColor: '#f4f2ee',
   canvasWidth: 1080,
   canvasHeight: 1920,
-  titleTop: 200,
-  productBgTop: 350,
-  productBgWidth: 800,
-  productBgHeight: 1100,
-  productImageTop: 400,
-  productImageWidth: 600,
-  productImageHeight: 700,
-  productNameTop: 1140,
-  productColorsTop: 1230,
-  productSizesTop: 1300,
-  productCodeTop: 1380,
-  priceTextTop: 1490,
+  titleTop: 187,
+  productBgColor: '#f2dbdc',
+  productBgTop: 270,
+  productBgWidth: 864,
+  productBgHeight: 1378,
+  productImageTop: 311,
+  productImageWidth: 785,
+  productImageHeight: 1019,
+  radius: 100,
+  imgRadius: 60,
+  textColor: '#cd4762',
+  titleFontSize: 44,
+  subtitleFontSize: 26,
+  productNameTop: 1385,
+  productColorsTop: 1466,
+  productSizesTop: 1509,
+  productCodeTop: 1552,
+  priceTextTop: 1670,
   discountBgTop: 400,
   discountTextTop: 400,
   marketingTextTop: 1400
@@ -38,7 +45,7 @@ const CONSTANTS = {
 
 @Component({
   standalone: true,
-  template: ` <form nz-form [formGroup]="storyGeneratorForm">
+  template: ` <!--<form nz-form [formGroup]="storyGeneratorForm">
       <nz-form-item>
         <nz-form-label>نرخ تخفیف</nz-form-label>
         <nz-form-control>
@@ -51,8 +58,78 @@ const CONSTANTS = {
           <textarea formControlName="marketingDescription" nz-input maxlength="50"></textarea>
         </nz-form-control>
       </nz-form-item>
-    </form>
+    </form>-->
+    <div
+      #storyElement
+      style="background-color: {{ CONSTANTS.canvasBgColor }}"
+      class="w-80 mx-auto text-center mt-2 bg-white px-8 relative"
+    >
+      <div class="h-6"></div>
+      <h1 style="font-family: Candice, serif" class="text-rose-600 text-xl">HeyLee</h1>
+      <div class="h-5"></div>
+      <div
+        style="background-color: {{ CONSTANTS.productBgColor }}"
+        class="w-64 py-2 shadow mx-auto text-center rounded-xl"
+      >
+        <img
+          [src]="stockItem.image"
+          alt="Product Image"
+          class="w-40 rounded-xl inline-block my-3 border-2 border-solid border-gray-100"
+        />
+        <div style="color: {{ CONSTANTS.textColor }}">
+          <h1 class="font-bold my-1 text-inherit">{{ stockItem.name }}</h1>
+          <div class="font-bold my-1">
+            <span>رنگ‌ها: </span>
+            @for (color of stockItem.colors; track $index) {
+              <span>{{ color.label }}</span>
+              <span class="last:hidden">، </span>
+            }
+          </div>
+
+          <div class="font-bold my-1">
+            <span>سایزها: </span>
+            @for (size of allSizes; track $index) {
+              <span>{{ size }}</span>
+              <span class="last:hidden">، </span>
+            }
+          </div>
+
+          <div>
+            <span class="font-mono">{{ stockItem.code }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="h-4"></div>
+      <div class="text-gray-600">
+        @if (storyGeneratorForm.get('discountPercentage')!.value > 0) {
+          <div class="font-bold text-2xl">
+            <span>فقط </span>
+            {{ discountedPrice | number }}
+            <span class="mx-1 opacity-70" style="font-size: 0.6rem">تومان</span>
+          </div>
+          <div class="inline-block relative text-sm text-rose-500 opacity-75">
+            {{ stockItem.sellingUnitPrice / 10 | number }}
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        } @else {
+          <span class="font-bold text-2xl">
+            {{ stockItem.sellingUnitPrice / 10 | number }}
+          </span>
+          <span class="mx-1 opacity-70" style="font-size: 0.6rem">تومان</span>
+        }
+      </div>
+
+      @if (storyGeneratorForm.get('discountPercentage')!.value > 0) {
+        <div dir="ltr" class="absolute font-bold top-28 left-14 bg-rose-500 h-7 w-20 -rotate-45 text-white rounded-lg">
+          <span class="leading-none"> {{ storyGeneratorForm.get('discountPercentage')?.value }}% OFF </span>
+        </div>
+      }
+      <div class="text-lg italic text-gray-500">
+        {{ storyGeneratorForm.get('marketingDescription')?.value }}
+      </div>
+    </div>
     <div class="absolute hidden -top-full -left-full">
+      <!--<div>-->
       <canvas #storyCanvas></canvas>
     </div>
     <div class="text-center mt-4">
@@ -65,7 +142,7 @@ const CONSTANTS = {
         <i class="fa-solid fa-share ms-2"></i>
       </button>
     </div>`,
-  imports: [NzButtonModule, NzFormModule, NzInputModule, NzSliderModule, ReactiveFormsModule],
+  imports: [NzButtonModule, NzFormModule, NzInputModule, NzSliderModule, ReactiveFormsModule, DecimalPipe],
   selector: 'story-generator'
 })
 export class StoryGeneratorComponent implements AfterViewInit {
@@ -111,7 +188,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
     const canvas = new Canvas(this.storyCanvas.nativeElement, {
       width: CONSTANTS.canvasWidth,
       height: CONSTANTS.canvasHeight,
-      backgroundColor: '#ffffff'
+      backgroundColor: CONSTANTS.canvasBgColor
     });
 
     const { name, image, sellingUnitPrice, code, colors } = this.stockItem;
@@ -120,27 +197,14 @@ export class StoryGeneratorComponent implements AfterViewInit {
 
     BaseFabricObject.ownDefaults.originX = 'center';
 
-    FabricImage.fromURL('/images/bg-pattern.png')
-      .then(img => {
-        img.set({
-          width: canvas.width,
-          height: canvas.height,
-          top: 0,
-          left: canvas.width / 2
-        });
-        canvas.backgroundImage = img;
-        canvas.renderAll();
-      })
-      .catch(err => console.error('Error loading background image', err));
-
     const title = new Textbox('HeyLee', {
       top: CONSTANTS.titleTop,
       left: canvas.width / 2,
       width: 600,
       textAlign: 'center',
-      fontSize: 92,
+      fontSize: 52,
       fontFamily: 'Candice',
-      borderColor: COLOR.pink_1,
+      borderColor: CONSTANTS.textColor,
       fill: '#e11d48'
     });
     canvas.add(title);
@@ -150,50 +214,44 @@ export class StoryGeneratorComponent implements AfterViewInit {
       left: canvas.width / 2,
       width: CONSTANTS.productBgWidth,
       height: CONSTANTS.productBgHeight,
-      fill: COLOR.rose_4,
-      rx: 50,
-      ry: 50
+      fill: CONSTANTS.productBgColor,
+      rx: CONSTANTS.radius,
+      ry: CONSTANTS.radius
     });
     canvas.add(productBg);
 
     FabricImage.fromURL(image || '', { crossOrigin: 'anonymous' })
       .then(img => {
-        const targetWidth = CONSTANTS.productImageWidth;
-        const targetHeight = CONSTANTS.productImageHeight;
-
-        const scaleFactor = Math.min(targetWidth / img.width, targetHeight / img.height);
-
+        const scaleX = CONSTANTS.productImageWidth / img.width;
+        const scaleY = CONSTANTS.productImageHeight / img.height;
         img.set({
-          scaleX: scaleFactor,
-          scaleY: scaleFactor,
+          top: CONSTANTS.productImageTop,
           left: canvas.width / 2,
-          top: CONSTANTS.productImageTop
+          scaleX,
+          scaleY,
+          selectable: false,
+          hasControls: false,
+          hasBorders: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          lockScalingX: true
         });
-        console.log(img.getCrossOrigin());
         img.clipPath = new Rect({
           top: -img.height / 2,
           left: 0,
           width: img.width,
           height: img.height,
-          rx: 45,
-          ry: 45
+          fill: CONSTANTS.canvasBgColor,
+          rx: CONSTANTS.imgRadius,
+          ry: CONSTANTS.imgRadius,
+          selectable: false,
+          hasControls: false,
+          hasBorders: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          lockScalingX: true
         });
-        const imageBorder = new Rect({
-          scaleX: scaleFactor,
-          scaleY: scaleFactor,
-          width: img.width,
-          height: img.height,
-          top: CONSTANTS.productImageTop - 5,
-          left: canvas.width / 2,
-          fill: '#ffffff',
-          stroke: 'white',
-          strokeWidth: 10,
-          rx: 45,
-          ry: 45
-        });
-        canvas.add(imageBorder);
         canvas.add(img);
-        canvas.renderAll();
       })
       .catch(err => console.error('Error loading product image', err));
 
@@ -202,13 +260,13 @@ export class StoryGeneratorComponent implements AfterViewInit {
       left: canvas.width / 2,
       direction: 'rtl',
       originX: 'center',
-      width: CONSTANTS.productImageWidth,
-      textAlign: 'center',
+      width: CONSTANTS.productImageWidth - 30,
+      textAlign: 'right',
       perPixelTargetFind: true,
-      fontSize: 50,
+      fontSize: CONSTANTS.titleFontSize,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
-      fill: COLOR.pink_1
+      fill: CONSTANTS.textColor
     });
     canvas.add(productName);
 
@@ -216,14 +274,13 @@ export class StoryGeneratorComponent implements AfterViewInit {
       top: CONSTANTS.productColorsTop,
       left: canvas.width / 2,
       direction: 'rtl',
-      originX: 'center',
-      width: CONSTANTS.productImageWidth,
-      textAlign: 'center',
+      width: CONSTANTS.productImageWidth - 30,
+      textAlign: 'right',
       perPixelTargetFind: true,
-      fontSize: 40,
+      fontSize: CONSTANTS.subtitleFontSize,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
-      fill: COLOR.pink_1
+      fill: CONSTANTS.textColor
     });
     canvas.add(productColors);
 
@@ -231,23 +288,25 @@ export class StoryGeneratorComponent implements AfterViewInit {
       top: CONSTANTS.productSizesTop,
       left: canvas.width / 2,
       direction: 'rtl',
-      originX: 'center',
-      width: CONSTANTS.productImageWidth,
-      textAlign: 'center',
+      width: CONSTANTS.productImageWidth - 30,
+      textAlign: 'right',
       perPixelTargetFind: true,
-      fontSize: 40,
+      fontSize: CONSTANTS.subtitleFontSize,
       fontFamily: 'Vazirmatn',
       fontWeight: 700,
-      fill: COLOR.pink_1
+      fill: CONSTANTS.textColor
     });
     canvas.add(productSizes);
 
-    const productCode = new FabricText(code, {
+    const productCode = new Textbox(code, {
       top: CONSTANTS.productCodeTop,
       left: canvas.width / 2,
-      fontSize: 30,
+      direction: 'rtl',
+      width: CONSTANTS.productImageWidth - 30,
+      textAlign: 'right',
+      fontSize: CONSTANTS.subtitleFontSize,
       fontFamily: 'monospace',
-      fill: COLOR.pink_1
+      fill: CONSTANTS.textColor
     });
     canvas.add(productCode);
 
@@ -263,7 +322,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
         perPixelTargetFind: true,
         fontSize: 76,
         fontFamily: 'Vazirmatn',
-        fill: '#4b5563',
+        fill: CONSTANTS.textColor,
         fontWeight: 700
       }
     );
@@ -278,7 +337,7 @@ export class StoryGeneratorComponent implements AfterViewInit {
       fontSize: 50,
       fontFamily: 'Vazirmatn',
       fontStyle: 'italic',
-      fill: '#6b7280'
+      fill: CONSTANTS.textColor
     });
     canvas.add(marketingText);
 
@@ -352,4 +411,6 @@ export class StoryGeneratorComponent implements AfterViewInit {
       console.error('Web Share API not supported in this browser');
     }
   }
+
+  protected readonly CONSTANTS = CONSTANTS;
 }
