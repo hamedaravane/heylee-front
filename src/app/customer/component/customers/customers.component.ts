@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { BidiModule } from '@angular/cdk/bidi';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -54,7 +54,7 @@ export class CustomersComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   operatorUser = this.authApi.operatorUser;
   customersIndex$ = this.customerFacade.customersIndex$;
-  loadingState = false;
+  loadingState = signal<boolean>(false);
   isAddCustomerVisible = false;
   isEditCustomerVisible = false;
   isCreateFormValid = false;
@@ -84,9 +84,9 @@ export class CustomersComponent implements OnInit {
           this.customerFacade.loadCustomers(1, [{ prop: searchBy, operator: 'like', value: searchValue }]);
         }
       });
-    this.customerFacade.loading$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(loading => (this.loadingState = loading));
+    this.customerFacade.loading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(loading => {
+      this.loadingState.set(loading);
+    });
   }
 
   selectCustomerToEdit(customer: Customer) {

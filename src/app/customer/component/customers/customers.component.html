@@ -1,7 +1,7 @@
 <page-container>
   <button
-    [nzLoading]="loadingState"
-    [disabled]="loadingState"
+    [nzLoading]="loadingState()"
+    [disabled]="loadingState()"
     nzType="primary"
     nz-button
     nzBlock
@@ -107,8 +107,8 @@
             <div class="col-span-8 mt-4">
               <div class="flex gap-2">
                 <button
-                  [nzLoading]="loadingState"
-                  [disabled]="loadingState"
+                  [nzLoading]="loadingState()"
+                  [disabled]="loadingState()"
                   nzType="default"
                   nz-button
                   (click)="selectCustomerToEdit(customer)"
@@ -117,8 +117,8 @@
                   <span>ویرایش</span>
                 </button>
                 <button
-                  [nzLoading]="loadingState"
-                  [disabled]="loadingState || operatorUser"
+                  [nzLoading]="loadingState()"
+                  [disabled]="loadingState() || operatorUser"
                   nzType="default"
                   nzDanger
                   nz-button
@@ -135,7 +135,7 @@
         <nz-empty nzNotFoundContent="موردی یافت نشد"></nz-empty>
       }
     </ul>
-  } @else if (loadingState) {
+  } @else if (loadingState()) {
     <ul>
       @for (_ of [].constructor(3); track $index) {
         <li class="mb-3 last:mb-0 text-xs rounded-sm overflow-clip border border-solid border-gray-600 p-4">
@@ -180,12 +180,12 @@
 
 <ng-template #createCustomerFooter>
   <button
-    [nzLoading]="loadingState"
+    [nzLoading]="loadingState()"
     nz-button
     nzBlock
     nzSize="large"
     nzType="primary"
-    [disabled]="!isCreateFormValid || loadingState"
+    [disabled]="!isCreateFormValid || loadingState()"
     (click)="createCustomer()"
   >
     <i class="fa-solid fa-plus mx-2"></i>
@@ -194,12 +194,12 @@
 </ng-template>
 <ng-template #editCustomerFooter>
   <button
-    [nzLoading]="loadingState"
+    [nzLoading]="loadingState()"
     nz-button
     nzBlock
     nzSize="large"
     nzType="primary"
-    [disabled]="!isEditFormValid || loadingState"
+    [disabled]="!isEditFormValid || loadingState()"
     (click)="editCustomer()"
   >
     <i class="fa-solid fa-pen mx-2"></i>
