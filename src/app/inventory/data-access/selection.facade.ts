@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { StockItemSelection } from '@inventory/entity/inventory.entity';
 import { InventoryFacade } from './inventory.facade';
+import { SalesItem, salesItemToStockItemSelection } from '@sale/entity/invoice.entity';
 
 @Injectable()
 export class SelectionFacade {
@@ -30,6 +31,11 @@ export class SelectionFacade {
 
   get selectedItems$(): Observable<StockItemSelection[]> {
     return this.selectedItemsSubject.asObservable();
+  }
+
+  set selectedItems$(items: SalesItem[]) {
+    const selected = items.map<StockItemSelection>(i => salesItemToStockItemSelection(i));
+    this.selectedItemsSubject.next(selected);
   }
 
   addItem(item: StockItemSelection, quantity: number = 1): void {

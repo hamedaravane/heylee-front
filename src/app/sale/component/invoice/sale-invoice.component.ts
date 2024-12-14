@@ -75,10 +75,6 @@ export class SaleInvoiceComponent implements OnInit {
   private readonly receiptService = inject(ReceiptService);
   private readonly router = inject(Router);
 
-  constructor() {
-    this.checkUpdateMode();
-  }
-
   invoiceToUpdate: SaleInvoice | null = null;
   loading = toSignal(this.saleFacade.loading$, { initialValue: false });
   paymentStatusOptions = ['paid', 'unpaid', 'partially-paid'];
@@ -113,7 +109,27 @@ export class SaleInvoiceComponent implements OnInit {
   isCustomerFormValid = false;
   customerFormValue: Customer | null = null;
 
+  constructor() {
+    this.checkUpdateMode();
+  }
+
   ngOnInit() {
+    if (this.invoiceToUpdate) {
+      this.handleCustomerForm(this.invoiceToUpdate.customer);
+      this.saleInvoiceForm.patchValue({
+        customerId: this.invoiceToUpdate.customerId,
+        city: this.invoiceToUpdate.city,
+        address: this.invoiceToUpdate.address,
+        description: this.invoiceToUpdate.description,
+        paymentStatus: this.invoiceToUpdate.paymentStatus as 'paid' | 'unpaid' | 'partially-paid',
+        shippingStatus: this.invoiceToUpdate.shippingStatus as 'shipped' | 'canceled' | 'ready-to-ship' | 'on-hold',
+        shippingPrice: this.invoiceToUpdate.shippingPrice,
+        discount: this.invoiceToUpdate.discount,
+        refNumber: this.invoiceToUpdate.refNumber,
+        items: this.invoiceToUpdate.salesItem
+      });
+      this.selectionFacade.selectedItems$ = this.invoiceToUpdate.salesItem;
+    }
     this.selectionFacade.selectedItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
       this.saleInvoiceForm.controls.items.setValue(value.map(selectedProductToInvoiceItem));
       this.totalItemsOrdered.set(value.reduce((acc, curr) => acc + curr.selectedQuantity, 0));
